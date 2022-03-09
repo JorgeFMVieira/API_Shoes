@@ -175,3 +175,7 @@ table tr td button{
 .modalBtns button{
     margin: 5px;
 }
+
+.error{
+    color: #ff3939;
+}

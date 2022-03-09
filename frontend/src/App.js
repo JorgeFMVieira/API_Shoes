@@ -1,6 +1,6 @@
 import './App.css';
 import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 function App() {
 
@@ -19,6 +19,8 @@ function App() {
   // Window Create
   const [showCreate, setShowCreate] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   const requestGet = async() =>{
       await axios.get(urlAPI)
@@ -52,7 +54,7 @@ function App() {
 }
 
 
-  const requestDelete = async(e, id) =>{
+  const requestDelete = async(id) =>{
     const urlWithId = (urlAPI + "/" + id);
     await axios.delete(urlWithId)
     .then(response => {
@@ -64,16 +66,47 @@ function App() {
     });
   }
 
+  const requestPut = async () => {
+    const urlEdit = (urlAPI + "/" + selectedProduct.id);
+    if(selectedProduct.name == "" || selectedProduct.description == "" || selectedProduct.price == ""){
+      setShowError(true);
+    }else{
+      if(isNaN(selectedProduct.price)){
+        setShowError(true);
+      }else{
+    await axios.put(urlEdit, selectedProduct)
+      .then(response => {
+        data.map(product => {
+          if (product.id === selectedProduct.id) {
+              product.name = response.data.name;
+              product.description = response.data.description;
+              product.price = response.data.price;
+            }
+        });
+        setShowEdit(false);
+      }).catch(() => {
+        setShowError(true);
+      })
+    }
+    }
+  }
+
   useEffect(() => {
     requestGet();
   });
 
 
+
   const selectProduct =(product, opcao)=>{
     setSelectedProduct(product);
-        (opcao === "Delete") &&
+        if(opcao === "Delete"){
           setShowDelete(true);
+        }else if(opcao === "Edit"){
+          setShowEdit(true);
+        }
   }
+
+
 
   return (
     <div className="App">
@@ -98,7 +131,7 @@ function App() {
                     <td>{product.description}</td>
                     <td>{product.price}</td>
                     <td>
-                        <button className="btn edit-btn">Edit</button>
+                        <button className="btn edit-btn" onClick={() =>selectProduct(product, "Edit")}>Edit</button>
                         <button className="btn delete-btn" onClick={()=> selectProduct(product, "Delete")}>Delete</button>
                     </td>
                 </tr>
@@ -146,11 +179,45 @@ function App() {
                         </div>
                     </div>
                     <div className="modalBtns">
-                        <button className="btn createNew" onClick={e => requestDelete(e,parseInt(selectedProduct.id))}>Delete</button>
+                        <button className="btn createNew" onClick={() => requestDelete(parseInt(selectedProduct.id))}>Delete</button>
                         <button className="btn cancelBtn" onClick={()=>setShowDelete(false)}>Cancel</button>
                     </div>
               </div>
           </div>:null
+        }
+
+        {
+          showEdit?
+          <div className="modalWindow">
+            <div className="containerModal">
+                  <div className="modalTitle"><h3>Edit Product - {selectedProduct.id}</h3></div>
+                  <div className="modalBody">
+                      <div className="modalItem">
+                          <label htmlFor="name">Name:</label>
+                          <input type="text" id="name" name="name" value={selectedProduct.name} onChange={handleChange}  />  
+                      </div>
+                      <div className="modalItem">
+                          <label htmlFor="description">Description:</label>
+                          <input type="text" id="description" name="description" value={selectedProduct.description} onChange={handleChange}  />  
+                      </div>
+                      <div className="modalItem">
+                          <label htmlFor="price">Price:</label>
+                          <input type="text" id="price" name="price" value={selectedProduct.price} onChange={handleChange}  />  
+                      </div>
+                      <div className="modalItem">
+                      {
+                        showError?
+                        <p className="error">* Please, fill all fields.</p>
+                        :null
+                      }  
+                      </div>
+                  </div>
+                  <div className="modalBtns">
+                      <button className="btn createNew" onClick={()=>requestPut(parseInt(selectedProduct.id))}>Save</button>
+                      <button className="btn cancelBtn" onClick={()=>setShowEdit(false)}>Cancel</button>
+                  </div>
+            </div>
+      </div>:null
         }
     </div>
   );
