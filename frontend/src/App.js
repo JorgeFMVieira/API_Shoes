@@ -21,7 +21,7 @@ function App() {
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showError, setShowError] = useState(false);
-  const [searchInput, setSearchInput] = useState('');
+  const [searchText, setsearchText] = useState('');
   const [filteredResults, setFilteredResults] = useState([]);
   // Save the data that the user will insert into the form
   // Uses setSelectedProduct to update the state
@@ -32,14 +32,14 @@ function App() {
     });
   }
 
-  const searchItems = (searchValue) => {
-    setSearchInput(searchValue)
-    // Ve
-    if (searchInput !== '') {
-      const filteredData = data.filter((item) => {
-        return Object.values(item).join('').toLowerCase().includes(searchInput.toLowerCase())
+  const requestSearch = (searchValue) => {
+    setsearchText(searchValue)
+    // Verifies if input is empty
+    if (searchText !== '') {
+      const dataSearched = data.filter((item) => {
+        return Object.values(item).join('').toLowerCase().includes(searchText.toLowerCase())
       })
-      setFilteredResults(filteredData)
+      setFilteredResults(dataSearched)
     }
     else {
       setFilteredResults(data)
@@ -120,7 +120,7 @@ function App() {
 
   return (
     <div className="App">
-      <input name="search" onChange={(e) => searchItems(e.target.value)} />
+      <input name="search" onChange={(e) => requestSearch(e.target.value)} />
 
       <div className="tableContainer">
         <h1>Products</h1>
@@ -135,7 +135,7 @@ function App() {
               <th>Options</th>
             </tr>
           </thead>
-          {searchInput.length > 0 ? (
+          {searchText.length > 0 ? (
             filteredResults.map((item) => {
               return (
                 <tbody>
