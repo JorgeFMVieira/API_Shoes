@@ -36,9 +36,12 @@ function App() {
     setsearchText(searchValue)
     // Verifies if input is empty
     if (searchText !== '') {
+      // Input is not empty
+      // Creates variable to save all the data that has the result of the searchValue
       const dataSearched = data.filter((item) => {
         return Object.values(item).join('').toLowerCase().includes(searchText.toLowerCase())
       })
+      // 
       setFilteredResults(dataSearched)
     }
     else {
@@ -120,11 +123,11 @@ function App() {
 
   return (
     <div className="App">
-      <input name="search" onChange={(e) => requestSearch(e.target.value)} />
 
       <div className="tableContainer">
         <h1>Products</h1>
         <button className="btn createNew" onClick={() => setShowCreate(true)}>Create New Product</button>
+        <input className="search" type="text" placeholder="Search..." name="search" onChange={(e) => requestSearch(e.target.value)} autoComplete="off" />
         <table>
           <thead>
             <tr>
