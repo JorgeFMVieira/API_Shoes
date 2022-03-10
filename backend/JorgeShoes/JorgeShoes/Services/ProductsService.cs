@@ -29,6 +29,7 @@ namespace JorgeShoes.Services
             }
         }
 
+
         public async Task<Product> GetProduct(int id)
         {
             var product = await _context.Products.FindAsync(id);
