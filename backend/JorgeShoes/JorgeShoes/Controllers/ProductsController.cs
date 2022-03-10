@@ -34,49 +34,6 @@ namespace JorgeShoes.Controllers
             }
         }
 
-        [HttpGet("ProductByName")]
-        public async Task<ActionResult<IAsyncEnumerable<Product>>> GetProductsByName([FromQuery] string name)
-        {
-            try
-            {
-                var products = await _productService.GetProductByName(name);
-                if(!products.Any())
-                {
-                    return NotFound($"We weren´t able to find products with the name of {name}");
-                }
-                else
-                {
-                    return Ok(products);
-                }
-            }
-            catch
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"We weren´t able to find products with the name of {name}");
-            }
-        }
-
-
-        [HttpGet("ProductByPrice")]
-        public async Task<ActionResult<IAsyncEnumerable<Product>>> GetProductsByPrice([FromQuery] int price)
-        {
-            try
-            {
-                var products = await _productService.GetProductByPrice(price);
-                if (!products.Any())
-                {
-                    return NotFound($"We weren´t able to find products with the price of {price}");
-                }
-                else
-                {
-                    return Ok(products);
-                }
-            }
-            catch
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"We weren´t able to find products with the price of {price}");
-            }
-        }
-
         [HttpGet("{id:int}", Name="GetProduct")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {

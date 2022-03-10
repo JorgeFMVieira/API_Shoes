@@ -88,7 +88,7 @@ table tr:nth-child(even){
 
 table tr td button{
     margin: 5px;
-    padding: 5%;
+    padding: 10px 15px;
 }
 
 .edit-btn{

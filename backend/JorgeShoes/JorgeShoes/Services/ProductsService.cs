@@ -29,34 +29,6 @@ namespace JorgeShoes.Services
             }
         }
 
-        public async Task<IEnumerable<Product>> GetProductByName(string name)
-        {
-            IEnumerable<Product> products;
-            if (!string.IsNullOrEmpty(name))
-            {
-                products = await _context.Products.Where(n => n.Name.Contains(name)).ToListAsync();
-            }
-            else
-            {
-                products = await GetProducts();
-            }
-            return products;
-        }
-
-        public async Task<IEnumerable<Product>> GetProductByPrice(int price)
-        {
-            IEnumerable<Product> products;
-            if (!string.IsNullOrEmpty(price.ToString()))
-            {
-                products = await _context.Products.Where(b => b.Price.Equals(price)).ToListAsync();
-            }
-            else
-            {
-                products = await GetProducts();
-            }
-            return products;
-        }
-
         public async Task<Product> GetProduct(int id)
         {
             var product = await _context.Products.FindAsync(id);
