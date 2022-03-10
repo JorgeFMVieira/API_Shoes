@@ -21,6 +21,9 @@ function App() {
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
 
+  const [searchText, setsearchText] = useState('');
+  const [filteredResults, setFilteredResults] = useState([]);
+
 
   // Save the productDB that the user will insert into the form
   // Uses setProductInfoSelected to update the state
@@ -95,13 +98,32 @@ function App() {
     }
   }
 
+  const requestSearch = (searchValue) => {
+    setsearchText(searchValue)
+    // Verifies if input is empty
+    if (searchValue !== '') {
+      // Input is not empty
+      // Creates variable to save all the data that has the result of the searchValue
+      const dataSearched = productDB.filter((item) => {
+        return Object.values(item).join('').toLowerCase().includes(searchValue.toLowerCase())
+      })
+      setFilteredResults(dataSearched)
+    }
+    else {
+      // Return normal data without search text
+      setFilteredResults(productDB)
+    }
+  }
+
+const i = 0;
+
   return (
     <div className="App">
 
       <div className="tableContainer">
         <h1>Products</h1>
         <button className="btn createNew" onClick={() => setShowCreate(true)}>Create New Product</button>
-        <input className="search" type="text" placeholder="Search..." name="search" autoComplete="off" />
+        <input className="search" type="text" placeholder="Search..." name="search" autoComplete="off" onInput={(e) => requestSearch(e.target.value)} />
         <table>
           <thead>
             <tr>
@@ -112,20 +134,39 @@ function App() {
               <th>Options</th>
             </tr>
           </thead>
-            <tbody>
-              {productDB.map(product => (
-                <tr key={product.id}>
-                  <td>{product.id}</td>
-                  <td>{product.name}</td>
-                  <td>{product.description}</td>
-                  <td>{product.price}</td>
-                  <td>
-                    <button className="btn edit-btn" onClick={() => selectProduct(product, "Edit")}>Edit</button>
-                    <button className="btn delete-btn" onClick={() => selectProduct(product, "Delete")}>Delete</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+          {searchText.length == 0 ? (
+                        <tbody>
+                        {productDB.map(product => (
+                          <tr>
+                            <td>{product.id}</td>
+                            <td>{product.name}</td>
+                            <td>{product.description}</td>
+                            <td>{product.price}</td>
+                            <td>
+                              <button className="btn edit-btn" onClick={() => selectProduct(product, "Edit")}>Edit</button>
+                              <button className="btn delete-btn" onClick={() => selectProduct(product, "Delete")}>Delete</button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+          ) : (
+            filteredResults.map((item) => {
+              return (
+                <tbody>
+                  <tr>
+                    <td>{item.id}</td>
+                    <td>{item.name}</td>
+                    <td>{item.description}</td>
+                    <td>{item.price}</td>
+                    <td>
+                      <button className="btn edit-btn" onClick={() => selectProduct(item, "Edit")}>Edit</button>
+                      <button className="btn delete-btn" onClick={() => selectProduct(item, "Delete")}>Delete</button>
+                    </td>
+                  </tr>
+                </tbody>
+              )
+            })
+          )}
         </table>
       </div>
 
