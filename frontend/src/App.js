@@ -52,6 +52,8 @@ function App() {
         // Contact all the productDB receveid to send to the db
         setProductDB(productDB.concat(response.data));
         setShowCreate(false);
+        setFilteredResults("");
+        window.location.reload();
       }).catch(error => {
         console.log(error);
       });
