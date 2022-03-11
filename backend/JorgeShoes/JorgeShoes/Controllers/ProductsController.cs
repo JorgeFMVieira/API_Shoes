@@ -34,6 +34,49 @@ namespace JorgeShoes.Controllers
             }
         }
 
+        [HttpGet("ProductById")]
+        public async Task<ActionResult<IAsyncEnumerable<Product>>> GetProductsById([FromQuery] int id)
+        {
+            try
+            {
+                var products = await _productService.GetProductsById(id);
+                if (!products.Any())
+                {
+                    return NotFound($"We weren´t able to find products with the id of {id}");
+                }
+                else
+                {
+                    return Ok(products);
+                }
+            }
+            catch
+            {
+                return NotFound($"We weren´t able to find products with the id of {id}");
+            }
+        }
+
+
+        [HttpGet("ProductByName")]
+        public async Task<ActionResult<IAsyncEnumerable<Product>>> GetProductsByName([FromQuery] string name)
+        {
+            try
+            {
+                var products = await _productService.GetProductsByName(name);
+                if (!products.Any())
+                {
+                    return NotFound($"We weren´t able to find products with the name of {name}");
+                }
+                else
+                {
+                    return Ok(products);
+                }
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"We weren´t able to find products with the name of {name}");
+            }
+        }
+
         [HttpGet("{id:int}", Name="GetProduct")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
@@ -51,7 +94,7 @@ namespace JorgeShoes.Controllers
             }
             catch
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"We weren´t able to find products with the id of {id}");
+                return NotFound($"We weren´t able to find products with the id of {id}"); ;
             }
         }
 
@@ -103,7 +146,7 @@ namespace JorgeShoes.Controllers
                 else
                 {
                     await _productService.DeleteProduct(product);
-                    return Ok($"Product width id of {id} was deleted");
+                    return Ok($"Product with id of {id} was deleted");
                 }
             }
             catch

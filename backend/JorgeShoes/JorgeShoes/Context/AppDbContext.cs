@@ -1,5 +1,7 @@
 ﻿using JorgeShoes.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
 
 namespace JorgeShoes.Context
 {
@@ -11,5 +13,10 @@ namespace JorgeShoes.Context
         }
 
         public DbSet<Product> Products { get; set; }
+
+        internal Task GetProductsByName(string name)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

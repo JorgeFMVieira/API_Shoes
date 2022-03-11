@@ -1,5 +1,6 @@
 ﻿using JorgeShoes.Context;
 using JorgeShoes.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,20 @@ namespace JorgeShoes.Services
             }
         }
 
+        public async Task<IEnumerable<Product>> GetProductsByName(string name)
+        {
+            IEnumerable<Product> products;
+            if (!string.IsNullOrEmpty(name))
+            {
+                products = await _context.Products.Where(n => n.Name.Contains(name)).ToListAsync();
+            }
+            else
+            {
+                products = await GetProducts();
+            }
+            return products;
+        }
+
 
         public async Task<Product> GetProduct(int id)
         {
@@ -52,6 +67,20 @@ namespace JorgeShoes.Services
         {
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Product>> GetProductsById(int id)
+        {
+            IEnumerable<Product> products;
+            if (!string.IsNullOrEmpty(id.ToString()))
+            {
+                products = await _context.Products.Where(b => b.Id.ToString().Contains(id.ToString())).ToListAsync();
+            }
+            else
+            {
+                products = await GetProducts();
+            }
+            return products;
         }
     }
 }

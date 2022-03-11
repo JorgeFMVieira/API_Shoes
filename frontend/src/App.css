@@ -182,8 +182,8 @@ table tr td button{
 
 .search{
     display: flex;
-    margin-top: 20px;
     padding: 10px;
+    margin-top: 20px;
     outline: none;
     border-radius: 5px;
     border: solid 1.5px #D3D3D3;
@@ -196,4 +196,59 @@ table tr td button{
 .search:focus{
     box-shadow: 0 0 5pt 2pt #D3D3D3;
     outline-width: 0px;
+}
+
+.errorFindId{
+    padding: 15px;
+    padding-left: 0px;
+    color: #ff3939;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.iconFilterSearch{
+    margin-left: auto;
+    font-size: 30px;
+    cursor: pointer;
+    transition: 0.3s all ease-in-out;
+}
+
+.filter{
+    position: absolute;
+    top: 45px;
+    right: 40px;
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    padding: 10px
+}
+
+.iconFilterSearch:hover{
+    transition: 0.3s all ease-in-out;
+    color: #01987A;
+}
+
+.tableHeader{
+    display: flex;
+}
+
+.filterOptions{
+    width: fit-content;
+    height: auto;
+    transition: 0.3s all ease-in-out;
+    text-align: right;
+    border-radius: 0px 0px 15px 15px;
+}
+
+.filterOptions ul li{
+    padding: 5px 15px;
+}
+
+li{
+    border-bottom: rgb(0,0,0,0.3);
+}
+
+ul li{
+    list-style-type: none;
+    cursor: pointer;
 }

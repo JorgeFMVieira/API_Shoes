@@ -8,6 +8,8 @@ namespace JorgeShoes.Services
     {
         Task<IEnumerable<Product>> GetProducts();
         Task<Product> GetProduct(int id);
+        Task<IEnumerable<Product>> GetProductsByName(string name);
+        Task<IEnumerable<Product>> GetProductsById(int id);
         Task CreateProduct(Product product);
         Task UpdateProduct(Product product);
         Task DeleteProduct(Product product);

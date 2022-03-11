@@ -1,9 +1,9 @@
 import './App.css';
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { MdOutlineSort } from "react-icons/md";
 
 function App() {
-
   // API Connection
   const urlAPI = "https://localhost:44384/api/Products";
 
@@ -20,6 +20,7 @@ function App() {
   const [showCreate, setShowCreate] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
 
   const [searchText, setsearchText] = useState('');
   const [filteredResults, setFilteredResults] = useState([]);
@@ -63,6 +64,7 @@ function App() {
         // .filter will 'loop' the table where the id is different than the id that we just deleted
         setProductDB(productDB.filter(product => product.id !== response.data));
         setShowDelete(false);
+        window.location.reload();
       }).catch(error => {
         console.log(error);
       });
@@ -70,19 +72,20 @@ function App() {
 
   const requestPut = async () => {
     const urlEdit = (urlAPI + "/" + productInfoSelected.id);
-        await axios.put(urlEdit, productInfoSelected)
-          .then(response => {
-            productDB.map(product => {
-              if (product.id === productInfoSelected.id) {
-                product.name = response.data.name;
-                product.description = response.data.description;
-                product.price = response.data.price;
-              }
-            });
-            setShowEdit(false);
-          }).catch(error => {
-            console.log(error);
-          })
+    await axios.put(urlEdit, productInfoSelected)
+      .then(response => {
+        productDB.map(product => {
+          if (product.id === productInfoSelected.id) {
+            product.name = response.data.name;
+            product.description = response.data.description;
+            product.price = response.data.price;
+          }
+        });
+        setShowEdit(false);
+        window.location.reload();
+      }).catch(error => {
+        console.log(error);
+      })
   }
 
   useEffect(() => {
@@ -98,78 +101,176 @@ function App() {
     }
   }
 
-  const requestSearch = (searchValue) => {
-    setsearchText(searchValue)
-    // Verifies if input is empty
-    if (searchValue !== '') {
-      // Input is not empty
-      // Creates variable to save all the data that has the result of the searchValue
-      const dataSearched = productDB.filter((item) => {
-        return Object.values(item).join('').toLowerCase().includes(searchValue.toLowerCase())
+  const [produto, setProduto] = useState([]);
+
+  const requestFindById = async (searchId) => {
+    const urlFind = (urlAPI + "/ProductById?id=" + searchId);
+    await axios.get(urlFind)
+      .then(response => {
+        setShowErroNoId(false);
+        setShowTable(true);
+        if (searchId !== '') {
+          setProduto(response.data);
+          setFilteredResults(" ");
+        } else {
+          setFilteredResults("");
+        }
+      }).catch(() => {
+        if (searchId == '') {
+          setShowTable(true);
+          setFilteredResults("");
+        } else {
+          setShowTable(false);
+          setShowErroNoId(true);
+        }
       })
-      setFilteredResults(dataSearched)
-    }
-    else {
-      // Return normal data without search text
-      setFilteredResults(productDB)
+  }
+
+  const requestFindByName = async (searchName) => {
+    const urlFind = (urlAPI + "/ProductByName?name=" + searchName);
+    await axios.get(urlFind)
+      .then(response => {
+        setShowErroNoId(false);
+        setShowTable(true);
+        if (searchName !== '') {
+          setProduto(response.data);
+          setFilteredResults(" ");
+        } else {
+          setFilteredResults("");
+        }
+      }).catch(() => {
+        if (searchName == '') {
+          setShowTable(true);
+          setFilteredResults("");
+        } else {
+          setShowTable(false);
+          setShowErroNoId(true);
+        }
+      })
+  }
+
+  const showHideFilter = () => {
+    const ativo = 0;
+    if (ativo == 0) {
+      setShowFilter(true);
+      ativo = 1;
+    } else {
+      setShowFilter(false);
+      ativo = 0;
     }
   }
 
-const i = 0;
+  const [showErroNoID, setShowErroNoId] = useState(false);
+  const [showTable, setShowTable] = useState(true);
+
+  const [showFilter, setShowFilter] = useState(false);
+
+  const [showInputId, setShowInputId] = useState(true);
+  const [showInputName, setShowInputName] = useState(false);
+
+  const closeFilter = useRef();
+
+  // Detects clicks
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClick);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+    };
+  }, []);
+
+  // Outside Click
+  const handleClick = e => {
+    if (!closeFilter.current.contains(e.target)) {
+      setShowFilter(false);
+      return;
+    }
+  };
 
   return (
     <div className="App">
 
       <div className="tableContainer">
-        <h1>Products</h1>
+        <div className="tableHeader">
+          <h1>Products</h1>
+          <div className="filter">
+            <MdOutlineSort className="iconFilterSearch" onClick={() => showHideFilter()} />
+            {
+              showFilter ?
+                <div className="filterOptions" ref={closeFilter}>
+                  <ul>
+                    <li onClick={() => (setShowInputId(true), setShowInputName(false), setFilteredResults(""), setShowFilter(false))}>Id</li>
+                    <li onClick={() => (setShowInputName(true), setShowInputId(false), setFilteredResults(""), setShowFilter(false))}>Name</li>
+                  </ul>
+                </div> : null
+            }
+          </div>
+        </div>
         <button className="btn createNew" onClick={() => setShowCreate(true)}>Create New Product</button>
-        <input className="search" type="text" placeholder="Search..." name="search" autoComplete="off" onInput={(e) => requestSearch(e.target.value)} />
-        <table>
-          <thead>
-            <tr>
-              <th>Id</th>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Price</th>
-              <th>Options</th>
-            </tr>
-          </thead>
-          {searchText.length == 0 ? (
-                        <tbody>
-                        {productDB.map(product => (
-                          <tr>
-                            <td>{product.id}</td>
-                            <td>{product.name}</td>
-                            <td>{product.description}</td>
-                            <td>{product.price}</td>
-                            <td>
-                              <button className="btn edit-btn" onClick={() => selectProduct(product, "Edit")}>Edit</button>
-                              <button className="btn delete-btn" onClick={() => selectProduct(product, "Delete")}>Delete</button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-          ) : (
-            filteredResults.map((item) => {
-              return (
-                <tbody>
-                  <tr>
-                    <td>{item.id}</td>
-                    <td>{item.name}</td>
-                    <td>{item.description}</td>
-                    <td>{item.price}</td>
-                    <td>
-                      <button className="btn edit-btn" onClick={() => selectProduct(item, "Edit")}>Edit</button>
-                      <button className="btn delete-btn" onClick={() => selectProduct(item, "Delete")}>Delete</button>
-                    </td>
-                  </tr>
-                </tbody>
-              )
-            })
-          )}
-        </table>
-      </div>
+        {
+          showInputId ?
+            <input className="search" type="text" placeholder="Search ID..." name="searchId" autoComplete="off" onInput={(e) => requestFindById(e.target.value)} />
+            : null
+        }
 
+        {
+          showInputName ?
+            <input className="search" type="text" placeholder="Search Name..." name="searchName" autoComplete="off" onInput={(e) => requestFindByName(e.target.value)} />
+            : null
+        }
+
+        {
+          showTable ?
+            <table>
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Price</th>
+                  <th>Options</th>
+                </tr>
+              </thead>
+              {filteredResults.length == 0 ? (
+                <tbody>
+                  {productDB.map(product => (
+                    <tr>
+                      <td>{product.id}</td>
+                      <td>{product.name}</td>
+                      <td>{product.description}</td>
+                      <td>{product.price}</td>
+                      <td>
+                        <button className="btn edit-btn" onClick={() => selectProduct(product, "Edit")}>Edit</button>
+                        <button className="btn delete-btn" onClick={() => selectProduct(product, "Delete")}>Delete</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              ) : (
+                <tbody>
+                  {produto.map(product => (
+                    <tr>
+                      <td>{product.id}</td>
+                      <td>{product.name}</td>
+                      <td>{product.description}</td>
+                      <td>{product.price}</td>
+                      <td>
+                        <button className="btn edit-btn" onClick={() => selectProduct(product, "Edit")}>Edit</button>
+                        <button className="btn delete-btn" onClick={() => selectProduct(product, "Delete")}>Delete</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              )}
+            </table> : null
+        }
+
+        {
+          showErroNoID ?
+            <div className='errorFindId'>
+              <p>We didn´t find a product with the that data.</p>
+            </div> : null
+        }
+      </div>
 
       {
         showCreate ?
@@ -238,6 +339,33 @@ const i = 0;
               <div className="modalBtns">
                 <button className="btn createNew" onClick={() => requestPut(parseInt(productInfoSelected.id))}>Save</button>
                 <button className="btn cancelBtn" onClick={() => setShowEdit(false)}>Cancel</button>
+              </div>
+            </div>
+          </div> : null
+      }
+
+      {
+        showSearch ?
+          <div className="modalWindow">
+            <div className="containerModal">
+              <div className="modalTitle"><h3>Product - </h3></div>
+              <div className="modalBody">
+                <div className="modalItem">
+                  <label htmlFor="name">Name:</label>
+                  <input type="text" id="name" name="name" />
+                </div>
+                <div className="modalItem">
+                  <label htmlFor="description">Description:</label>
+                  <input type="text" id="description" name="description" />
+                </div>
+                <div className="modalItem">
+                  <label htmlFor="price">Price:</label>
+                  <input type="text" id="price" name="price" />
+                </div>
+              </div>
+              <div className="modalBtns">
+                <button className="btn createNew">Save</button>
+                <button className="btn cancelBtn">Cancel</button>
               </div>
             </div>
           </div> : null
