@@ -1,4 +1,5 @@
 ﻿ using JorgeShoes.Models;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -13,5 +14,7 @@ namespace JorgeShoes.Services
         Task CreateProduct(Product product);
         Task UpdateProduct(Product product);
         Task DeleteProduct(Product product);
+
+        Task<int> Pagination();
     }
 }

@@ -154,5 +154,19 @@ namespace JorgeShoes.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"We weren´t able to edit the product");
             }
         }
+
+        [HttpGet("Page")]
+        public async Task<int> Pagination()
+        {
+            try
+            {
+                var product = await _productService.Pagination();
+                return product;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
     }
 }
