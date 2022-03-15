@@ -15,6 +15,5 @@ namespace JorgeShoes.Services
         Task UpdateProduct(Product product);
         Task DeleteProduct(Product product);
 
-        Task<int> Pagination();
     }
 }

@@ -83,10 +83,5 @@ namespace JorgeShoes.Services
             }
             return products;
         }
-
-        public async Task<int> Pagination()
-        {
-            return await _context.Products.CountAsync();
-        }
     }
 }

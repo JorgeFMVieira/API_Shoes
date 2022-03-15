@@ -1,7 +1,10 @@
-﻿using JorgeShoes.Models;
+﻿using JorgeShoes.Context;
+using JorgeShoes.Models;
 using JorgeShoes.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,10 +17,12 @@ namespace JorgeShoes.Controllers
     {
 
         private IProductService _productService;
+        private readonly AppDbContext _context;
 
-        public ProductsController(IProductService productService)
+        public ProductsController(IProductService productService, AppDbContext context)
         {
             _productService = productService;
+            _context = context;
         }
 
         [HttpGet]
@@ -152,20 +157,6 @@ namespace JorgeShoes.Controllers
             catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, $"We weren´t able to edit the product");
-            }
-        }
-
-        [HttpGet("Page")]
-        public async Task<int> Pagination()
-        {
-            try
-            {
-                var product = await _productService.Pagination();
-                return product;
-            }
-            catch
-            {
-                return 0;
             }
         }
     }
