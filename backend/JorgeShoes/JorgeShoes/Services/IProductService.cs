@@ -19,6 +19,6 @@ namespace JorgeShoes.Services
 
         Task<IEnumerable<Product>> GetAll(string search);
 
-        Task<IActionResult> Order(string option);
+        Task<IEnumerable<Product>> Order(string option);
     }
 }

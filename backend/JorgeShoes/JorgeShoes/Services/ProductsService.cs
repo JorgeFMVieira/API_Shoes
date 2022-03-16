@@ -133,7 +133,7 @@ namespace JorgeShoes.Services
             return products;
         }
 
-        public Task<IActionResult> Order(string option)
+        public async Task<IEnumerable<Product>> Order(string option)
         {
 
             var produtos = from s in _context.Products
@@ -165,7 +165,7 @@ namespace JorgeShoes.Services
                     produtos = produtos.OrderBy(s => s.Id);
                     break;
             }
-            return _context.Products.ToListAsync();
+            return await produtos.AsNoTracking().ToListAsync();
         }
     }
 }
