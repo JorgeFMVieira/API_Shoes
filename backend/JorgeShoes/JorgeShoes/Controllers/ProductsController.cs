@@ -26,16 +26,16 @@ namespace JorgeShoes.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Product>>> GetProducts(int page)
+        public async Task<ActionResult<IAsyncEnumerable<Product>>> GetProducts()
         {
             try
             {
-                var products = await _productService.GetProducts(page);
-                return products;
+                var products = await _productService.GetProducts();
+                return Ok(products);
             }
             catch
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "We weren´t able to find products");
+                throw new Exception("Erro");
             }
         }
 

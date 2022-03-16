@@ -2,6 +2,8 @@ import './App.css';
 import axios from 'axios';
 import React, { useState, useEffect, useRef } from 'react';
 import { MdOutlineSort } from "react-icons/md";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   // API Connection
@@ -15,6 +17,12 @@ function App() {
     description: '',
     price: ''
   });
+
+  // useEffect(() => {
+  //   toast.success('I"m faisal from success!');
+  //   toast.info('I"m faisal from info!');
+  //   toast.error('I"m faisal from error!');
+  // });
 
   // Window Create
   const [showCreate, setShowCreate] = useState(false);
@@ -46,16 +54,30 @@ function App() {
 
   const requestPost = async () => {
     delete productInfoSelected.id;
-    productInfoSelected.price = parseInt(productInfoSelected.price)
+    if(productInfoSelected.name == "" || productInfoSelected.description == "" || productInfoSelected.price == ""){
+      toast.error('Please, fill  all fields!');
+      return;
+    }
+
+    if(productInfoSelected.price.includes(',')){
+      const priceReplaced = productInfoSelected.price.replace(',', '.');
+      productInfoSelected.price = priceReplaced;
+    }
+
+    if(isNaN(productInfoSelected.price)){
+      toast.error('The price has to be a number.');
+      return;
+    }
+
+    productInfoSelected.price = parseFloat(productInfoSelected.price)
     await axios.post(urlAPI, productInfoSelected)
       .then(response => {
-        // Contact all the productDB receveid to send to the db
-        setProductDB(productDB.concat(response.data));
-        setShowCreate(false);
-        setFilteredResults("");
-        window.location.reload();
-      }).catch(error => {
-        console.log(error);
+          setProductDB(productDB.concat(response.data));
+          setShowCreate(false);
+          setFilteredResults("");
+          toast.success('A new product id the id ' + response.data.id + ' has been created!');
+      }).catch(() => {
+          toast.error('We weren´t able to create the product');
       });
   }
 
@@ -66,13 +88,29 @@ function App() {
         // .filter will 'loop' the table where the id is different than the id that we just deleted
         setProductDB(productDB.filter(product => product.id !== response.data));
         setShowDelete(false);
-        window.location.reload();
+        toast.success('The product with the id ' + id + ' was deleted');
       }).catch(error => {
         console.log(error);
       });
   }
 
   const requestPut = async () => {
+    if(productInfoSelected.name == "" || productInfoSelected.description == "" || productInfoSelected.price == ""){
+      toast.error('Please, fill  all fields!');
+      return;
+    }
+
+    if(productInfoSelected.price.toString().includes(',', 0)){
+      const priceReplaced = productInfoSelected.price.replace(',', '.');
+      productInfoSelected.price = priceReplaced;
+    }
+
+    if(isNaN(productInfoSelected.price)){
+      toast.error('The price has to be a number.');
+      return;
+    }
+
+    productInfoSelected.price = parseFloat(productInfoSelected.price)
     const urlEdit = (urlAPI + "/" + productInfoSelected.id);
     await axios.put(urlEdit, productInfoSelected)
       .then(response => {
@@ -84,7 +122,7 @@ function App() {
           }
         });
         setShowEdit(false);
-        window.location.reload();
+        toast.success('The product with the id' + productInfoSelected.id + ' was edited');
       }).catch(error => {
         console.log(error);
       })
@@ -111,6 +149,11 @@ function App() {
       .then(response => {
         setShowErroNoId(false);
         setShowTable(true);
+        if(searchId != ""){
+          setTimeout(() => {
+            toast.success('We found a product with the id ' + searchId);
+          }, 1000);
+        }
         if (searchId !== '') {
           setProduto(response.data);
           setFilteredResults(" ");
@@ -124,6 +167,9 @@ function App() {
         } else {
           setShowTable(false);
           setShowErroNoId(true);
+          if(searchId != ""){
+            toast.error('We didn´t find a product with the id ' + searchId);
+          }
         }
       })
   }
@@ -173,24 +219,24 @@ function App() {
   const closeFilter = useRef();
 
   // Detects clicks
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClick);
-    return () => {
-      document.removeEventListener("mousedown", handleClick);
-    };
-  }, []);
+  // useEffect(() => {
+  //   document.addEventListener("mousedown", handleClick);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClick);
+  //   };
+  // }, []);
 
   // Outside Click
-  const handleClick = e => {
-    if (!closeFilter.current.contains(e.target)) {
-      setShowFilter(false);
-      return;
-    }
-  };
+  // const handleClick = e => {
+  //   if (!closeFilter.current.contains(e.target)) {
+  //     setShowFilter(false);
+  //     return;
+  //   }
+  // };
 
   return (
     <div className="App">
-
+    <ToastContainer />
       <div className="tableContainer">
         <div className="tableHeader">
           <h1>Products</h1>

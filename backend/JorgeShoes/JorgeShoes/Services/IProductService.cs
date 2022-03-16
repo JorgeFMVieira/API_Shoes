@@ -1,4 +1,4 @@
-﻿ using JorgeShoes.Models;
+﻿using JorgeShoes.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -7,7 +7,8 @@ namespace JorgeShoes.Services
 {
     public interface IProductService
     {
-        Task<ActionResult<List<Product>>> GetProducts(int page);
+        //Task<ActionResult<List<Product>>> GetProducts(int page);
+        Task<IEnumerable<Product>> GetProducts();
         Task<Product> GetProduct(int id);
         Task<IEnumerable<Product>> GetProductsByName(string name);
         Task<IEnumerable<Product>> GetProductsById(int id);

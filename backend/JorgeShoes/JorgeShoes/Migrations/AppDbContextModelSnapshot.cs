@@ -35,28 +35,12 @@ namespace JorgeShoes.Migrations
                         .HasMaxLength(80)
                         .HasColumnType("nvarchar(80)");
 
-                    b.Property<int>("Price")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Products");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "Desicrição Jordan Paris",
-                            Name = "Air Jordan 1 Mid Paris",
-                            Price = 13
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "Descrição de Lebron 19",
-                            Name = "LeBron 19",
-                            Price = 20
-                        });
                 });
 #pragma warning restore 612, 618
         }
