@@ -16,5 +16,7 @@ namespace JorgeShoes.Services
         Task UpdateProduct(Product product);
         Task DeleteProduct(Product product);
 
+        Task<IEnumerable<Product>> GetAll(string search);
+
     }
 }

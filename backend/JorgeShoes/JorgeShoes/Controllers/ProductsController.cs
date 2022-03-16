@@ -103,6 +103,27 @@ namespace JorgeShoes.Controllers
             }
         }
 
+        [HttpGet("GetAll")]
+        public async Task<ActionResult<Product>> GetAll(string search)
+        {
+            try
+            {
+                var product = await _productService.GetAll(search);
+                if (product == null)
+                {
+                    return NotFound($"We weren´t able to find products with the data: {search}");
+                }
+                else
+                {
+                    return Ok(product);
+                }
+            }
+            catch
+            {
+                return NotFound($"We weren´t able to find products with the data: {search}"); ;
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult> Create(Product product)
         {

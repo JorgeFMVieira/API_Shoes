@@ -118,5 +118,19 @@ namespace JorgeShoes.Services
             }
             return products;
         }
+
+        public async Task<IEnumerable<Product>> GetAll(string search)
+        {
+            IEnumerable<Product> products;
+            if (!string.IsNullOrEmpty(search)) 
+            { 
+                products = await _context.Products.Where(n => n.Id.ToString().Contains(search.ToString()) || n.Name.Contains(search) || n.Description.Contains(search) || n.Price.ToString().Contains(search.ToString())).ToListAsync();
+            }
+            else
+            {
+                    products = await _context.Products.ToListAsync();
+            }
+            return products;
+        }
     }
 }

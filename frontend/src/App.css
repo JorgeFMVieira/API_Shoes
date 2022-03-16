@@ -252,3 +252,12 @@ ul li{
     list-style-type: none;
     cursor: pointer;
 }
+
+.searchItems{
+    display: flex;
+}
+
+.search-options{
+    margin-left: 10px;
+    text-transform: uppercase;
+}

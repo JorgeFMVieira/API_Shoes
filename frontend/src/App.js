@@ -54,17 +54,17 @@ function App() {
 
   const requestPost = async () => {
     delete productInfoSelected.id;
-    if(productInfoSelected.name == "" || productInfoSelected.description == "" || productInfoSelected.price == ""){
+    if (productInfoSelected.name == "" || productInfoSelected.description == "" || productInfoSelected.price == "") {
       toast.error('Please, fill  all fields!');
       return;
     }
 
-    if(productInfoSelected.price.includes(',')){
+    if (productInfoSelected.price.includes(',')) {
       const priceReplaced = productInfoSelected.price.replace(',', '.');
       productInfoSelected.price = priceReplaced;
     }
 
-    if(isNaN(productInfoSelected.price)){
+    if (isNaN(productInfoSelected.price)) {
       toast.error('The price has to be a number.');
       return;
     }
@@ -72,12 +72,12 @@ function App() {
     productInfoSelected.price = parseFloat(productInfoSelected.price)
     await axios.post(urlAPI, productInfoSelected)
       .then(response => {
-          setProductDB(productDB.concat(response.data));
-          setShowCreate(false);
-          setFilteredResults("");
-          toast.success('A new product id the id ' + response.data.id + ' has been created!');
+        setProductDB(productDB.concat(response.data));
+        setShowCreate(false);
+        setFilteredResults("");
+        toast.success('A new product with the id ' + response.data.id + ' has been created!');
       }).catch(() => {
-          toast.error('We weren´t able to create the product');
+        toast.error('We weren´t able to create the product');
       });
   }
 
@@ -95,17 +95,17 @@ function App() {
   }
 
   const requestPut = async () => {
-    if(productInfoSelected.name == "" || productInfoSelected.description == "" || productInfoSelected.price == ""){
+    if (productInfoSelected.name == "" || productInfoSelected.description == "" || productInfoSelected.price == "") {
       toast.error('Please, fill  all fields!');
       return;
     }
 
-    if(productInfoSelected.price.toString().includes(',', 0)){
+    if (productInfoSelected.price.toString().includes(',', 0)) {
       const priceReplaced = productInfoSelected.price.replace(',', '.');
       productInfoSelected.price = priceReplaced;
     }
 
-    if(isNaN(productInfoSelected.price)){
+    if (isNaN(productInfoSelected.price)) {
       toast.error('The price has to be a number.');
       return;
     }
@@ -122,7 +122,7 @@ function App() {
           }
         });
         setShowEdit(false);
-        toast.success('The product with the id' + productInfoSelected.id + ' was edited');
+        toast.success('The product with the id ' + productInfoSelected.id + ' was edited');
       }).catch(error => {
         console.log(error);
       })
@@ -149,11 +149,6 @@ function App() {
       .then(response => {
         setShowErroNoId(false);
         setShowTable(true);
-        if(searchId != ""){
-          setTimeout(() => {
-            toast.success('We found a product with the id ' + searchId);
-          }, 1000);
-        }
         if (searchId !== '') {
           setProduto(response.data);
           setFilteredResults(" ");
@@ -167,9 +162,30 @@ function App() {
         } else {
           setShowTable(false);
           setShowErroNoId(true);
-          if(searchId != ""){
-            toast.error('We didn´t find a product with the id ' + searchId);
-          }
+        }
+      })
+  }
+
+  const requestSearch = async (search) => {
+    const urlFind = (urlAPI + "/GetAll?search=" + search);
+    await axios.get(urlFind)
+      .then(response => {
+        setShowErroNoId(false);
+        setShowTable(true);
+        if (search !== '') {
+          setProduto(response.data);
+          setFilteredResults(" ");
+        } else {
+          setFilteredResults("");
+        }
+      }).catch(() => {
+        if (search == '') {
+          setShowTable(true);
+          setFilteredResults("");
+        } else {
+          setShowTable(false);
+          setShowErroNoId(true);
+
         }
       })
   }
@@ -197,74 +213,70 @@ function App() {
       })
   }
 
-  const showHideFilter = () => {
-    const ativo = 0;
-    if (ativo == 0) {
-      setShowFilter(true);
-      ativo = 1;
-    } else {
-      setShowFilter(false);
-      ativo = 0;
-    }
-  }
-
   const [showErroNoID, setShowErroNoId] = useState(false);
   const [showTable, setShowTable] = useState(true);
 
-  const [showFilter, setShowFilter] = useState(false);
-
-  const [showInputId, setShowInputId] = useState(true);
+  const [showInputId, setShowInputId] = useState(false);
   const [showInputName, setShowInputName] = useState(false);
+  const [showSearchInput, setShowSearchInput] = useState(true);
 
-  const closeFilter = useRef();
 
-  // Detects clicks
-  // useEffect(() => {
-  //   document.addEventListener("mousedown", handleClick);
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClick);
-  //   };
-  // }, []);
+  const changeOptionSearch = async (searchOption) => {
+    if(searchOption == "id"){
+      setShowInputId(true);
+      setShowInputName(false);
+      setShowSearchInput(false);
+      return;
+    }
 
-  // Outside Click
-  // const handleClick = e => {
-  //   if (!closeFilter.current.contains(e.target)) {
-  //     setShowFilter(false);
-  //     return;
-  //   }
-  // };
+    if(searchOption == "name"){
+      setShowInputName(true);
+      setShowInputId(false);
+      setShowSearchInput(false);
+      return;
+    }
+
+    if(searchOption == "all"){
+      setShowSearchInput(true);
+      setShowInputId(false);
+      setShowInputName(false);
+      return;
+    }
+  }
 
   return (
     <div className="App">
-    <ToastContainer />
+      <ToastContainer />
       <div className="tableContainer">
         <div className="tableHeader">
           <h1>Products</h1>
-          <div className="filter">
-            <MdOutlineSort className="iconFilterSearch" onClick={() => showHideFilter()} />
-            {
-              showFilter ?
-                <div className="filterOptions" ref={closeFilter}>
-                  <ul>
-                    <li onClick={() => (setShowInputId(true), setShowInputName(false), setFilteredResults(""), setShowFilter(false))}>Id</li>
-                    <li onClick={() => (setShowInputName(true), setShowInputId(false), setFilteredResults(""), setShowFilter(false))}>Name</li>
-                  </ul>
-                </div> : null
-            }
-          </div>
         </div>
         <button className="btn createNew" onClick={() => setShowCreate(true)}>Create New Product</button>
-        {
-          showInputId ?
-            <input className="search" type="text" placeholder="Search ID..." name="searchId" autoComplete="off" onInput={(e) => requestFindById(e.target.value)} />
-            : null
-        }
 
-        {
-          showInputName ?
-            <input className="search" type="text" placeholder="Search Name..." name="searchName" autoComplete="off" onInput={(e) => requestFindByName(e.target.value)} />
-            : null
-        }
+        <div className="searchItems">
+          {
+            showSearchInput ?
+              <input className="search" type="text" placeholder="Search..." name="search" autoComplete="off" onInput={(e) => requestSearch(e.target.value)} />
+              : null
+          }
+          {
+            showInputId ?
+              <input className="search" type="text" placeholder="Search ID..." name="searchId" autoComplete="off" onInput={(e) => requestFindById(e.target.value)} />
+              : null
+          }
+
+          {
+            showInputName ?
+              <input className="search" type="text" placeholder="Search Name..." name="searchName" autoComplete="off" onInput={(e) => requestFindByName(e.target.value)} />
+              : null
+          }
+
+          <select name="optionSearch" className="search search-options" onChange={(e) => changeOptionSearch(e.target.value)}>
+            <option value="All" selected>All</option>
+            <option value="id">Id</option>
+            <option value="name">Name</option>
+          </select>
+        </div>
 
         {
           showTable ?
