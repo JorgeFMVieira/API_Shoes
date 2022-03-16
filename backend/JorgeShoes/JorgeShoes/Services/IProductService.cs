@@ -1,6 +1,7 @@
 ﻿using JorgeShoes.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace JorgeShoes.Services
@@ -18,5 +19,6 @@ namespace JorgeShoes.Services
 
         Task<IEnumerable<Product>> GetAll(string search);
 
+        Task<IActionResult> Order(string option);
     }
 }
