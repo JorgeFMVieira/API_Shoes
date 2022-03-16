@@ -1,7 +1,6 @@
 import './App.css';
 import axios from 'axios';
 import React, { useState, useEffect, useRef } from 'react';
-import { MdOutlineSort } from "react-icons/md";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -10,6 +9,7 @@ function App() {
   const urlAPI = "https://localhost:44384/api/Products";
 
   const [productDB, setProductDB] = useState([]);
+
   // Create the state of productInfoSelected
   const [productInfoSelected, setProductInfoSelected] = useState({
     id: '',
@@ -30,7 +30,6 @@ function App() {
   const [showEdit, setShowEdit] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
 
-  const [searchText, setsearchText] = useState('');
   const [filteredResults, setFilteredResults] = useState([]);
 
 
@@ -47,8 +46,8 @@ function App() {
     await axios.get(urlAPI)
       .then(response => {
         setProductDB(response.data);
-      }).catch(error => {
-        console.log(error);
+      }).catch(() => {
+        toast.error('Please contact an administrator!');
       });
   }
 
@@ -185,7 +184,6 @@ function App() {
         } else {
           setShowTable(false);
           setShowErroNoId(true);
-
         }
       })
   }
@@ -226,6 +224,7 @@ function App() {
       setShowInputId(true);
       setShowInputName(false);
       setShowSearchInput(false);
+      setShowErroNoId(false);
       return;
     }
 
@@ -233,6 +232,7 @@ function App() {
       setShowInputName(true);
       setShowInputId(false);
       setShowSearchInput(false);
+      setShowErroNoId(false);
       return;
     }
 
@@ -240,6 +240,7 @@ function App() {
       setShowSearchInput(true);
       setShowInputId(false);
       setShowInputName(false);
+      setShowErroNoId(false);
       return;
     }
   }
@@ -256,23 +257,23 @@ function App() {
         <div className="searchItems">
           {
             showSearchInput ?
-              <input className="search" type="text" placeholder="Search..." name="search" autoComplete="off" onInput={(e) => requestSearch(e.target.value)} />
+              <input className="search todo" type="text" placeholder="Search..." name="search" autoComplete="off" onInput={(e) => requestSearch(e.target.value)} />
               : null
           }
           {
             showInputId ?
-              <input className="search" type="text" placeholder="Search ID..." name="searchId" autoComplete="off" onInput={(e) => requestFindById(e.target.value)} />
+              <input className="search soId" type="text" placeholder="Search ID..." name="searchId" autoComplete="off" onInput={(e) => requestFindById(e.target.value)} />
               : null
           }
 
           {
             showInputName ?
-              <input className="search" type="text" placeholder="Search Name..." name="searchName" autoComplete="off" onInput={(e) => requestFindByName(e.target.value)} />
+              <input className="search soNome" type="text" placeholder="Search Name..." name="searchName" autoComplete="off" onInput={(e) => requestFindByName(e.target.value)} />
               : null
           }
 
-          <select name="optionSearch" className="search search-options" onChange={(e) => changeOptionSearch(e.target.value)}>
-            <option value="All" selected>All</option>
+          <select name="optionSearch" defaultValue={'all'} className="search search-options" onChange={(e) => changeOptionSearch(e.target.value)}>
+            <option value="all">All</option>
             <option value="id">Id</option>
             <option value="name">Name</option>
           </select>
@@ -293,7 +294,7 @@ function App() {
               {filteredResults.length == 0 ? (
                 <tbody>
                   {productDB.map(product => (
-                    <tr>
+                    <tr key={product.id}>
                       <td>{product.id}</td>
                       <td>{product.name}</td>
                       <td>{product.description}</td>
@@ -308,7 +309,7 @@ function App() {
               ) : (
                 <tbody>
                   {produto.map(product => (
-                    <tr>
+                    <tr key={product.id}>
                       <td>{product.id}</td>
                       <td>{product.name}</td>
                       <td>{product.description}</td>
