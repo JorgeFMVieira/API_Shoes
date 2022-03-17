@@ -26,16 +26,16 @@ namespace JorgeShoes.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IAsyncEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IAsyncEnumerable<Product>>> GetProducts(int page)
         {
             try
             {
-                var products = await _productService.GetProducts();
+                var products = await _productService.GetProducts(page);
                 return Ok(products);
             }
             catch
             {
-                throw new Exception("Erro");
+                throw;
             }
         }
 
@@ -181,19 +181,19 @@ namespace JorgeShoes.Controllers
             }
         }
 
-        [HttpGet("Order")]
-        public async Task<ActionResult<IAsyncEnumerable<Product>>> Order(string option)
-        {
+        //[HttpGet("Order")]
+        //public async Task<ActionResult<IAsyncEnumerable<Product>>> Order(string option)
+        //{
             
-            try
-            {
-                var product = await _productService.Order(option);
-                return (ActionResult)product;
-            }
-            catch
-            {
-                throw;
-            }
-        }
+        //    try
+        //    {
+        //        var product = await _productService.Order(option);
+        //        return (ActionResult)product;
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //}
     }
 }

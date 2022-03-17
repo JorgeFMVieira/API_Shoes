@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace JorgeShoes.Models
 {
@@ -17,5 +18,7 @@ namespace JorgeShoes.Models
 
         [Required]
         public decimal Price { get; set; }
+
+        public DateTimeOffset DateCreated { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace JorgeShoes.Services
@@ -19,46 +20,34 @@ namespace JorgeShoes.Services
             _context = context;
         }
 
-        //public async Task<ActionResult<List<Product>>> GetProducts(int page)
-        //{
-        //    try
-        //    {
-        //        var pageResults = 3f;
-        //        var pageCount = Math.Ceiling(_context.Products.Count() / pageResults);
 
-        //        if (page > pageCount)
-        //            throw new Exception();
-
-        //        if (page <= 0)
-        //            throw new Exception();
-
-        //        var products = await _context.Products
-        //            .Skip((page - 1) * (int)pageResults)
-        //            .Take((int)pageResults)
-        //            .ToListAsync();
-
-
-        //        var response = new ProductResponse
-        //        {
-        //            Products = products,
-        //            CurrentPage = page,
-        //            Pages = (int)pageCount
-        //        };
-
-        //        return (products);
-        //    }
-        //    catch
-        //    {
-        //        throw;
-        //    }
-        //}
-
-        public async Task<IEnumerable<Product>> GetProducts()
+        public async Task<ProductResponse> GetProducts(int page)
         {
             try
             {
-                var products = await _context.Products.ToListAsync();
-                return products;
+                var pageResults = 3f;
+                var pageCount = Math.Ceiling(_context.Products.Count() / pageResults);
+
+                if (page > pageCount)
+                    throw new Exception();
+
+                if (page <= 0)
+                    throw new Exception();
+
+                var products = await _context.Products
+                    .Skip((page - 1) * (int)pageResults)
+                    .Take((int)pageResults)
+                    .ToListAsync();
+
+
+                var response = new ProductResponse
+                {
+                    Products = products,
+                    CurrentPage = page,
+                    Pages = (int)pageCount
+                };
+
+                return response;
             }
             catch
             {
@@ -89,6 +78,7 @@ namespace JorgeShoes.Services
 
         public async Task CreateProduct(Product product)
         {
+            product.DateCreated = DateTime.Now;
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
         }
@@ -133,39 +123,39 @@ namespace JorgeShoes.Services
             return products;
         }
 
-        public async Task<IEnumerable<Product>> Order(string option)
-        {
+        //public async Task<IEnumerable<Product>> Order(string option)
+        //{
 
-            var produtos = from s in _context.Products
-                           select s;
-            switch (option)
-            {
-                case "id_desc":
-                    produtos = produtos.OrderByDescending(s => s.Id);
-                    break;
-                case "name":
-                    produtos = produtos.OrderBy(s => s.Name);
-                    break;
-                case "name_desc":
-                    produtos = produtos.OrderByDescending(s => s.Name);
-                    break;
-                case "description":
-                    produtos = produtos.OrderBy(s => s.Description);
-                    break;
-                case "description_desc":
-                    produtos = produtos.OrderByDescending(s => s.Description);
-                    break;
-                case "price":
-                    produtos = produtos.OrderBy(s => s.Price);
-                    break;
-                case "price_desc":
-                    produtos = produtos.OrderByDescending(s => s.Price);
-                    break;
-                default:
-                    produtos = produtos.OrderBy(s => s.Id);
-                    break;
-            }
-            return await produtos.AsNoTracking().ToListAsync();
-        }
+        //    var produtos = from s in _context.Products
+        //                   select s;
+        //    switch (option)
+        //    {
+        //        case "id_desc":
+        //            produtos = produtos.OrderByDescending(s => s.Id);
+        //            break;
+        //        case "name":
+        //            produtos = produtos.OrderBy(s => s.Name);
+        //            break;
+        //        case "name_desc":
+        //            produtos = produtos.OrderByDescending(s => s.Name);
+        //            break;
+        //        case "description":
+        //            produtos = produtos.OrderBy(s => s.Description);
+        //            break;
+        //        case "description_desc":
+        //            produtos = produtos.OrderByDescending(s => s.Description);
+        //            break;
+        //        case "price":
+        //            produtos = produtos.OrderBy(s => s.Price);
+        //            break;
+        //        case "price_desc":
+        //            produtos = produtos.OrderByDescending(s => s.Price);
+        //            break;
+        //        default:
+        //            produtos = produtos.OrderBy(s => s.Id);
+        //            break;
+        //    }
+        //    return await produtos.AsNoTracking().ToListAsync();
+        //}
     }
 }

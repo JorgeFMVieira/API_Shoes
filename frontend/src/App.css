@@ -261,3 +261,36 @@ ul li{
     margin-left: 10px;
     text-transform: uppercase;
 }
+
+.btn-Page{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-Page button{
+    margin: 15px;
+    padding: 10px 15px;
+    background-color: #01987A;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    color: #FFFFFF;
+    cursor: pointer;
+    transition: 0.3s all ease-in-out;
+}
+
+.btn-Page button[disabled]{
+    background-color: #67857f;
+    cursor: auto;
+}
+
+.btn-Page button:hover{
+    transition: 0.3s all ease-in-out;
+    background-color: #2bbb9e;
+}
+
+.btn-Page button[disabled]:hover{
+    background-color: #67857f;
+}

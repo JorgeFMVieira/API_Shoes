@@ -6,9 +6,30 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   // API Connection
-  const urlAPI = "https://localhost:44384/api/Products";
+  const [page, setPage] = useState(1);
+  const urlAPI = "https://localhost:44384/api/Products?page=" + page;
+
+  const [data, setData] = useState([]);
 
   const [productDB, setProductDB] = useState([]);
+
+    // Window Create
+    const [showCreate, setShowCreate] = useState(false);
+    const [showDelete, setShowDelete] = useState(false);
+    const [showEdit, setShowEdit] = useState(false);
+    const [showSearch, setShowSearch] = useState(false);
+  
+    const [filteredResults, setFilteredResults] = useState([]);
+
+    
+  const [produto, setProduto] = useState([]);
+  
+  const [showErroNoID, setShowErroNoId] = useState(false);
+  const [showTable, setShowTable] = useState(true);
+
+  const [showInputId, setShowInputId] = useState(false);
+  const [showInputName, setShowInputName] = useState(false);
+  const [showSearchInput, setShowSearchInput] = useState(true);
 
   // Create the state of productInfoSelected
   const [productInfoSelected, setProductInfoSelected] = useState({
@@ -18,19 +39,7 @@ function App() {
     price: ''
   });
 
-  // useEffect(() => {
-  //   toast.success('I"m faisal from success!');
-  //   toast.info('I"m faisal from info!');
-  //   toast.error('I"m faisal from error!');
-  // });
 
-  // Window Create
-  const [showCreate, setShowCreate] = useState(false);
-  const [showDelete, setShowDelete] = useState(false);
-  const [showEdit, setShowEdit] = useState(false);
-  const [showSearch, setShowSearch] = useState(false);
-
-  const [filteredResults, setFilteredResults] = useState([]);
 
 
   // Save the productDB that the user will insert into the form
@@ -42,10 +51,14 @@ function App() {
     });
   }
 
+  const [totalpages, setTotalPages] = useState(0);
+
   const requestGet = async () => {
     await axios.get(urlAPI)
       .then(response => {
-        setProductDB(response.data);
+        setData(response.data.products);
+        setTotalPages(response.data.pages);
+        console.log(response.data);
       }).catch(() => {
         toast.error('Please contact an administrator!');
       });
@@ -127,10 +140,6 @@ function App() {
       })
   }
 
-  useEffect(() => {
-    requestGet();
-  });
-
   const selectProduct = (product, type) => {
     setProductInfoSelected(product);
     if (type == "Delete") {
@@ -139,8 +148,6 @@ function App() {
       setShowEdit(true);
     }
   }
-
-  const [produto, setProduto] = useState([]);
 
   const requestFindById = async (searchId) => {
     const urlFind = (urlAPI + "/ProductById?id=" + searchId);
@@ -211,14 +218,6 @@ function App() {
       })
   }
 
-  const [showErroNoID, setShowErroNoId] = useState(false);
-  const [showTable, setShowTable] = useState(true);
-
-  const [showInputId, setShowInputId] = useState(false);
-  const [showInputName, setShowInputName] = useState(false);
-  const [showSearchInput, setShowSearchInput] = useState(true);
-
-
   const changeOptionSearch = async (searchOption) => {
     if(searchOption == "id"){
       setShowInputId(true);
@@ -242,6 +241,48 @@ function App() {
       setShowInputName(false);
       setShowErroNoId(false);
       return;
+    }
+  }
+
+  useEffect(() => {
+    requestGet();
+  }, [page]);
+
+
+
+
+
+  function CheckPages() {
+    if(page < 1){
+    return <div className="btn-Page">
+        <button onClick={() => setPage(page - 1)}>Previous</button>
+        <button>{page}</button>
+        <button onClick={() => setPage(page + 1)}>Next</button>
+    </div>;
+    }
+
+    if(page + 1 > totalpages){
+      return <div className="btn-Page">
+      <button onClick={() => setPage(page - 1)}>Previous</button>
+      <button>{page}</button>
+      <button onClick={() => setPage(page + 1)} disabled>Next</button>
+  </div>;
+    }
+
+    if(page - 1 < 1){
+      return <div className="btn-Page">
+      <button onClick={() => setPage(page - 1)} disabled>Previous</button>
+      <button>{page}</button>
+      <button onClick={() => setPage(page + 1)}>Next</button>
+  </div>;
+    }
+
+    if(page){
+      return <div className="btn-Page">
+      <button onClick={() => setPage(page - 1)}>Previous</button>
+      <button>{page}</button>
+      <button onClick={() => setPage(page + 1)}>Next</button>
+  </div>;
     }
   }
 
@@ -293,7 +334,7 @@ function App() {
               </thead>
               {filteredResults.length == 0 ? (
                 <tbody>
-                  {productDB.map(product => (
+                  {data.map(product => (
                     <tr key={product.id}>
                       <td>{product.id}</td>
                       <td>{product.name}</td>
@@ -308,7 +349,7 @@ function App() {
                 </tbody>
               ) : (
                 <tbody>
-                  {produto.map(product => (
+                  {data.map(product => (
                     <tr key={product.id}>
                       <td>{product.id}</td>
                       <td>{product.name}</td>
@@ -324,6 +365,8 @@ function App() {
               )}
             </table> : null
         }
+
+<CheckPages />
 
         {
           showErroNoID ?
