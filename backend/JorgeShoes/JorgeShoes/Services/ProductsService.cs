@@ -25,29 +25,39 @@ namespace JorgeShoes.Services
         {
             try
             {
-                var pageResults = 3f;
-                var pageCount = Math.Ceiling(_context.Products.Count() / pageResults);
+                var pageResults = 15f;
+                var pageCount = Math.Ceiling(_context.Products.Where(n => n.DateDeleted == null).Count() / pageResults);
+
+                ProductResponse produto = new ProductResponse();
+                produto.Pages = (int)pageCount;
+                produto.CurrentPage = page;
 
                 if (page > pageCount)
-                    throw new Exception();
+                {
+                    produto.Success = false;
+                    produto.Erro = "A página é maior que o total";
+                return produto;
+                }
 
-                if (page <= 0)
-                    throw new Exception();
+
+                if (page < 1)
+                {
+                    produto.Success = false;
+                    produto.Erro = "A página é menor que 1";
+                    return produto;
+                }
+                    
+
 
                 var products = await _context.Products
+                    .Where(n => n.DateDeleted == null)
                     .Skip((page - 1) * (int)pageResults)
                     .Take((int)pageResults)
                     .ToListAsync();
 
+                produto.Products = products;
 
-                var response = new ProductResponse
-                {
-                    Products = products,
-                    CurrentPage = page,
-                    Pages = (int)pageCount
-                };
-
-                return response;
+                return produto;
             }
             catch
             {
@@ -85,14 +95,24 @@ namespace JorgeShoes.Services
 
         public async Task UpdateProduct(Product product)
         {
+            product.DateCreated = DateTime.Now;
             _context.Entry(product).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteProduct(Product product)
+        public async Task<bool> DeleteProduct(Product product)
         {
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
+            try
+            {
+                product.DateDeleted = DateTime.Now;
+                _context.Entry(product).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                throw new Exception();
+            }
         }
 
         public async Task<IEnumerable<Product>> GetProductsById(int id)

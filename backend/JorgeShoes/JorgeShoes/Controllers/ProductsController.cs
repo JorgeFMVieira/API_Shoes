@@ -171,8 +171,12 @@ namespace JorgeShoes.Controllers
                 }
                 else
                 {
-                    await _productService.DeleteProduct(product);
-                    return Ok($"Product with id of {id} was deleted");
+                    var delete = await _productService.DeleteProduct(product);
+                    if(delete == true)
+                    {
+                        return Ok(true);
+                    }
+                        return Ok(false);
                 }
             }
             catch

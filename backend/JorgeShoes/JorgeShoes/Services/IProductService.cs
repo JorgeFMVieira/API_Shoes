@@ -14,7 +14,7 @@ namespace JorgeShoes.Services
         Task<IEnumerable<Product>> GetProductsById(int id);
         Task CreateProduct(Product product);
         Task UpdateProduct(Product product);
-        Task DeleteProduct(Product product);
+        Task<bool> DeleteProduct(Product product);
         Task<IEnumerable<Product>> GetAll(string search);
         //Task<IEnumerable<Product>> Order(string option);
     }

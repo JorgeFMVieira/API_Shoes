@@ -73,6 +73,7 @@ table tr:nth-child(even){
 }
 
 .btn{
+    transition: 0.3s all ease-in-out;
     border: none;
     cursor: pointer;
     border-radius: 5px;
@@ -293,4 +294,29 @@ ul li{
 
 .btn-Page button[disabled]:hover{
     background-color: #67857f;
+}
+
+.createNew:hover{
+    transition: 0.3s all ease-in-out;
+    background-color: #2bbb9e;
+}
+
+.delete-btn:hover,
+.cancelBtn:hover{
+    transition: 0.3s all ease-in-out;
+    background-color: #e71414;
+}
+
+.edit-btn:hover{
+    transition: 0.3s all ease-in-out;
+    background-color: #3679f7;
+}
+
+.btnCurrentPage{
+    cursor: auto !important;
+}
+
+.btnCurrentPage:hover{
+    transition: 0.3s all ease-in-out;
+    background-color: #01987A !important;
 }

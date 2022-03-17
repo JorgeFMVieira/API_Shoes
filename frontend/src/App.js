@@ -30,6 +30,7 @@ function App() {
   const [showInputId, setShowInputId] = useState(false);
   const [showInputName, setShowInputName] = useState(false);
   const [showSearchInput, setShowSearchInput] = useState(true);
+  const [showNoProducts, setShowNoProducts] = useState(false);
 
   // Create the state of productInfoSelected
   const [productInfoSelected, setProductInfoSelected] = useState({
@@ -58,7 +59,6 @@ function App() {
       .then(response => {
         setData(response.data.products);
         setTotalPages(response.data.pages);
-        console.log(response.data);
       }).catch(() => {
         toast.error('Please contact an administrator!');
       });
@@ -88,19 +88,26 @@ function App() {
         setShowCreate(false);
         setFilteredResults("");
         toast.success('A new product with the id ' + response.data.id + ' has been created!');
+        requestGet();
       }).catch(() => {
         toast.error('We weren´t able to create the product');
       });
   }
 
   const requestDelete = async (id) => {
-    const urlWithId = (urlAPI + "/" + id);
+    const urlWithId = ("https://localhost:44384/api/Products/" + id);
     await axios.delete(urlWithId)
       .then(response => {
-        // .filter will 'loop' the table where the id is different than the id that we just deleted
-        setProductDB(productDB.filter(product => product.id !== response.data));
         setShowDelete(false);
         toast.success('The product with the id ' + id + ' was deleted');
+        if(response.data == true && data.length == 1){
+           if(page != 1){
+              setPage(page - 1);
+           }else{
+            setShowNoProducts(true);
+           }
+        }
+        requestGet();
       }).catch(error => {
         console.log(error);
       });
@@ -111,19 +118,18 @@ function App() {
       toast.error('Please, fill  all fields!');
       return;
     }
-
     if (productInfoSelected.price.toString().includes(',', 0)) {
       const priceReplaced = productInfoSelected.price.replace(',', '.');
       productInfoSelected.price = priceReplaced;
     }
-
     if (isNaN(productInfoSelected.price)) {
       toast.error('The price has to be a number.');
       return;
     }
 
     productInfoSelected.price = parseFloat(productInfoSelected.price)
-    const urlEdit = (urlAPI + "/" + productInfoSelected.id);
+
+    const urlEdit = ("https://localhost:44384/api/Products/" + productInfoSelected.id);
     await axios.put(urlEdit, productInfoSelected)
       .then(response => {
         productDB.map(product => {
@@ -133,6 +139,7 @@ function App() {
             product.price = response.data.price;
           }
         });
+        requestGet();
         setShowEdit(false);
         toast.success('The product with the id ' + productInfoSelected.id + ' was edited');
       }).catch(error => {
@@ -249,40 +256,34 @@ function App() {
   }, [page]);
 
 
-
-
+  // if(page > totalpages){
+  //   window.location.replace("https://localhost:44384/api/Products?page=1");
+  // }
 
   function CheckPages() {
-    if(page < 1){
-    return <div className="btn-Page">
-        <button onClick={() => setPage(page - 1)}>Previous</button>
-        <button>{page}</button>
-        <button onClick={() => setPage(page + 1)}>Next</button>
-    </div>;
-    }
+    if(page <= 1 && page + 1 > totalpages){
+      return <div className="btn-Page">
+          <button onClick={() => setPage(page - 1)} disabled>Previous</button>
+          <button className='btnCurrentPage'>{page}</button>
+          <button onClick={() => setPage(page + 1)} disabled>Next</button>
+      </div>;
+      }
+      
 
     if(page + 1 > totalpages){
       return <div className="btn-Page">
       <button onClick={() => setPage(page - 1)}>Previous</button>
-      <button>{page}</button>
+      <button className='btnCurrentPage'>{page}</button>
       <button onClick={() => setPage(page + 1)} disabled>Next</button>
   </div>;
     }
 
-    if(page - 1 < 1){
-      return <div className="btn-Page">
-      <button onClick={() => setPage(page - 1)} disabled>Previous</button>
-      <button>{page}</button>
-      <button onClick={() => setPage(page + 1)}>Next</button>
-  </div>;
-    }
-
-    if(page){
-      return <div className="btn-Page">
-      <button onClick={() => setPage(page - 1)}>Previous</button>
-      <button>{page}</button>
-      <button onClick={() => setPage(page + 1)}>Next</button>
-  </div>;
+    if(page <= 1){
+    return <div className="btn-Page">
+        <button onClick={() => setPage(page - 1)} disabled>Previous</button>
+        <button className='btnCurrentPage'>{page}</button>
+        <button onClick={() => setPage(page + 1)}>Next</button>
+    </div>;
     }
   }
 
@@ -364,6 +365,13 @@ function App() {
                 </tbody>
               )}
             </table> : null
+        }
+
+{
+          showNoProducts ?
+            <div className='errorFindId'>
+              <p>We didn´t find a product any products.</p>
+            </div> : null
         }
 
 <CheckPages />
