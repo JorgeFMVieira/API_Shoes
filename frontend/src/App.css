@@ -255,7 +255,7 @@ ul li{
 }
 
 .searchItems{
-    display: flex;
+    display: block;
 }
 
 .search-options{
@@ -319,4 +319,8 @@ ul li{
 .btnCurrentPage:hover{
     transition: 0.3s all ease-in-out;
     background-color: #01987A !important;
+}
+
+.searchItems-Inputs{
+    display: flex;
 }
