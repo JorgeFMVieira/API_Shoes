@@ -324,3 +324,16 @@ ul li{
 .searchItems-Inputs{
     display: flex;
 }
+
+.currentPageInput{
+    background-color: #01987A;
+    color: #FFFFFF;
+    text-align: center;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 10px;
+}
+::placeholder {
+    color: #FFFFFF;
+}

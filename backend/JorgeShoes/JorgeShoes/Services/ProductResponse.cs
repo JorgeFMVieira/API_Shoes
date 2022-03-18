@@ -5,7 +5,7 @@ namespace JorgeShoes
 {
     public class ProductResponse
     {
-        public ProductResponse(bool success, string erro)
+        public ProductResponse(bool success, bool erro)
         {
             Success = success;
             Erro = erro;
@@ -21,6 +21,6 @@ namespace JorgeShoes
         public int CurrentPage { get; set; }
         public float Entries { get; set; }
         public bool Success { get; set; }
-        public string Erro { get; set; }
+        public bool Erro { get; set; }
     }
 }

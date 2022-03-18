@@ -35,7 +35,7 @@ namespace JorgeShoes.Services
                 if (page > pageCount)
                 {
                     produto.Success = false;
-                    produto.Erro = "A página é maior que o total";
+                    produto.Erro = true;
                     return produto;
                 }
 
@@ -43,7 +43,7 @@ namespace JorgeShoes.Services
                 if (page < 1)
                 {
                     produto.Success = false;
-                    produto.Erro = "A página é menor que 1";
+                    produto.Erro = true;
                     return produto;
                 }
 
@@ -79,7 +79,7 @@ namespace JorgeShoes.Services
                 if (page > pageCount)
                 {
                     produto.Success = false;
-                    produto.Erro = "A página é maior que o total";
+                    produto.Erro = true;
                     return produto;
                 }
 
@@ -87,7 +87,7 @@ namespace JorgeShoes.Services
                 if (page < 1)
                 {
                     produto.Success = false;
-                    produto.Erro = "A página é menor que 1";
+                    produto.Erro = true;
                     return produto;
                 }
 

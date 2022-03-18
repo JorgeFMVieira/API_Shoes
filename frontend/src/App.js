@@ -1,8 +1,9 @@
 import './App.css';
 import axios from 'axios';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { parse } from '@fortawesome/fontawesome-svg-core';
 
 function App() {
   // API Connection
@@ -209,18 +210,21 @@ function App() {
       })
   }
 
-  const changeEntriesPerTable = async (n) => {
+  const changeEntriesPerTable = async (x) => {
     await axios.get(urlAPI)
       .then(response => {
-        if (n == "") {
+        setEntriesPerTable(x);
+        if (x == "") {
           setEntriesPerTable(5);
           requestGet();
-        } else {
-          setEntriesPerTable(n);
-          requestGet();
-          console.log(n);
-          console.log(response.data);
+          return;
         }
+        if (response.data.erro === true) {
+          setPage(1);
+          requestGet();
+          return;
+        }
+        console.log(response.data);
       }).catch(() => {
         toast.error('Please contact an administrator!');
       });
@@ -231,9 +235,7 @@ function App() {
     await axios.get(urlFind)
       .then(response => {
         setData(response.data.products);
-        console.log(response.data)
         setTotalPagesFilter(response.data.pages);
-        console.log(pageFilter);
         if (searchName !== '') {
           setFilteredResults(" ");
         } else {
@@ -271,41 +273,72 @@ function App() {
     }
   }
 
-  useEffect(() => {
-    requestGet();
-  }, [page, entriesPerTable]);
+    const [inputValue, setInputValue] = useState(page);
+
+    const handleChange()
+
+  const setChoosePage = async (e) => {
+    var pagina = parseInt(e);
+    setInputValue(e);
+
+    if(e.length == ""){
+      setPage(page);
+      return;
+    }else{
+      if(isNaN(pagina)){
+        setPage(page);
+        toast.error("The page number must be a number.");
+        return;
+      }else{
+        if(pagina > totalpages){
+          setInputValue(page);
+          toast.error("The page limit is "+ totalpages + ".");
+          return;
+        }
+  
+        if(pagina < 1){
+          setInputValue(1);
+          toast.error("The page minium is 1.");
+          return;
+        }
+  
+        setPage(pagina);
+        requestGet();
+      }
+    }
+  }
 
   function CheckPages() {
     if (page <= 1 && page + 1 > totalpages) {
       return <div className="btn-Page">
-        <button onClick={() => setPage(page - 1)} disabled>Previous</button>
-        <button className='btnCurrentPage'>{page}</button>
-        <button onClick={() => setPage(page + 1)} disabled>Next</button>
+        <button onClick={() => (setPage(page - 1), setInputValue(page -1))} disabled>Previous</button>
+        <input type="text" autoFocus className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
+        <button onClick={() => (setPage(page + 1), setInputValue(page + 1))} disabled>Next</button>
       </div>;
     }
 
 
     if (page + 1 > totalpages) {
       return <div className="btn-Page">
-        <button onClick={() => setPage(page - 1)}>Previous</button>
-        <button className='btnCurrentPage'>{page}</button>
-        <button onClick={() => setPage(page + 1)} disabled>Next</button>
+        <button onClick={() => (setPage(page - 1), setInputValue(page -1))}>Previous</button>
+        <input type="text" autoFocus className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
+        <button onClick={() => (setPage(page + 1), setInputValue(page + 1))} disabled>Next</button>
       </div>;
     }
 
     if (page <= 1) {
       return <div className="btn-Page">
-        <button onClick={() => setPage(page - 1)} disabled>Previous</button>
-        <button className='btnCurrentPage'>{page}</button>
-        <button onClick={() => setPage(page + 1)}>Next</button>
+        <button onClick={() => (setPage(page - 1), setInputValue(page -1))} disabled>Previous</button>
+        <input type="text" autoFocus className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
+        <button onClick={() => (setPage(page + 1), setInputValue(page + 1))}>Next</button>
       </div>;
     }
 
     if (page) {
       return <div className="btn-Page">
-        <button onClick={() => setPage(page - 1)}>Previous</button>
-        <button className='btnCurrentPage'>{page}</button>
-        <button onClick={() => setPage(page + 1)}>Next</button>
+        <button onClick={() => (setPage(page - 1), setInputValue(page -1))}>Previous</button>
+        <input type="text" autoFocus className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
+        <button onClick={() => (setPage(page + 1), setInputValue(page + 1))}>Next</button>
       </div>;
     }
   }
@@ -345,6 +378,10 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    requestGet();
+  }, [page, entriesPerTable, inputValue]);
+
   return (
     <div className="App">
       <ToastContainer />
@@ -380,8 +417,8 @@ function App() {
               <option value="name">Name</option>
             </select>
           </div>
-          <input type="number" name="" id="" onInput={(e) => changeEntriesPerTable(e.target.value)} />
-          {/* <select className="search todo" id="number" name="number" >
+          {/* <input type="number" name="" id="" onInput={(e) => changeEntriesPerTable(e.target.value)} /> */}
+          <select className="search todo" onInput={(e) => changeEntriesPerTable(e.target.value)} >
             <option value="5">5</option>
             <option value="10">10</option>
             <option value="15">15</option>
@@ -390,7 +427,7 @@ function App() {
             <option value="60">60</option>
             <option value="80">80</option>
             <option value="100">100</option>
-          </select> */}
+          </select>
         </div>
 
         {filteredResults.length == 0 ? (
