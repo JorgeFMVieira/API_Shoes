@@ -21,22 +21,22 @@ namespace JorgeShoes.Services
         }
 
 
-        public async Task<ProductResponse> GetProducts(int page)
+        public async Task<ProductResponse> GetProducts(int page, float entries)
         {
             try
             {
-                var pageResults = 15f;
-                var pageCount = Math.Ceiling(_context.Products.Where(n => n.DateDeleted == null).Count() / pageResults);
+                var pageCount = Math.Ceiling(_context.Products.Where(n => n.DateDeleted == null).Count() / entries);
 
                 ProductResponse produto = new ProductResponse();
                 produto.Pages = (int)pageCount;
                 produto.CurrentPage = page;
+                produto.Entries = entries;
 
                 if (page > pageCount)
                 {
                     produto.Success = false;
                     produto.Erro = "A página é maior que o total";
-                return produto;
+                    return produto;
                 }
 
 
@@ -46,13 +46,13 @@ namespace JorgeShoes.Services
                     produto.Erro = "A página é menor que 1";
                     return produto;
                 }
-                    
+
 
 
                 var products = await _context.Products
                     .Where(n => n.DateDeleted == null)
-                    .Skip((page - 1) * (int)pageResults)
-                    .Take((int)pageResults)
+                    .Skip((page - 1) * (int)entries)
+                    .Take((int)entries)
                     .ToListAsync();
 
                 produto.Products = products;

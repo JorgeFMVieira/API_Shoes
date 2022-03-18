@@ -19,6 +19,7 @@ namespace JorgeShoes
         public List<Product> Products { get; set; } = new List<Product>();
         public int Pages { get; set; }
         public int CurrentPage { get; set; }
+        public float Entries { get; set; }
         public bool Success { get; set; }
         public string Erro { get; set; }
     }

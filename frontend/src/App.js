@@ -7,8 +7,9 @@ import 'react-toastify/dist/ReactToastify.css';
 function App() {
   // API Connection
   const [page, setPage] = useState(1);
+  const [entriesPerTable, setEntriesPerTable] = useState(15);
   const [pageFilter, setPageFilter] = useState(1);
-  const urlAPI = "https://localhost:44384/api/Products?page=" + page;
+  const urlAPI = "https://localhost:44384/api/Products?page=" + page + "&entries=" + entriesPerTable;
 
   const [data, setData] = useState([]);
 
@@ -208,339 +209,357 @@ function App() {
       })
   }
 
-  const requestFindByName = async (searchName) => {
-    const urlFind = ("https://localhost:44384/api/Products/ProductByName?page=" + pageFilter + "&name=" + searchName);
-    await axios.get(urlFind)
+  const changeEntriesPerTable = async (n) => {
+    await axios.get(urlAPI)
       .then(response => {
-        setData(response.data.products);
-        console.log(response.data)
-        setTotalPagesFilter(response.data.pages);
-        console.log(pageFilter);
-        if (searchName !== '') {
-          setFilteredResults(" ");
-        } else {
+        if(n == ""){
+            setEntriesPerTable(15);
+            requestGet();
+        }else{
+          setEntriesPerTable(n);
+          console.log(response.data);
+          console.log(n);
           requestGet();
-          setFilteredResults("");
         }
       }).catch(() => {
         toast.error('Please contact an administrator!');
       });
   }
 
-  const changeOptionSearch = async (searchOption) => {
-    if (searchOption == "id") {
-      setShowInputId(true);
-      setShowInputName(false);
-      setShowSearchInput(false);
-      setShowErroNoId(false);
-      return;
-    }
+const requestFindByName = async (searchName) => {
+  const urlFind = ("https://localhost:44384/api/Products/ProductByName?page=" + pageFilter + "&name=" + searchName);
+  await axios.get(urlFind)
+    .then(response => {
+      setData(response.data.products);
+      console.log(response.data)
+      setTotalPagesFilter(response.data.pages);
+      console.log(pageFilter);
+      if (searchName !== '') {
+        setFilteredResults(" ");
+      } else {
+        requestGet();
+        setFilteredResults("");
+      }
+    }).catch(() => {
+      toast.error('Please contact an administrator!');
+    });
+}
 
-    if (searchOption == "name") {
-      setShowInputName(true);
-      setShowInputId(false);
-      setShowSearchInput(false);
-      setShowErroNoId(false);
-      return;
-    }
-
-    if (searchOption == "all") {
-      setShowSearchInput(true);
-      setShowInputId(false);
-      setShowInputName(false);
-      setShowErroNoId(false);
-      return;
-    }
+const changeOptionSearch = async (searchOption) => {
+  if (searchOption == "id") {
+    setShowInputId(true);
+    setShowInputName(false);
+    setShowSearchInput(false);
+    setShowErroNoId(false);
+    return;
   }
 
-  useEffect(() => {
-    requestGet();
-  }, [page]);
-
-  function CheckPages() {
-    if (page <= 1 && page + 1 > totalpages) {
-      return <div className="btn-Page">
-        <button onClick={() => setPage(page - 1)} disabled>Previous</button>
-        <button className='btnCurrentPage'>{page}</button>
-        <button onClick={() => setPage(page + 1)} disabled>Next</button>
-      </div>;
-    }
-
-
-    if (page + 1 > totalpages) {
-      return <div className="btn-Page">
-        <button onClick={() => setPage(page - 1)}>Previous</button>
-        <button className='btnCurrentPage'>{page}</button>
-        <button onClick={() => setPage(page + 1)} disabled>Next</button>
-      </div>;
-    }
-
-    if (page <= 1) {
-      return <div className="btn-Page">
-        <button onClick={() => setPage(page - 1)} disabled>Previous</button>
-        <button className='btnCurrentPage'>{page}</button>
-        <button onClick={() => setPage(page + 1)}>Next</button>
-      </div>;
-    }
-
-    if (page) {
-      return <div className="btn-Page">
-        <button onClick={() => setPage(page - 1)}>Previous</button>
-        <button className='btnCurrentPage'>{page}</button>
-        <button onClick={() => setPage(page + 1)}>Next</button>
-      </div>;
-    }
+  if (searchOption == "name") {
+    setShowInputName(true);
+    setShowInputId(false);
+    setShowSearchInput(false);
+    setShowErroNoId(false);
+    return;
   }
 
-  function CheckPagesFilter() {
-    if (pageFilter <= 1 && pageFilter + 1 > totalpagesFilter) {
-      return <div className="btn-Page">
-        <button onClick={() => setPageFilter(pageFilter - 1)} disabled>Previous</button>
-        <button className='btnCurrentPage'>{pageFilter}</button>
-        <button onClick={() => setPageFilter(pageFilter + 1)} disabled>Next</button>
-      </div>;
-    }
+  if (searchOption == "all") {
+    setShowSearchInput(true);
+    setShowInputId(false);
+    setShowInputName(false);
+    setShowErroNoId(false);
+    return;
+  }
+}
 
+useEffect(() => {
+  requestGet();
+}, [page]);
 
-    if (pageFilter + 1 > totalpagesFilter) {
-      return <div className="btn-Page">
-        <button onClick={() => setPageFilter(pageFilter - 1)}>Previous</button>
-        <button className='btnCurrentPage'>{pageFilter}</button>
-        <button onClick={() => setPageFilter(pageFilter + 1)} disabled>Next</button>
-      </div>;
-    }
-
-    if (pageFilter <= 1) {
-      return <div className="btn-Page">
-        <button onClick={() => setPageFilter(pageFilter - 1)} disabled>Previous</button>
-        <button className='btnCurrentPage'>{pageFilter}</button>
-        <button onClick={() => setPageFilter(pageFilter + 1)}>Next</button>
-      </div>;
-    }
-
-    if (pageFilter) {
-      return <div className="btn-Page">
-        <button onClick={() => setPageFilter(pageFilter - 1)}>Previous</button>
-        <button className='btnCurrentPage'>{pageFilter}</button>
-        <button onClick={() => setPageFilter(pageFilter + 1)}>Next</button>
-      </div>;
-    }
+function CheckPages() {
+  if (page <= 1 && page + 1 > totalpages) {
+    return <div className="btn-Page">
+      <button onClick={() => setPage(page - 1)} disabled>Previous</button>
+      <button className='btnCurrentPage'>{page}</button>
+      <button onClick={() => setPage(page + 1)} disabled>Next</button>
+    </div>;
   }
 
-  return (
-    <div className="App">
-      <ToastContainer />
-      <div className="tableContainer">
-        <div className="tableHeader">
-          <h1>Products</h1>
-        </div>
-        <button className="btn createNew" onClick={() => setShowCreate(true)}>Create New Product</button>
 
-        <div className="searchItems">
-          {
-            showSearchInput ?
-              <input className="search todo" type="text" placeholder="Search..." name="search" autoComplete="off" onInput={(e) => requestSearch(e.target.value)} />
-              : null
-          }
-          {
-            showInputId ?
-              <input className="search soId" type="text" placeholder="Search ID..." name="searchId" autoComplete="off" onInput={(e) => requestFindById(e.target.value)} />
-              : null
-          }
+  if (page + 1 > totalpages) {
+    return <div className="btn-Page">
+      <button onClick={() => setPage(page - 1)}>Previous</button>
+      <button className='btnCurrentPage'>{page}</button>
+      <button onClick={() => setPage(page + 1)} disabled>Next</button>
+    </div>;
+  }
 
-          {
-            showInputName ?
-              <input className="search soNome" type="text" placeholder="Search Name..." name="searchName" autoComplete="off" onInput={(e) => requestFindByName(e.target.value)} />
-              : null
-          }
+  if (page <= 1) {
+    return <div className="btn-Page">
+      <button onClick={() => setPage(page - 1)} disabled>Previous</button>
+      <button className='btnCurrentPage'>{page}</button>
+      <button onClick={() => setPage(page + 1)}>Next</button>
+    </div>;
+  }
 
-          <select name="optionSearch" defaultValue={'all'} className="search search-options" onChange={(e) => changeOptionSearch(e.target.value)}>
-            <option value="all">All</option>
-            <option value="id">Id</option>
-            <option value="name">Name</option>
-          </select>
-        </div>
+  if (page) {
+    return <div className="btn-Page">
+      <button onClick={() => setPage(page - 1)}>Previous</button>
+      <button className='btnCurrentPage'>{page}</button>
+      <button onClick={() => setPage(page + 1)}>Next</button>
+    </div>;
+  }
+}
 
-            {filteredResults.length == 0 ? (
-                <div className="content-table">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Id</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                        <th>Options</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data.map(product => (
-                        <tr key={product.id}>
-                          <td>{product.id}</td>
-                          <td>{product.name}</td>
-                          <td>{product.description}</td>
-                          <td>{product.price}</td>
-                          <td>
-                            <button className="btn edit-btn" onClick={() => selectProduct(product, "Edit")}>Edit</button>
-                            <button className="btn delete-btn" onClick={() => selectProduct(product, "Delete")}>Delete</button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  <CheckPages />
-                  <p>ola</p>
-                </div>
-              ) : (
-                <div className="content-table">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Id</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                        <th>Options</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data.map(product => (
-                        <tr key={product.id}>
-                          <td>{product.id}</td>
-                          <td>{product.name}</td>
-                          <td>{product.description}</td>
-                          <td>{product.price}</td>
-                          <td>
-                            <button className="btn edit-btn" onClick={() => selectProduct(product, "Edit")}>Edit</button>
-                            <button className="btn delete-btn" onClick={() => selectProduct(product, "Delete")}>Delete</button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  <CheckPagesFilter />
-                  <p>adeus</p>
-                </div>
-              )
-            }
+function CheckPagesFilter() {
+  if (pageFilter <= 1 && pageFilter + 1 > totalpagesFilter) {
+    return <div className="btn-Page">
+      <button onClick={() => setPageFilter(pageFilter - 1)} disabled>Previous</button>
+      <button className='btnCurrentPage'>{pageFilter}</button>
+      <button onClick={() => setPageFilter(pageFilter + 1)} disabled>Next</button>
+    </div>;
+  }
 
+
+  if (pageFilter + 1 > totalpagesFilter) {
+    return <div className="btn-Page">
+      <button onClick={() => setPageFilter(pageFilter - 1)}>Previous</button>
+      <button className='btnCurrentPage'>{pageFilter}</button>
+      <button onClick={() => setPageFilter(pageFilter + 1)} disabled>Next</button>
+    </div>;
+  }
+
+  if (pageFilter <= 1) {
+    return <div className="btn-Page">
+      <button onClick={() => setPageFilter(pageFilter - 1)} disabled>Previous</button>
+      <button className='btnCurrentPage'>{pageFilter}</button>
+      <button onClick={() => setPageFilter(pageFilter + 1)}>Next</button>
+    </div>;
+  }
+
+  if (pageFilter) {
+    return <div className="btn-Page">
+      <button onClick={() => setPageFilter(pageFilter - 1)}>Previous</button>
+      <button className='btnCurrentPage'>{pageFilter}</button>
+      <button onClick={() => setPageFilter(pageFilter + 1)}>Next</button>
+    </div>;
+  }
+}
+
+return (
+  <div className="App">
+    <ToastContainer />
+    <input type="number" name="number" onInput={(e) => changeEntriesPerTable(e.target.value)} />
+    <div className="tableContainer">
+      <div className="tableHeader">
+        <h1>Products</h1>
+      </div>
+      <button className="btn createNew" onClick={() => setShowCreate(true)}>Create New Product</button>
+
+      <div className="searchItems">
         {
-          showNoProducts ?
-            <div className='errorFindId'>
-              <p>We didn´t find a product any products.</p>
-            </div> : null
+          showSearchInput ?
+            <input className="search todo" type="text" placeholder="Search..." name="search" autoComplete="off" onInput={(e) => requestSearch(e.target.value)} />
+            : null
+        }
+        {
+          showInputId ?
+            <input className="search soId" type="text" placeholder="Search ID..." name="searchId" autoComplete="off" onInput={(e) => requestFindById(e.target.value)} />
+            : null
         }
 
-
-
         {
-          showErroNoID ?
-            <div className='errorFindId'>
-              <p>We didn´t find a product with the that data.</p>
-            </div> : null
+          showInputName ?
+            <input className="search soNome" type="text" placeholder="Search Name..." name="searchName" autoComplete="off" onInput={(e) => requestFindByName(e.target.value)} />
+            : null
         }
+
+        <select name="optionSearch" defaultValue={'all'} className="search search-options" onChange={(e) => changeOptionSearch(e.target.value)}>
+          <option value="all">All</option>
+          <option value="id">Id</option>
+          <option value="name">Name</option>
+        </select>
       </div>
 
-      {
-        showCreate ?
-          <div className="modalWindow">
-            <div className="containerModal">
-              <div className="modalTitle"><h3>Create New Product</h3></div>
-              <div className="modalBody">
-                <div className="modalItem">
-                  <label htmlFor="name">Name:</label>
-                  <input type="text" id="name" name="name" onChange={inputProductData} />
-                </div>
-                <div className="modalItem">
-                  <label htmlFor="description">Description:</label>
-                  <input type="text" id="description" name="description" onChange={inputProductData} />
-                </div>
-                <div className="modalItem">
-                  <label htmlFor="price">Price:</label>
-                  <input type="text" id="price" name="price" onChange={inputProductData} />
-                </div>
-              </div>
-              <div className="modalBtns">
-                <button className="btn createNew" onClick={() => requestPost()}>Create</button>
-                <button className="btn cancelBtn" onClick={() => setShowCreate(false)}>Cancel</button>
-              </div>
-            </div>
-          </div> : null
+      {filteredResults.length == 0 ? (
+        <div className="content-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Options</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map(product => (
+                <tr key={product.id}>
+                  <td>{product.id}</td>
+                  <td>{product.name}</td>
+                  <td>{product.description}</td>
+                  <td>{product.price}</td>
+                  <td>
+                    <button className="btn edit-btn" onClick={() => selectProduct(product, "Edit")}>Edit</button>
+                    <button className="btn delete-btn" onClick={() => selectProduct(product, "Delete")}>Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <CheckPages />
+          <p>ola</p>
+        </div>
+      ) : (
+        <div className="content-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Options</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map(product => (
+                <tr key={product.id}>
+                  <td>{product.id}</td>
+                  <td>{product.name}</td>
+                  <td>{product.description}</td>
+                  <td>{product.price}</td>
+                  <td>
+                    <button className="btn edit-btn" onClick={() => selectProduct(product, "Edit")}>Edit</button>
+                    <button className="btn delete-btn" onClick={() => selectProduct(product, "Delete")}>Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <CheckPagesFilter />
+          <p>adeus</p>
+        </div>
+      )
       }
 
       {
-        showDelete ?
-          <div className="modalWindow">
-            <div className="containerModal">
-              <div className="modalTitle"><h3>Delete Product</h3></div>
-              <div className="modalBody">
-                <div className="modalItem">
-                  <span>Are you sure you want to delete the product with id: {productInfoSelected.id}</span>
-                </div>
-              </div>
-              <div className="modalBtns">
-                <button className="btn cancelBtn" onClick={() => requestDelete(parseInt(productInfoSelected.id))}>Delete</button>
-                <button className="btn createNew" onClick={() => setShowDelete(false)}>Cancel</button>
-              </div>
-            </div>
+        showNoProducts ?
+          <div className='errorFindId'>
+            <p>We didn´t find a product any products.</p>
           </div> : null
       }
 
-      {
-        showEdit ?
-          <div className="modalWindow">
-            <div className="containerModal">
-              <div className="modalTitle"><h3>Edit Product - {productInfoSelected.id}</h3></div>
-              <div className="modalBody">
-                <div className="modalItem">
-                  <label htmlFor="name">Name:</label>
-                  <input type="text" id="name" name="name" value={productInfoSelected.name} onChange={inputProductData} />
-                </div>
-                <div className="modalItem">
-                  <label htmlFor="description">Description:</label>
-                  <input type="text" id="description" name="description" value={productInfoSelected.description} onChange={inputProductData} />
-                </div>
-                <div className="modalItem">
-                  <label htmlFor="price">Price:</label>
-                  <input type="text" id="price" name="price" value={productInfoSelected.price} onChange={inputProductData} />
-                </div>
-              </div>
-              <div className="modalBtns">
-                <button className="btn createNew" onClick={() => requestPut(parseInt(productInfoSelected.id))}>Save</button>
-                <button className="btn cancelBtn" onClick={() => setShowEdit(false)}>Cancel</button>
-              </div>
-            </div>
-          </div> : null
-      }
+
 
       {
-        showSearch ?
-          <div className="modalWindow">
-            <div className="containerModal">
-              <div className="modalTitle"><h3>Product - </h3></div>
-              <div className="modalBody">
-                <div className="modalItem">
-                  <label htmlFor="name">Name:</label>
-                  <input type="text" id="name" name="name" />
-                </div>
-                <div className="modalItem">
-                  <label htmlFor="description">Description:</label>
-                  <input type="text" id="description" name="description" />
-                </div>
-                <div className="modalItem">
-                  <label htmlFor="price">Price:</label>
-                  <input type="text" id="price" name="price" />
-                </div>
-              </div>
-              <div className="modalBtns">
-                <button className="btn createNew">Save</button>
-                <button className="btn cancelBtn">Cancel</button>
-              </div>
-            </div>
+        showErroNoID ?
+          <div className='errorFindId'>
+            <p>We didn´t find a product with the that data.</p>
           </div> : null
       }
     </div>
-  );
+
+    {
+      showCreate ?
+        <div className="modalWindow">
+          <div className="containerModal">
+            <div className="modalTitle"><h3>Create New Product</h3></div>
+            <div className="modalBody">
+              <div className="modalItem">
+                <label htmlFor="name">Name:</label>
+                <input type="text" id="name" name="name" onChange={inputProductData} />
+              </div>
+              <div className="modalItem">
+                <label htmlFor="description">Description:</label>
+                <input type="text" id="description" name="description" onChange={inputProductData} />
+              </div>
+              <div className="modalItem">
+                <label htmlFor="price">Price:</label>
+                <input type="text" id="price" name="price" onChange={inputProductData} />
+              </div>
+            </div>
+            <div className="modalBtns">
+              <button className="btn createNew" onClick={() => requestPost()}>Create</button>
+              <button className="btn cancelBtn" onClick={() => setShowCreate(false)}>Cancel</button>
+            </div>
+          </div>
+        </div> : null
+    }
+
+    {
+      showDelete ?
+        <div className="modalWindow">
+          <div className="containerModal">
+            <div className="modalTitle"><h3>Delete Product</h3></div>
+            <div className="modalBody">
+              <div className="modalItem">
+                <span>Are you sure you want to delete the product with id: {productInfoSelected.id}</span>
+              </div>
+            </div>
+            <div className="modalBtns">
+              <button className="btn cancelBtn" onClick={() => requestDelete(parseInt(productInfoSelected.id))}>Delete</button>
+              <button className="btn createNew" onClick={() => setShowDelete(false)}>Cancel</button>
+            </div>
+          </div>
+        </div> : null
+    }
+
+    {
+      showEdit ?
+        <div className="modalWindow">
+          <div className="containerModal">
+            <div className="modalTitle"><h3>Edit Product - {productInfoSelected.id}</h3></div>
+            <div className="modalBody">
+              <div className="modalItem">
+                <label htmlFor="name">Name:</label>
+                <input type="text" id="name" name="name" value={productInfoSelected.name} onChange={inputProductData} />
+              </div>
+              <div className="modalItem">
+                <label htmlFor="description">Description:</label>
+                <input type="text" id="description" name="description" value={productInfoSelected.description} onChange={inputProductData} />
+              </div>
+              <div className="modalItem">
+                <label htmlFor="price">Price:</label>
+                <input type="text" id="price" name="price" value={productInfoSelected.price} onChange={inputProductData} />
+              </div>
+            </div>
+            <div className="modalBtns">
+              <button className="btn createNew" onClick={() => requestPut(parseInt(productInfoSelected.id))}>Save</button>
+              <button className="btn cancelBtn" onClick={() => setShowEdit(false)}>Cancel</button>
+            </div>
+          </div>
+        </div> : null
+    }
+
+    {
+      showSearch ?
+        <div className="modalWindow">
+          <div className="containerModal">
+            <div className="modalTitle"><h3>Product - </h3></div>
+            <div className="modalBody">
+              <div className="modalItem">
+                <label htmlFor="name">Name:</label>
+                <input type="text" id="name" name="name" />
+              </div>
+              <div className="modalItem">
+                <label htmlFor="description">Description:</label>
+                <input type="text" id="description" name="description" />
+              </div>
+              <div className="modalItem">
+                <label htmlFor="price">Price:</label>
+                <input type="text" id="price" name="price" />
+              </div>
+            </div>
+            <div className="modalBtns">
+              <button className="btn createNew">Save</button>
+              <button className="btn cancelBtn">Cancel</button>
+            </div>
+          </div>
+        </div> : null
+    }
+  </div>
+);
 }
 
 export default App;
