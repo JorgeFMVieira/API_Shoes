@@ -8,11 +8,12 @@ import { parse } from '@fortawesome/fontawesome-svg-core';
 function App() {
   // API Connection
   const [page, setPage] = useState(1);
-  const [entriesPerTable, setEntriesPerTable] = useState(5);
   const [pageFilter, setPageFilter] = useState(1);
+  const [entriesPerTable, setEntriesPerTable] = useState(5);
   const urlAPI = "https://localhost:44384/api/Products?page=" + page + "&entries=" + entriesPerTable;
 
   const [data, setData] = useState([]);
+
 
   const [productDB, setProductDB] = useState([]);
 
@@ -215,9 +216,14 @@ function App() {
     await axios.get(urlAPI)
       .then(response => {
         setEntriesPerTable(e);
-        console.log("Api: " + entriesPerTable);
-        console.log(response.data.products);
-        console.log(response.data.erro);
+        if (e == "") {
+          setEntriesPerTable(5);
+          requestGet();
+        }
+        if (response.data.erro == true) {
+          setPage(1);
+          requestGet();
+        }
       }).catch(() => {
         toast.error('Please contact an administrator!');
       });
