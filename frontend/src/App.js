@@ -210,21 +210,14 @@ function App() {
       })
   }
 
-  const changeEntriesPerTable = async (x) => {
+
+  const changeEntriesPerTable = async (e) => {
     await axios.get(urlAPI)
       .then(response => {
-        setEntriesPerTable(x);
-        if (x == "") {
-          setEntriesPerTable(5);
-          requestGet();
-          return;
-        }
-        if (response.data.erro === true) {
-          setPage(1);
-          requestGet();
-          return;
-        }
-        console.log(response.data);
+        setEntriesPerTable(e);
+        console.log("Api: " + entriesPerTable);
+        console.log(response.data.products);
+        console.log(response.data.erro);
       }).catch(() => {
         toast.error('Please contact an administrator!');
       });
@@ -275,7 +268,9 @@ function App() {
 
     const [inputValue, setInputValue] = useState(page);
 
-    const handleChange()
+    const handleChange = (e) => {
+      setInputValue(e.target.value);
+    };
 
   const setChoosePage = async (e) => {
     var pagina = parseInt(e);
@@ -287,6 +282,7 @@ function App() {
     }else{
       if(isNaN(pagina)){
         setPage(page);
+        setInputValue(page);
         toast.error("The page number must be a number.");
         return;
       }else{
@@ -380,7 +376,7 @@ function App() {
 
   useEffect(() => {
     requestGet();
-  }, [page, entriesPerTable, inputValue]);
+  }, [entriesPerTable, page, inputValue]);
 
   return (
     <div className="App">
