@@ -285,6 +285,14 @@ function App() {
         <button onClick={() => setPage(page + 1)}>Next</button>
     </div>;
     }
+
+    if(page){
+      return <div className="btn-Page">
+          <button onClick={() => setPage(page - 1)}>Previous</button>
+          <button className='btnCurrentPage'>{page}</button>
+          <button onClick={() => setPage(page + 1)}>Next</button>
+      </div>;
+      }
   }
 
   return (
