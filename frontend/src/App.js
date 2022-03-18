@@ -7,23 +7,24 @@ import 'react-toastify/dist/ReactToastify.css';
 function App() {
   // API Connection
   const [page, setPage] = useState(1);
+  const [pageFilter, setPageFilter] = useState(1);
   const urlAPI = "https://localhost:44384/api/Products?page=" + page;
 
   const [data, setData] = useState([]);
 
   const [productDB, setProductDB] = useState([]);
 
-    // Window Create
-    const [showCreate, setShowCreate] = useState(false);
-    const [showDelete, setShowDelete] = useState(false);
-    const [showEdit, setShowEdit] = useState(false);
-    const [showSearch, setShowSearch] = useState(false);
-  
-    const [filteredResults, setFilteredResults] = useState([]);
+  // Window Create
+  const [showCreate, setShowCreate] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
 
-    
+  const [filteredResults, setFilteredResults] = useState([]);
+
+
   const [produto, setProduto] = useState([]);
-  
+
   const [showErroNoID, setShowErroNoId] = useState(false);
   const [showTable, setShowTable] = useState(true);
 
@@ -53,6 +54,7 @@ function App() {
   }
 
   const [totalpages, setTotalPages] = useState(0);
+  const [totalpagesFilter, setTotalPagesFilter] = useState(0);
 
   const requestGet = async () => {
     await axios.get(urlAPI)
@@ -100,12 +102,12 @@ function App() {
       .then(response => {
         setShowDelete(false);
         toast.success('The product with the id ' + id + ' was deleted');
-        if(response.data == true && data.length == 1){
-           if(page != 1){
-              setPage(page - 1);
-           }else{
+        if (response.data == true && data.length == 1) {
+          if (page != 1) {
+            setPage(page - 1);
+          } else {
             setShowNoProducts(true);
-           }
+          }
         }
         requestGet();
       }).catch(error => {
@@ -183,12 +185,16 @@ function App() {
     const urlFind = (urlAPI + "/GetAll?search=" + search);
     await axios.get(urlFind)
       .then(response => {
+        // Desativa os erros, caso estejam ativos
         setShowErroNoId(false);
+        // Mostra a tabela caso esteja vazia
         setShowTable(true);
         if (search !== '') {
           setProduto(response.data);
+          // Coloca o filtro com algo dentro para mostrar a tabela filtrada
           setFilteredResults(" ");
         } else {
+          setShowTable(true);
           setFilteredResults("");
         }
       }).catch(() => {
@@ -203,30 +209,26 @@ function App() {
   }
 
   const requestFindByName = async (searchName) => {
-    const urlFind = (urlAPI + "/ProductByName?name=" + searchName);
+    const urlFind = ("https://localhost:44384/api/Products/ProductByName?page=" + pageFilter + "&name=" + searchName);
     await axios.get(urlFind)
       .then(response => {
-        setShowErroNoId(false);
-        setShowTable(true);
+        setData(response.data.products);
+        console.log(response.data)
+        setTotalPagesFilter(response.data.pages);
+        console.log(pageFilter);
         if (searchName !== '') {
-          setProduto(response.data);
           setFilteredResults(" ");
         } else {
+          requestGet();
           setFilteredResults("");
         }
       }).catch(() => {
-        if (searchName == '') {
-          setShowTable(true);
-          setFilteredResults("");
-        } else {
-          setShowTable(false);
-          setShowErroNoId(true);
-        }
-      })
+        toast.error('Please contact an administrator!');
+      });
   }
 
   const changeOptionSearch = async (searchOption) => {
-    if(searchOption == "id"){
+    if (searchOption == "id") {
       setShowInputId(true);
       setShowInputName(false);
       setShowSearchInput(false);
@@ -234,7 +236,7 @@ function App() {
       return;
     }
 
-    if(searchOption == "name"){
+    if (searchOption == "name") {
       setShowInputName(true);
       setShowInputId(false);
       setShowSearchInput(false);
@@ -242,7 +244,7 @@ function App() {
       return;
     }
 
-    if(searchOption == "all"){
+    if (searchOption == "all") {
       setShowSearchInput(true);
       setShowInputId(false);
       setShowInputName(false);
@@ -255,44 +257,74 @@ function App() {
     requestGet();
   }, [page]);
 
-
-  // if(page > totalpages){
-  //   window.location.replace("https://localhost:44384/api/Products?page=1");
-  // }
-
   function CheckPages() {
-    if(page <= 1 && page + 1 > totalpages){
+    if (page <= 1 && page + 1 > totalpages) {
       return <div className="btn-Page">
-          <button onClick={() => setPage(page - 1)} disabled>Previous</button>
-          <button className='btnCurrentPage'>{page}</button>
-          <button onClick={() => setPage(page + 1)} disabled>Next</button>
+        <button onClick={() => setPage(page - 1)} disabled>Previous</button>
+        <button className='btnCurrentPage'>{page}</button>
+        <button onClick={() => setPage(page + 1)} disabled>Next</button>
       </div>;
-      }
-      
-
-    if(page + 1 > totalpages){
-      return <div className="btn-Page">
-      <button onClick={() => setPage(page - 1)}>Previous</button>
-      <button className='btnCurrentPage'>{page}</button>
-      <button onClick={() => setPage(page + 1)} disabled>Next</button>
-  </div>;
     }
 
-    if(page <= 1){
-    return <div className="btn-Page">
+
+    if (page + 1 > totalpages) {
+      return <div className="btn-Page">
+        <button onClick={() => setPage(page - 1)}>Previous</button>
+        <button className='btnCurrentPage'>{page}</button>
+        <button onClick={() => setPage(page + 1)} disabled>Next</button>
+      </div>;
+    }
+
+    if (page <= 1) {
+      return <div className="btn-Page">
         <button onClick={() => setPage(page - 1)} disabled>Previous</button>
         <button className='btnCurrentPage'>{page}</button>
         <button onClick={() => setPage(page + 1)}>Next</button>
-    </div>;
+      </div>;
     }
 
-    if(page){
+    if (page) {
       return <div className="btn-Page">
-          <button onClick={() => setPage(page - 1)}>Previous</button>
-          <button className='btnCurrentPage'>{page}</button>
-          <button onClick={() => setPage(page + 1)}>Next</button>
+        <button onClick={() => setPage(page - 1)}>Previous</button>
+        <button className='btnCurrentPage'>{page}</button>
+        <button onClick={() => setPage(page + 1)}>Next</button>
       </div>;
-      }
+    }
+  }
+
+  function CheckPagesFilter() {
+    if (pageFilter <= 1 && pageFilter + 1 > totalpagesFilter) {
+      return <div className="btn-Page">
+        <button onClick={() => setPageFilter(pageFilter - 1)} disabled>Previous</button>
+        <button className='btnCurrentPage'>{pageFilter}</button>
+        <button onClick={() => setPageFilter(pageFilter + 1)} disabled>Next</button>
+      </div>;
+    }
+
+
+    if (pageFilter + 1 > totalpagesFilter) {
+      return <div className="btn-Page">
+        <button onClick={() => setPageFilter(pageFilter - 1)}>Previous</button>
+        <button className='btnCurrentPage'>{pageFilter}</button>
+        <button onClick={() => setPageFilter(pageFilter + 1)} disabled>Next</button>
+      </div>;
+    }
+
+    if (pageFilter <= 1) {
+      return <div className="btn-Page">
+        <button onClick={() => setPageFilter(pageFilter - 1)} disabled>Previous</button>
+        <button className='btnCurrentPage'>{pageFilter}</button>
+        <button onClick={() => setPageFilter(pageFilter + 1)}>Next</button>
+      </div>;
+    }
+
+    if (pageFilter) {
+      return <div className="btn-Page">
+        <button onClick={() => setPageFilter(pageFilter - 1)}>Previous</button>
+        <button className='btnCurrentPage'>{pageFilter}</button>
+        <button onClick={() => setPageFilter(pageFilter + 1)}>Next</button>
+      </div>;
+    }
   }
 
   return (
@@ -329,60 +361,77 @@ function App() {
           </select>
         </div>
 
-        {
-          showTable ?
-            <table>
-              <thead>
-                <tr>
-                  <th>Id</th>
-                  <th>Name</th>
-                  <th>Description</th>
-                  <th>Price</th>
-                  <th>Options</th>
-                </tr>
-              </thead>
-              {filteredResults.length == 0 ? (
-                <tbody>
-                  {data.map(product => (
-                    <tr key={product.id}>
-                      <td>{product.id}</td>
-                      <td>{product.name}</td>
-                      <td>{product.description}</td>
-                      <td>{product.price}</td>
-                      <td>
-                        <button className="btn edit-btn" onClick={() => selectProduct(product, "Edit")}>Edit</button>
-                        <button className="btn delete-btn" onClick={() => selectProduct(product, "Delete")}>Delete</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
+            {filteredResults.length == 0 ? (
+                <div className="content-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Options</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.map(product => (
+                        <tr key={product.id}>
+                          <td>{product.id}</td>
+                          <td>{product.name}</td>
+                          <td>{product.description}</td>
+                          <td>{product.price}</td>
+                          <td>
+                            <button className="btn edit-btn" onClick={() => selectProduct(product, "Edit")}>Edit</button>
+                            <button className="btn delete-btn" onClick={() => selectProduct(product, "Delete")}>Delete</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <CheckPages />
+                  <p>ola</p>
+                </div>
               ) : (
-                <tbody>
-                  {data.map(product => (
-                    <tr key={product.id}>
-                      <td>{product.id}</td>
-                      <td>{product.name}</td>
-                      <td>{product.description}</td>
-                      <td>{product.price}</td>
-                      <td>
-                        <button className="btn edit-btn" onClick={() => selectProduct(product, "Edit")}>Edit</button>
-                        <button className="btn delete-btn" onClick={() => selectProduct(product, "Delete")}>Delete</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              )}
-            </table> : null
-        }
+                <div className="content-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Options</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.map(product => (
+                        <tr key={product.id}>
+                          <td>{product.id}</td>
+                          <td>{product.name}</td>
+                          <td>{product.description}</td>
+                          <td>{product.price}</td>
+                          <td>
+                            <button className="btn edit-btn" onClick={() => selectProduct(product, "Edit")}>Edit</button>
+                            <button className="btn delete-btn" onClick={() => selectProduct(product, "Delete")}>Delete</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <CheckPagesFilter />
+                  <p>adeus</p>
+                </div>
+              )
+            }
 
-{
+        {
           showNoProducts ?
             <div className='errorFindId'>
               <p>We didn´t find a product any products.</p>
             </div> : null
         }
 
-<CheckPages />
+
 
         {
           showErroNoID ?

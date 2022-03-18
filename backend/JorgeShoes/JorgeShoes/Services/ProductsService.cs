@@ -65,18 +65,46 @@ namespace JorgeShoes.Services
             }
         }
 
-        public async Task<IEnumerable<Product>> GetProductsByName(string name)
+        public async Task<ProductResponse> GetProductsByName(int page, string name)
         {
-            IEnumerable<Product> products;
-            if (!string.IsNullOrEmpty(name))
+            try 
             {
-                products = await _context.Products.Where(n => n.Name.Contains(name)).ToListAsync();
+                var pageResults = 15f;
+                var pageCount = Math.Ceiling(_context.Products.Where(n => n.DateDeleted == null && n.Name.Contains(name)).Count() / pageResults);
+
+                ProductResponse produto = new ProductResponse();
+                produto.Pages = (int)pageCount;
+                produto.CurrentPage = page;
+
+                if (page > pageCount)
+                {
+                    produto.Success = false;
+                    produto.Erro = "A página é maior que o total";
+                    return produto;
+                }
+
+
+                if (page < 1)
+                {
+                    produto.Success = false;
+                    produto.Erro = "A página é menor que 1";
+                    return produto;
+                }
+
+                var products = await _context.Products
+                    .Where(n => n.DateDeleted == null && n.Name.Contains(name))
+                    .Skip((page - 1) * (int)pageResults)
+                    .Take((int)pageResults)
+                    .ToListAsync();
+
+                produto.Products = products;
+
+                return produto;
             }
-            else
+            catch
             {
-                products = await _context.Products.ToListAsync();
+                throw;
             }
-            return products;
         }
 
 

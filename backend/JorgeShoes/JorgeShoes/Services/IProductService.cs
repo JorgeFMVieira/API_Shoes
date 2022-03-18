@@ -10,7 +10,7 @@ namespace JorgeShoes.Services
     {
         Task<ProductResponse> GetProducts(int page);
         Task<Product> GetProduct(int id);
-        Task<IEnumerable<Product>> GetProductsByName(string name);
+        Task<ProductResponse> GetProductsByName(int page, string name);
         Task<IEnumerable<Product>> GetProductsById(int id);
         Task CreateProduct(Product product);
         Task UpdateProduct(Product product);

@@ -62,23 +62,16 @@ namespace JorgeShoes.Controllers
 
 
         [HttpGet("ProductByName")]
-        public async Task<ActionResult<IAsyncEnumerable<Product>>> GetProductsByName([FromQuery] string name)
+        public async Task<ActionResult<IAsyncEnumerable<Product>>> GetProductsByName([FromQuery] int page, string name)
         {
             try
             {
-                var products = await _productService.GetProductsByName(name);
-                if (!products.Any())
-                {
-                    return NotFound($"We weren´t able to find products with the name of {name}");
-                }
-                else
-                {
-                    return Ok(products);
-                }
+                var products = await _productService.GetProductsByName(page, name);
+                return Ok(products);
             }
             catch
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"We weren´t able to find products with the name of {name}");
+                throw;
             }
         }
 
