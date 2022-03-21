@@ -20,6 +20,7 @@ namespace JorgeShoes.Models
         public decimal Price { get; set; }
 
         public DateTime DateCreated { get; set; }
+        public DateTime? DateEdited { get; set; }
 
         public DateTimeOffset? DateDeleted { get; set; }
     }

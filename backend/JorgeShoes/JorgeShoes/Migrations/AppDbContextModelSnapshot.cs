@@ -32,6 +32,9 @@ namespace JorgeShoes.Migrations
                     b.Property<DateTimeOffset?>("DateDeleted")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<DateTime?>("DateEdited")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(300)

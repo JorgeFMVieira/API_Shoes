@@ -10,7 +10,9 @@ function App() {
   const [page, setPage] = useState(1);
   const [pageFilter, setPageFilter] = useState(1);
   const [entriesPerTable, setEntriesPerTable] = useState(5);
-  const urlAPI = "https://localhost:44384/api/Products?page=" + page + "&entries=" + entriesPerTable;
+  const [searchBy, setSearchBy] = useState("all");
+  const [searchTable, setSearchTable] = useState("");
+  const urlAPI = "https://localhost:44384/api/Products?page=" + page + "&entries=" + entriesPerTable + "&searchby=" + searchBy + "&search=" + searchTable;
 
   const [data, setData] = useState([]);
 
@@ -64,6 +66,15 @@ function App() {
       .then(response => {
         setData(response.data.products);
         setTotalPages(response.data.pages);
+        console.log(response.data);
+        setShowNoProducts(false);
+        if(response.data.products.length == 0){
+          setShowNoProducts(true);
+        }
+        setShowErroNoId(false);
+        if(response.data.erro == "SearchError"){
+          setShowNoProducts(true);
+        }
       }).catch(() => {
         toast.error('Please contact an administrator!');
       });
@@ -185,7 +196,7 @@ function App() {
   }
 
   const requestSearch = async (search) => {
-    const urlFind = (urlAPI + "/GetAll?search=" + search);
+    const urlFind = (urlAPI + "&search=" + search);
     await axios.get(urlFind)
       .then(response => {
         // Desativa os erros, caso estejam ativos
@@ -216,15 +227,8 @@ function App() {
     await axios.get(urlAPI)
       .then(response => {
         setEntriesPerTable(e);
-        if (e == "") {
-          setEntriesPerTable(5);
-          requestGet();
-        }
-        if (response.data.erro == true) {
-          setPage(1);
-          requestGet();
-        }
       }).catch(() => {
+        setEntriesPerTable(5);
         toast.error('Please contact an administrator!');
       });
   }
@@ -314,7 +318,7 @@ function App() {
     if (page <= 1 && page + 1 > totalpages) {
       return <div className="btn-Page">
         <button onClick={() => (setPage(page - 1), setInputValue(page -1))} disabled>Previous</button>
-        <input type="text" autoFocus className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
+        <input type="text" className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
         <button onClick={() => (setPage(page + 1), setInputValue(page + 1))} disabled>Next</button>
       </div>;
     }
@@ -323,7 +327,7 @@ function App() {
     if (page + 1 > totalpages) {
       return <div className="btn-Page">
         <button onClick={() => (setPage(page - 1), setInputValue(page -1))}>Previous</button>
-        <input type="text" autoFocus className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
+        <input type="text" className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
         <button onClick={() => (setPage(page + 1), setInputValue(page + 1))} disabled>Next</button>
       </div>;
     }
@@ -331,7 +335,7 @@ function App() {
     if (page <= 1) {
       return <div className="btn-Page">
         <button onClick={() => (setPage(page - 1), setInputValue(page -1))} disabled>Previous</button>
-        <input type="text" autoFocus className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
+        <input type="text" className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
         <button onClick={() => (setPage(page + 1), setInputValue(page + 1))}>Next</button>
       </div>;
     }
@@ -339,7 +343,7 @@ function App() {
     if (page) {
       return <div className="btn-Page">
         <button onClick={() => (setPage(page - 1), setInputValue(page -1))}>Previous</button>
-        <input type="text" autoFocus className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
+        <input type="text" className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
         <button onClick={() => (setPage(page + 1), setInputValue(page + 1))}>Next</button>
       </div>;
     }
@@ -381,8 +385,13 @@ function App() {
   }
 
   useEffect(() => {
+    setPage(1);
+    setInputValue(1);
+  }, [entriesPerTable]);
+
+  useEffect(() => {
     requestGet();
-  }, [entriesPerTable, page, inputValue]);
+  }, [entriesPerTable, page, inputValue, searchBy, searchTable]);
 
   return (
     <div className="App">
@@ -398,21 +407,20 @@ function App() {
           <div className="searchItems-Inputs">
             {
               showSearchInput ?
-                <input className="search todo" type="text" placeholder="Search..." name="search" autoComplete="off" onInput={(e) => requestSearch(e.target.value)} />
+                <input className="search todo" type="text" placeholder="Search..." name="search" autoComplete="off" onChange={(e) => (setSearchBy("all"), setSearchTable(e.target.value))} />
                 : null
             }
             {
               showInputId ?
-                <input className="search soId" type="text" placeholder="Search ID..." name="searchId" autoComplete="off" onInput={(e) => requestFindById(e.target.value)} />
+                <input className="search soId" type="text" placeholder="Search ID..." name="searchId" autoComplete="off" onChange={(e) => (setSearchBy("id"), setSearchTable(e.target.value))} />
                 : null
             }
 
             {
               showInputName ?
-                <input className="search soNome" type="text" placeholder="Search Name..." name="searchName" autoComplete="off" onInput={(e) => requestFindByName(e.target.value)} />
+                <input className="search soNome" type="text" placeholder="Search Name..." name="searchName" autoComplete="off" onChange={(e) => (setSearchBy("name"), setSearchTable(e.target.value))} />
                 : null
             }
-
             <select name="optionSearch" defaultValue={'all'} className="search search-options" onChange={(e) => changeOptionSearch(e.target.value)}>
               <option value="all">All</option>
               <option value="id">Id</option>
@@ -496,16 +504,7 @@ function App() {
         {
           showNoProducts ?
             <div className='errorFindId'>
-              <p>We didn´t find a product any products.</p>
-            </div> : null
-        }
-
-
-
-        {
-          showErroNoID ?
-            <div className='errorFindId'>
-              <p>We didn´t find a product with the that data.</p>
+              <p>We didn´t find any products.</p>
             </div> : null
         }
       </div>

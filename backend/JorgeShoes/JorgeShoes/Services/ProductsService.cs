@@ -21,81 +21,92 @@ namespace JorgeShoes.Services
         }
 
 
-        public async Task<ProductResponse> GetProducts(int page, float entries)
+        public async Task<ProductResponse> GetProducts(int page, float entries, string searchBy, string search)
         {
             try
             {
                 var pageCount = Math.Ceiling(_context.Products.Where(n => n.DateDeleted == null).Count() / entries);
+                if (search != null)
+                {
+                    if (searchBy == "all")
+                    {
+                        pageCount = Math.Ceiling(_context.Products.Where(n => n.DateDeleted == null && (n.Id.ToString().Contains(search) || n.Name.Contains(search) || n.Description.Contains(search) || n.Price.ToString().Contains(search))).Count() / entries);
+                    }
+                    else if(searchBy == "name")
+                    {
+                        pageCount = Math.Ceiling(_context.Products.Where(n => n.DateDeleted == null && n.Name.Contains(search)).Count() / entries);
+                    }
+                    else if (searchBy == "id")
+                    {
+                        pageCount = Math.Ceiling(_context.Products.Where(n => n.DateDeleted == null && n.Id.ToString().Contains(search)).Count() / entries);
+                    }
+                    else
+                    {
+                        pageCount = Math.Ceiling(_context.Products.Where(n => n.DateDeleted == null && (n.Id.ToString().Contains(search) || n.Name.Contains(search) || n.Description.Contains(search) || n.Price.ToString().Contains(search))).Count() / entries);
+                    }
+                }
+                
 
                 ProductResponse produto = new ProductResponse();
                 produto.Pages = (int)pageCount;
                 produto.CurrentPage = page;
                 produto.Entries = entries;
+                produto.Search = search;
 
-                if (page > pageCount)
-                {
-                    produto.Success = false;
-                    produto.Erro = true;
-                    return produto;
-                }
-
-
-                if (page < 1)
-                {
-                    produto.Success = false;
-                    produto.Erro = true;
-                    return produto;
-                }
-
-
-
-                var products = await _context.Products
-                    .Where(n => n.DateDeleted == null)
-                    .Skip((page - 1) * (int)entries)
-                    .Take((int)entries)
-                    .ToListAsync();
-
-                produto.Products = products;
-
-                return produto;
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        public async Task<ProductResponse> GetProductsByName(int page, string name)
-        {
-            try 
-            {
-                var pageResults = 15f;
-                var pageCount = Math.Ceiling(_context.Products.Where(n => n.DateDeleted == null && n.Name.Contains(name)).Count() / pageResults);
-
-                ProductResponse produto = new ProductResponse();
-                produto.Pages = (int)pageCount;
-                produto.CurrentPage = page;
-
-                if (page > pageCount)
-                {
-                    produto.Success = false;
-                    produto.Erro = true;
-                    return produto;
-                }
+                //if (page > pageCount)
+                //{
+                //    produto.Success = false;
+                //    produto.Erro = "";
+                //    return produto;
+                //}
 
 
                 if (page < 1)
                 {
                     produto.Success = false;
-                    produto.Erro = true;
+                    produto.Erro = "The page minium is 1";
                     return produto;
                 }
 
                 var products = await _context.Products
-                    .Where(n => n.DateDeleted == null && n.Name.Contains(name))
-                    .Skip((page - 1) * (int)pageResults)
-                    .Take((int)pageResults)
-                    .ToListAsync();
+                                .Where(n => n.DateDeleted == null)
+                                .Skip((page - 1) * (int)entries)
+                                .Take((int)entries)
+                                .ToListAsync();
+                if (search != null)
+                {
+                    if(searchBy == "all")
+                    {
+                        products = await _context.Products
+                        .Where(n => n.DateDeleted == null && (n.Id.ToString().Contains(search) || n.Name.Contains(search) || n.Description.Contains(search) || n.Price.ToString().Contains(search)))
+                        .Skip((page - 1) * (int)entries)
+                        .Take((int)entries)
+                        .ToListAsync();
+                    }else if(searchBy == "name")
+                    {
+                        products = await _context.Products
+                        .Where(n => n.DateDeleted == null && n.Name.Contains(search))
+                        .Skip((page - 1) * (int)entries)
+                        .Take((int)entries)
+                        .ToListAsync();
+                    }
+                    else if (searchBy == "id")
+                    {
+                        products = await _context.Products
+                        .Where(n => n.DateDeleted == null && n.Id.ToString().Contains(search))
+                        .Skip((page - 1) * (int)entries)
+                        .Take((int)entries)
+                        .ToListAsync();
+                    }
+                    else
+                    {
+                        products = await _context.Products
+                        .Where(n => n.DateDeleted == null && (n.Id.ToString().Contains(search) || n.Name.Contains(search) || n.Description.Contains(search) || n.Price.ToString().Contains(search)))
+                        .Skip((page - 1) * (int)entries)
+                        .Take((int)entries)
+                        .ToListAsync();
+                    }
+                }
 
                 produto.Products = products;
 
@@ -123,7 +134,7 @@ namespace JorgeShoes.Services
 
         public async Task UpdateProduct(Product product)
         {
-            product.DateCreated = DateTime.Now;
+            product.DateEdited = DateTime.Now;
             _context.Entry(product).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
@@ -141,20 +152,6 @@ namespace JorgeShoes.Services
             {
                 throw new Exception();
             }
-        }
-
-        public async Task<IEnumerable<Product>> GetProductsById(int id)
-        {
-            IEnumerable<Product> products;
-            if (!string.IsNullOrEmpty(id.ToString()))
-            {
-                products = await _context.Products.Where(b => b.Id.ToString().Contains(id.ToString())).ToListAsync();
-            }
-            else
-            {
-                products = await _context.Products.ToListAsync();
-            }
-            return products;
         }
 
         public async Task<IEnumerable<Product>> GetAll(string search)

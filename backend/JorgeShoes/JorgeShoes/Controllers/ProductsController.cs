@@ -26,11 +26,11 @@ namespace JorgeShoes.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IAsyncEnumerable<Product>>> GetProducts(int page, float entries)
+        public async Task<ActionResult<IAsyncEnumerable<Product>>> GetProducts(int page, float entries, string searchBy, string search)
         {
             try
             {
-                var products = await _productService.GetProducts(page, entries);
+                var products = await _productService.GetProducts(page, entries, searchBy, search);
                 return Ok(products);
             }
             catch
@@ -39,41 +39,6 @@ namespace JorgeShoes.Controllers
             }
         }
 
-        [HttpGet("ProductById")]
-        public async Task<ActionResult<IAsyncEnumerable<Product>>> GetProductsById([FromQuery] int id)
-        {
-            try
-            {
-                var products = await _productService.GetProductsById(id);
-                if (!products.Any())
-                {
-                    return NotFound($"We weren´t able to find products with the id of {id}");
-                }
-                else
-                {
-                    return Ok(products);
-                }
-            }
-            catch
-            {
-                return NotFound($"We weren´t able to find products with the id of {id}");
-            }
-        }
-
-
-        [HttpGet("ProductByName")]
-        public async Task<ActionResult<IAsyncEnumerable<Product>>> GetProductsByName([FromQuery] int page, string name)
-        {
-            try
-            {
-                var products = await _productService.GetProductsByName(page, name);
-                return Ok(products);
-            }
-            catch
-            {
-                throw;
-            }
-        }
 
         [HttpGet("{id:int}", Name="GetProduct")]
         public async Task<ActionResult<Product>> GetProduct(int id)
@@ -93,27 +58,6 @@ namespace JorgeShoes.Controllers
             catch
             {
                 return NotFound($"We weren´t able to find products with the id of {id}"); ;
-            }
-        }
-
-        [HttpGet("GetAll")]
-        public async Task<ActionResult<Product>> GetAll(string search)
-        {
-            try
-            {
-                var product = await _productService.GetAll(search);
-                if (product == null)
-                {
-                    return NotFound($"We weren´t able to find products with the data: {search}");
-                }
-                else
-                {
-                    return Ok(product);
-                }
-            }
-            catch
-            {
-                return NotFound($"We weren´t able to find products with the data: {search}"); ;
             }
         }
 
