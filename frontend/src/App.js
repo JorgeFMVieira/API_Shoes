@@ -46,9 +46,6 @@ function App() {
     price: ''
   });
 
-
-
-
   // Save the productDB that the user will insert into the form
   // Uses setProductInfoSelected to update the state
   const inputProductData = e => {

@@ -21,7 +21,7 @@ namespace JorgeShoes.Services
         }
 
 
-        public async Task<ProductResponse> GetProducts(int page, float entries, string searchBy, string search)
+        public async Task<ProductResponse> GetProducts(int page, float entries, string searchBy, string search, string order)
         {
             try
             {
@@ -45,21 +45,14 @@ namespace JorgeShoes.Services
                         pageCount = Math.Ceiling(_context.Products.Where(n => n.DateDeleted == null && (n.Id.ToString().Contains(search) || n.Name.Contains(search) || n.Description.Contains(search) || n.Price.ToString().Contains(search))).Count() / entries);
                     }
                 }
-                
 
-                ProductResponse produto = new ProductResponse();
+
+                ProductResponse produto = new();
                 produto.Pages = (int)pageCount;
                 produto.CurrentPage = page;
                 produto.Entries = entries;
                 produto.Search = search;
-
-                //if (page > pageCount)
-                //{
-                //    produto.Success = false;
-                //    produto.Erro = "";
-                //    return produto;
-                //}
-
+                produto.Order = order;
 
                 if (page < 1)
                 {
@@ -73,6 +66,7 @@ namespace JorgeShoes.Services
                                 .Skip((page - 1) * (int)entries)
                                 .Take((int)entries)
                                 .ToListAsync();
+
                 if (search != null)
                 {
                     if(searchBy == "all")
@@ -108,7 +102,33 @@ namespace JorgeShoes.Services
                     }
                 }
 
-                produto.Products = products;
+                switch (order)
+                {
+                    case "id_desc":
+                        produto.Products = products.OrderByDescending(s => s.Id).ToList();
+                        break;
+                    case "name_asc":
+                        produto.Products = products.OrderBy(s => s.Name).ToList();
+                        break;
+                    case "name_desc":
+                        produto.Products = products.OrderByDescending(s => s.Name).ToList();
+                        break;
+                    case "descriptions_asc":
+                        produto.Products = products.OrderBy(s => s.Description).ToList();
+                        break;
+                    case "descriptions_desc":
+                        produto.Products = products.OrderByDescending(s => s.Description).ToList();
+                        break;
+                    case "price_asc":
+                        produto.Products = products.OrderBy(s => s.Price).ToList();
+                        break;
+                    case "price_desc":
+                        produto.Products = products.OrderByDescending(s => s.Price).ToList();
+                        break;
+                    default:
+                        produto.Products = products.OrderBy(s => s.Id).ToList();
+                        break;
+                }
 
                 return produto;
             }
