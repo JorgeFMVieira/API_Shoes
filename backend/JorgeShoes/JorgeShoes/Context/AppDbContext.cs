@@ -14,9 +14,6 @@ namespace JorgeShoes.Context
 
         public DbSet<Product> Products { get; set; }
 
-        internal Task GetProductsByName(string name)
-        {
-            throw new NotImplementedException();
-        }
+        public DbSet<ProductType> ProductTypes { get; set; }
     }
 }

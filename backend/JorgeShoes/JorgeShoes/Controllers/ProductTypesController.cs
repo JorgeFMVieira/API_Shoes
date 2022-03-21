@@ -1,36 +1,35 @@
-﻿using JorgeShoes.Context;
-using JorgeShoes.Models;
-using JorgeShoes.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using JorgeShoes.Context;
+using JorgeShoes.Models;
+using JorgeShoes.Services;
 
 namespace JorgeShoes.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductsController : ControllerBase
+    public class ProductTypesController : ControllerBase
     {
-
-        private readonly IProductService _productService;
+        private IProductTypeService _productTypeService;
         private readonly AppDbContext _context;
 
-        public ProductsController(IProductService productService, AppDbContext context)
+        public ProductTypesController(IProductTypeService productTypeService, AppDbContext context)
         {
-            _productService = productService;
+            _productTypeService = productTypeService;
             _context = context;
         }
-
+        
         [HttpGet]
-        public async Task<ActionResult<IAsyncEnumerable<Product>>> GetProducts(int page, float entries, string searchBy, string search, string order)
+        public async Task<ActionResult<IAsyncEnumerable<ProductType>>> GetProductsTypes(int page, float entries, string searchBy, string search)
         {
             try
             {
-                var products = await _productService.GetProducts(page, entries, searchBy, search, order);
+                var products = await _productTypeService.GetProductTypes(page, entries, searchBy, search);
                 return Ok(products);
             }
             catch
@@ -39,13 +38,12 @@ namespace JorgeShoes.Controllers
             }
         }
 
-
-        [HttpGet("{id:int}", Name="GetProduct")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        [HttpGet("{id:int}", Name = "GetProductType")]
+        public async Task<ActionResult<ProductType>> GetProductType(int id)
         {
             try
             {
-                var product = await _productService.GetProduct(id);
+                var product = await _productTypeService.GetProductType(id);
                 if (product == null)
                 {
                     return NotFound($"We weren´t able to find products with the id of {id}");
@@ -62,12 +60,12 @@ namespace JorgeShoes.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(Product product)
+        public async Task<ActionResult> Create(ProductType product)
         {
             try
             {
-                await _productService.CreateProduct(product);
-                return CreatedAtRoute(nameof(GetProduct), new { id = product.Id }, product);
+                await _productTypeService.Create(product);
+                return CreatedAtRoute(nameof(GetProductType), new { id = product.Id }, product);
             }
             catch
             {
@@ -76,13 +74,13 @@ namespace JorgeShoes.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> UpdateProduct(int id, [FromBody]Product product)
+        public async Task<ActionResult> UpdateProduct(int id, [FromBody] ProductType product)
         {
             try
             {
-                if(product.Id == id)
+                if (product.Id == id)
                 {
-                    await _productService.UpdateProduct(product);
+                    await _productTypeService.Update(product);
                     return Ok($"Product width id of {id} was updated");
                 }
                 else
@@ -96,24 +94,25 @@ namespace JorgeShoes.Controllers
             }
         }
 
+
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> DeleteProduct(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             try
             {
-                var product = await _productService.GetProduct(id);
-                if(product == null)
+                var product = await _productTypeService.GetProductType(id);
+                if (product == null)
                 {
                     return NotFound($"We weren´t able to find the product with the id of {id}");
                 }
                 else
                 {
-                    var delete = await _productService.DeleteProduct(product);
-                    if(delete == true)
+                    var delete = await _productTypeService.Delete(product);
+                    if (delete == true)
                     {
                         return Ok(true);
                     }
-                        return Ok(false);
+                    return Ok(false);
                 }
             }
             catch
@@ -122,19 +121,5 @@ namespace JorgeShoes.Controllers
             }
         }
 
-        //[HttpGet("Order")]
-        //public async Task<ActionResult<IAsyncEnumerable<Product>>> Order(string option)
-        //{
-            
-        //    try
-        //    {
-        //        var product = await _productService.Order(option);
-        //        return (ActionResult)product;
-        //    }
-        //    catch
-        //    {
-        //        throw;
-        //    }
-        //}
     }
 }
