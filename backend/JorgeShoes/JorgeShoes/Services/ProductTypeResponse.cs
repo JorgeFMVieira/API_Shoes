@@ -5,9 +5,9 @@ namespace JorgeShoes.Services
 {
     public class ProductTypeResponse
     {
-        public ProductTypeResponse(bool success, bool error)
+        public ProductTypeResponse(string errorMsg, bool error)
         {
-            Success = success;
+            ErrorMsg = errorMsg;
             Error = error;
         }
 
@@ -18,12 +18,11 @@ namespace JorgeShoes.Services
 
         public List<ProductType> ProductType { get; set; }
 
-        public bool Success { get; set; }
+        public string ErrorMsg { get; set; }
         public bool Error { get; set; }
         public int Pages { get; set; }
         public float Entries { get; set; }
         public int CurrentPage { get; set; }
         public string Search { get; set; }
-        public string SearchBy { get; set; }
     }
 }
