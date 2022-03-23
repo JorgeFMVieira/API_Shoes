@@ -6,6 +6,7 @@ namespace JorgeShoes.Models
 {
     public class ProductType
     {
+
         [Key]
         public int ProductTypeID { get; set; }
 
@@ -17,6 +18,6 @@ namespace JorgeShoes.Models
 
         public DateTimeOffset? DateDeleted { get; set; }
 
-        public List<Product> Products { get; set; }
+        public ICollection<Product> Products { get; set; }
     }
 }

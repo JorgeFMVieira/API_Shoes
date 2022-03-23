@@ -86,13 +86,13 @@ namespace JorgeShoes.Migrations
 
             modelBuilder.Entity("JorgeShoes.Models.Product", b =>
                 {
-                    b.HasOne("JorgeShoes.Models.ProductType", "ProductType")
+                    b.HasOne("JorgeShoes.Models.ProductType", "Type")
                         .WithMany("Products")
                         .HasForeignKey("ProductTypeID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ProductType");
+                    b.Navigation("Type");
                 });
 
             modelBuilder.Entity("JorgeShoes.Models.ProductType", b =>

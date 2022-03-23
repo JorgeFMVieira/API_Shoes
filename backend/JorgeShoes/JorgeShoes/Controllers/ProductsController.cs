@@ -1,4 +1,5 @@
 ﻿using JorgeShoes.Context;
+using JorgeShoes.DTO;
 using JorgeShoes.Models;
 using JorgeShoes.Services;
 using Microsoft.AspNetCore.Http;
@@ -17,12 +18,10 @@ namespace JorgeShoes.Controllers
     {
 
         private readonly IProductService _productService;
-        private readonly AppDbContext _context;
 
-        public ProductsController(IProductService productService, AppDbContext context)
+        public ProductsController(IProductService productService)
         {
             _productService = productService;
-            _context = context;
         }
 
         [HttpGet]
@@ -62,12 +61,12 @@ namespace JorgeShoes.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(Product product)
+        public async Task<ActionResult> Create(CreateDTO product)
         {
             try
             {
                 await _productService.CreateProduct(product);
-                return CreatedAtRoute(nameof(GetProduct), new { id = product.Id }, product);
+                return Ok(product);
             }
             catch
             {

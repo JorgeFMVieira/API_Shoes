@@ -27,7 +27,8 @@ namespace JorgeShoes.Models
 
         [Required]
         public int ProductTypeID  { get; set; }
-        public ProductType ProductType { get; set; }
+        public ProductType Type { get; set; }
+        //public ProductType ProductType { get; set; }
 
     }
 }

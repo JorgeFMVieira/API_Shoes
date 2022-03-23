@@ -1,7 +1,9 @@
 ﻿using JorgeShoes.Context;
+using JorgeShoes.DTO;
 using JorgeShoes.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,6 +15,14 @@ namespace JorgeShoes.Services
         public ProductTypeService(AppDbContext context)
         {
             _context = context;
+        }
+
+        public async Task<List<ProductTypeDTO>> GetAllType()
+        {
+            var table = await _context.ProductTypes.Where(n => n.DateDeleted == null)
+                    .Select(x => new ProductTypeDTO(x))    
+                    .ToListAsync();
+            return table;
         }
 
         public async Task<ProductTypeResponse> GetProductsType(int page, float entries, string search)
@@ -86,13 +96,6 @@ namespace JorgeShoes.Services
         }
 
         public async Task<ProductType> GetProductType(int id)
-        {
-            var product = await _context.ProductTypes.FindAsync(id);
-            return product;
-        }
-
-
-        public async Task<ProductType> GetProduct(int id)
         {
             var product = await _context.ProductTypes.FindAsync(id);
             return product;

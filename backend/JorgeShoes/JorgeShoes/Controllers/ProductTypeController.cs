@@ -36,6 +36,20 @@ namespace JorgeShoes.Controllers
             }
         }
 
+        [HttpGet("id:int")]
+        public async Task<ActionResult> GetAllType()
+        {
+            try
+            {
+                var products = await _productTypeService.GetAllType();
+                return Ok(products);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult<ProductType>> Create(ProductType productType)
         {

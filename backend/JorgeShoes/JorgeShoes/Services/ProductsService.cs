@@ -1,4 +1,5 @@
 ﻿using JorgeShoes.Context;
+using JorgeShoes.DTO;
 using JorgeShoes.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,43 +26,29 @@ namespace JorgeShoes.Services
         {
             try
             {
-                var pageCount = Math.Ceiling(_context.Products.Where(n => n.DateDeleted == null).Count() / entries);
+                var pageCount = Math.Ceiling(_context.Products.Include(x => x.Type).Where(n => n.DateDeleted == null).Count() / entries);
                 if (search != null)
                 {
                     if (searchBy == "all")
                     {
-                        pageCount = Math.Ceiling(_context.Products.Where(n => n.DateDeleted == null && (n.Id.ToString().Contains(search) || n.Name.Contains(search) || n.Description.Contains(search) || n.Price.ToString().Contains(search))).Count() / entries);
+                        pageCount = Math.Ceiling(_context.Products.Include(x => x.Type).Where(n => n.DateDeleted == null && (n.Id.ToString().Contains(search) || n.Name.Contains(search) || n.Description.Contains(search) || n.Price.ToString().Contains(search))).Count() / entries);
                     }
                     else if(searchBy == "name")
                     {
-                        pageCount = Math.Ceiling(_context.Products.Where(n => n.DateDeleted == null && n.Name.Contains(search)).Count() / entries);
+                        pageCount = Math.Ceiling(_context.Products.Include(x => x.Type).Where(n => n.DateDeleted == null && n.Name.Contains(search)).Count() / entries);
                     }
                     else if (searchBy == "id")
                     {
-                        pageCount = Math.Ceiling(_context.Products.Where(n => n.DateDeleted == null && n.Id.ToString().Contains(search)).Count() / entries);
+                        pageCount = Math.Ceiling(_context.Products.Include(x => x.Type).Where(n => n.DateDeleted == null && n.Id.ToString().Contains(search)).Count() / entries);
                     }
                     else
                     {
-                        pageCount = Math.Ceiling(_context.Products.Where(n => n.DateDeleted == null && (n.Id.ToString().Contains(search) || n.Name.Contains(search) || n.Description.Contains(search) || n.Price.ToString().Contains(search))).Count() / entries);
+                        pageCount = Math.Ceiling(_context.Products.Include(x => x.Type).Where(n => n.DateDeleted == null && (n.Id.ToString().Contains(search) || n.Name.Contains(search) || n.Description.Contains(search) || n.Price.ToString().Contains(search))).Count() / entries);
                     }
                 }
 
-
-                ProductResponse produto = new();
-                produto.Pages = (int)pageCount;
-                produto.CurrentPage = page;
-                produto.Entries = entries;
-                produto.Search = search;
-                produto.Order = order;
-
-                if (page < 1)
-                {
-                    produto.Success = false;
-                    produto.Erro = "The page minium is 1";
-                    return produto;
-                }
-
                 var products = await _context.Products
+                                .Include(x => x.Type)
                                 .Where(n => n.DateDeleted == null)
                                 .Skip((page - 1) * (int)entries)
                                 .Take((int)entries)
@@ -102,32 +89,48 @@ namespace JorgeShoes.Services
                     }
                 }
 
-                switch (order)
+                //switch (order)
+                //{
+                //    case "id_desc":
+                //        produto.Products = products.OrderByDescending(s => s.Id).ToList();
+                //        break;
+                //    case "name_asc":
+                //        produto.Products = products.OrderBy(s => s.Name).ToList();
+                //        break;
+                //    case "name_desc":
+                //        produto.Products = products.OrderByDescending(s => s.Name).ToList();
+                //        break;
+                //    case "descriptions_asc":
+                //        produto.Products = products.OrderBy(s => s.Description).ToList();
+                //        break;
+                //    case "descriptions_desc":
+                //        produto.Products = products.OrderByDescending(s => s.Description).ToList();
+                //        break;
+                //    case "price_asc":
+                //        produto.Products = products.OrderBy(s => s.Price).ToList();
+                //        break;
+                //    case "price_desc":
+                //        produto.Products = products.OrderByDescending(s => s.Price).ToList();
+                //        break;
+                //    default:
+                //        produto.Products = products.OrderBy(s => s.Id).ToList();
+                //        break;
+                //}
+
+                ProductResponse produto = new();
+                produto.Products = products.Select(t => new ListProductType(t)).ToList();
+                produto.Pages = (int)pageCount;
+                produto.CurrentPage = page;
+                produto.Entries = entries;
+                produto.Search = search;
+                produto.SearchBy = searchBy;
+                produto.Order = order;
+
+                if (page < 1)
                 {
-                    case "id_desc":
-                        produto.Products = products.OrderByDescending(s => s.Id).ToList();
-                        break;
-                    case "name_asc":
-                        produto.Products = products.OrderBy(s => s.Name).ToList();
-                        break;
-                    case "name_desc":
-                        produto.Products = products.OrderByDescending(s => s.Name).ToList();
-                        break;
-                    case "descriptions_asc":
-                        produto.Products = products.OrderBy(s => s.Description).ToList();
-                        break;
-                    case "descriptions_desc":
-                        produto.Products = products.OrderByDescending(s => s.Description).ToList();
-                        break;
-                    case "price_asc":
-                        produto.Products = products.OrderBy(s => s.Price).ToList();
-                        break;
-                    case "price_desc":
-                        produto.Products = products.OrderByDescending(s => s.Price).ToList();
-                        break;
-                    default:
-                        produto.Products = products.OrderBy(s => s.Id).ToList();
-                        break;
+                    produto.Success = false;
+                    produto.Erro = "The page minium is 1";
+                    return produto;
                 }
 
                 return produto;
@@ -145,10 +148,10 @@ namespace JorgeShoes.Services
             return product;
         }
 
-        public async Task CreateProduct(Product product)
+        public async Task CreateProduct(CreateDTO product)
         {
             product.DateCreated = DateTime.Now;
-            _context.Products.Add(product);
+            _context.Products.Add(product.ToEntity());
             await _context.SaveChangesAsync();
         }
 

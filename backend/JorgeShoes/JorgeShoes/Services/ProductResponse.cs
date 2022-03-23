@@ -1,4 +1,5 @@
-﻿using JorgeShoes.Models;
+﻿using JorgeShoes.DTO;
+using JorgeShoes.Models;
 using System.Collections.Generic;
 
 namespace JorgeShoes
@@ -13,10 +14,10 @@ namespace JorgeShoes
 
         public ProductResponse()
         {
-            Products = new List<Product>();
+            Products = new List<ListProductType>();
         }
 
-        public List<Product> Products { get; set; } = new List<Product>();
+        public List<ListProductType> Products { get; set; } = new List<ListProductType>();
 
         public string SearchBy { get; set; }
         public string Search { get; set; }

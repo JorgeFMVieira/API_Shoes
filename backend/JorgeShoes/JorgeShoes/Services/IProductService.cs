@@ -1,4 +1,5 @@
-﻿using JorgeShoes.Models;
+﻿using JorgeShoes.DTO;
+using JorgeShoes.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace JorgeShoes.Services
     {
         Task<ProductResponse> GetProducts(int page, float entries, string searchBy, string search, string order);
         Task<Product> GetProduct(int id);
-        Task CreateProduct(Product product);
+        Task CreateProduct(CreateDTO product);
         Task UpdateProduct(Product product);
         Task<bool> DeleteProduct(Product product);
     }

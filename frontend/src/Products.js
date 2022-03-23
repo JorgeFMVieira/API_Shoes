@@ -15,7 +15,7 @@ function Products() {
   const urlAPI = "https://localhost:44384/api/Products?page=" + page + "&entries=" + entriesPerTable + "&searchby=" + searchBy + "&search=" + searchTable;
 
   const [data, setData] = useState([]);
-
+  const [dataType, setDataType] = useState([]);
 
   const [productDB, setProductDB] = useState([]);
 
@@ -43,8 +43,16 @@ function Products() {
     id: '',
     name: '',
     description: '',
-    price: ''
+    price: '',
+    type: ''
   });
+
+  const [productTypeSelect, setProductTypeSelect] = useState({
+    name: '',
+    description: '',
+    price: '',
+    productTypeID: ''
+  })
 
   // Save the productDB that the user will insert into the form
   // Uses setProductInfoSelected to update the state
@@ -53,6 +61,15 @@ function Products() {
     setProductInfoSelected({
       ...productInfoSelected, [name]: value
     });
+    console.log(productInfoSelected);
+  }
+
+  const productTypeData = e => {
+    const { name, value } = e.target;
+    setProductTypeSelect({
+      ...productTypeSelect, [name]: value
+    });
+    console.log(productTypeSelect);
   }
 
   const [totalpages, setTotalPages] = useState(0);
@@ -63,7 +80,6 @@ function Products() {
       .then(response => {
         setData(response.data.products);
         setTotalPages(response.data.pages);
-        console.log(response.data);
         setShowNoProducts(false);
         if(response.data.products.length == 0){
           setShowNoProducts(true);
@@ -77,16 +93,25 @@ function Products() {
       });
   }
 
+  const requestGetType = async () => {
+    await axios.get("https://localhost:44384/api/ProductType/id:int")
+        .then(response => {
+          setDataType(response.data);
+        }).catch(error => {
+          console.log(error);
+        })
+  }
+
   const requestPost = async () => {
-    delete productInfoSelected.id;
-    if (productInfoSelected.name == "" || productInfoSelected.description == "" || productInfoSelected.price == "") {
+    delete productTypeSelect.id;
+    if (productTypeSelect.name == "" || productTypeSelect.description == "" || productTypeSelect.price == "") {
       toast.error('Please, fill  all fields!');
       return;
     }
 
-    if (productInfoSelected.price.includes(',')) {
-      const priceReplaced = productInfoSelected.price.replace(',', '.');
-      productInfoSelected.price = priceReplaced;
+    if (productTypeSelect.price.includes(',')) {
+      const priceReplaced = productTypeSelect.price.replace(',', '.');
+      productTypeSelect.price = priceReplaced;
     }
 
     if (isNaN(productInfoSelected.price)) {
@@ -94,16 +119,25 @@ function Products() {
       return;
     }
 
-    productInfoSelected.price = parseFloat(productInfoSelected.price)
-    await axios.post(urlAPI, productInfoSelected)
+    if(productTypeSelect.price == 50){
+      productTypeSelect.price = 33;
+    }
+
+
+    console.log(productTypeSelect);
+
+    productTypeSelect.price = parseFloat(productTypeSelect.price)
+    await axios.post(urlAPI, productTypeSelect)
       .then(response => {
+        console.log(response.data);
         setProductDB(productDB.concat(response.data));
         setShowCreate(false);
         setFilteredResults("");
         toast.success('A new product with the id ' + response.data.id + ' has been created!');
         requestGet();
-      }).catch(() => {
+      }).catch(error => {
         toast.error('We weren´t able to create the product');
+        console.log(error);
       });
   }
 
@@ -145,11 +179,13 @@ function Products() {
     const urlEdit = ("https://localhost:44384/api/Products/" + productInfoSelected.id);
     await axios.put(urlEdit, productInfoSelected)
       .then(response => {
+        console.log(response.data);
         productDB.map(product => {
           if (product.id === productInfoSelected.id) {
             product.name = response.data.name;
             product.description = response.data.description;
             product.price = response.data.price;
+            product.type = response.data.type;
           }
         });
         requestGet();
@@ -388,6 +424,7 @@ function Products() {
 
   useEffect(() => {
     requestGet();
+    requestGetType();
   }, [entriesPerTable, page, inputValue, searchBy, searchTable]);
 
   return (
@@ -446,6 +483,7 @@ function Products() {
                   <th>Name</th>
                   <th>Description</th>
                   <th>Price</th>
+                  <th>Type</th>
                   <th>Options</th>
                 </tr>
               </thead>
@@ -456,6 +494,7 @@ function Products() {
                     <td>{product.name}</td>
                     <td>{product.description}</td>
                     <td>{product.price}</td>
+                    <td>{product.type}</td>
                     <td>
                       <button className="btn edit-btn" onClick={() => selectProduct(product, "Edit")}>Edit</button>
                       <button className="btn delete-btn" onClick={() => selectProduct(product, "Delete")}>Delete</button>
@@ -483,15 +522,24 @@ function Products() {
               <div className="modalBody">
                 <div className="modalItem">
                   <label htmlFor="name">Name:</label>
-                  <input type="text" id="name" name="name" onChange={inputProductData} />
+                  <input type="text" id="name" name="name" onChange={productTypeData} />
                 </div>
                 <div className="modalItem">
                   <label htmlFor="description">Description:</label>
-                  <input type="text" id="description" name="description" onChange={inputProductData} />
+                  <input type="text" id="description" name="description" onChange={productTypeData} />
                 </div>
                 <div className="modalItem">
                   <label htmlFor="price">Price:</label>
-                  <input type="text" id="price" name="price" onChange={inputProductData} />
+                  <input type="text" id="price" name="price" onChange={productTypeData} />
+                </div>
+                <div className="modalItem">
+                  <label htmlFor="type">Type:</label>
+                  <select name="productTypeID" onChange={productTypeData} type="text">
+                      <option key="1" defaultValue="Choose an option" hidden>Choose an option</option>
+                      {dataType.map((productType, index) => (
+                        <option key={index} value={productType.productTypeID}>{productType.productTypeID}</option>
+                      ))}
+                  </select>
                 </div>
               </div>
               <div className="modalBtns">
