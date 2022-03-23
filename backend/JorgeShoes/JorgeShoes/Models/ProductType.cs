@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace JorgeShoes.Models
@@ -6,7 +7,7 @@ namespace JorgeShoes.Models
     public class ProductType
     {
         [Key]
-        public int Id { get; set; }
+        public int ProductTypeID { get; set; }
 
         [Required]
         [MaxLength(200)]
@@ -15,5 +16,7 @@ namespace JorgeShoes.Models
         public DateTime? DateEdited { get; set; }
 
         public DateTimeOffset? DateDeleted { get; set; }
+
+        public List<Product> Products { get; set; }
     }
 }

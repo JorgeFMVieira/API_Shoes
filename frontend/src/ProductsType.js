@@ -38,7 +38,7 @@ function ProductsType() {
 
   // Create the state of productInfoSelected
   const [productInfoSelected, setProductInfoSelected] = useState({
-    id: '',
+    productTypeID: '',
     type: ''
   });
 
@@ -59,7 +59,6 @@ function ProductsType() {
       .then(response => {
         setData(response.data.productType);
         setTotalPages(response.data.pages);
-        console.log(response.data);
         setShowNoProducts(false);
         if(response.data.productType.length == 0){
           setShowNoProducts(true);
@@ -74,17 +73,21 @@ function ProductsType() {
   }
 
   const requestPost = async () => {
-    delete productInfoSelected.id;
+    delete productInfoSelected.productTypeID;
     if (productInfoSelected.type == "") {
       toast.error('Please, fill  all fields!');
       return;
     }
     await axios.post(urlAPI, productInfoSelected)
       .then(response => {
-        setProductDB(productDB.concat(response.data));
-        setShowCreate(false);
-        setFilteredResults("");
-        toast.success('A new product with the id ' + response.data.id + ' has been created!');
+        if(response.data.productTypeID != 0){
+          setProductDB(productDB.concat(response.data));
+          setShowCreate(false);
+          setFilteredResults("");
+          toast.success('A new product with the id ' + response.data.type + ' has been created!');
+        }else{
+          toast.error('A product type with the type of ' + response.data.type + ' already exists.');
+        }
         requestGet();
       }).catch(() => {
         toast.error('We weren´t able to create the product type');
@@ -95,6 +98,7 @@ function ProductsType() {
     const urlWithId = ("https://localhost:44384/api/ProductType/" + id);
     await axios.delete(urlWithId)
       .then(response => {
+        console.log(response.data);
         setShowDelete(false);
         toast.success('The product type: ' + response.data.type + ' was deleted');
         if (response.data == true && data.length == 1) {
@@ -115,12 +119,12 @@ function ProductsType() {
         toast.error('Please, fill  all fields!');
         return;
       }
-    const urlEdit = ("https://localhost:44384/api/ProductType/" + productInfoSelected.id);
+    const urlEdit = ("https://localhost:44384/api/ProductType/" + productInfoSelected.productTypeID);
     await axios.put(urlEdit, productInfoSelected)
       .then(response => {
         productDB.map(product => {
             console.log(productInfoSelected);
-          if (product.id === productInfoSelected.id) {
+          if (product.productTypeID === productInfoSelected.productTypeID) {
             product.type = response.data.type;
           }
         });
@@ -308,7 +312,7 @@ function ProductsType() {
               </thead>
               <tbody>
                 {data.map(product => (
-                  <tr key={product.id}>
+                  <tr key={product.productTypeID}>
                     <td>{product.type}</td>
                     <td>
                       <button className="btn edit-btn" onClick={() => selectProduct(product, "Edit")}>Edit</button>
@@ -359,7 +363,7 @@ function ProductsType() {
                 </div>
               </div>
               <div className="modalBtns">
-                <button className="btn cancelBtn" onClick={() => requestDelete(parseInt(productInfoSelected.id))}>Delete</button>
+                <button className="btn cancelBtn" onClick={() => requestDelete(parseInt(productInfoSelected.productTypeID))}>Delete</button>
                 <button className="btn createNew" onClick={() => setShowDelete(false)}>Cancel</button>
               </div>
             </div>
@@ -378,7 +382,7 @@ function ProductsType() {
                 </div>
               </div>
               <div className="modalBtns">
-                <button className="btn createNew" onClick={() => requestPut(parseInt(productInfoSelected.id))}>Save</button>
+                <button className="btn createNew" onClick={() => requestPut(parseInt(productInfoSelected.productTypeID))}>Save</button>
                 <button className="btn cancelBtn" onClick={() => setShowEdit(false)}>Cancel</button>
               </div>
             </div>

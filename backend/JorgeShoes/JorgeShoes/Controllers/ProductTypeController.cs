@@ -54,7 +54,7 @@ namespace JorgeShoes.Controllers
         {
             try
             {
-                if (productType.Id == id)
+                if (productType.ProductTypeID == id)
                 {
                     await _productTypeService.Update(productType);
                     return Ok($"Product Type {productType.Type} was edited");
@@ -82,12 +82,12 @@ namespace JorgeShoes.Controllers
                 }
                 else
                 {
-                    var delete = await _productTypeService.Delete(product);
-                    if (delete == true)
+                    var delete = _productTypeService.Delete(product);
+                    if (delete != null)
                     {
-                        return Ok(true);
+                        return Ok(product);
                     }
-                    return Ok(false);
+                    return Ok("We weren´t able to delete the product");
                 }
             }
             catch

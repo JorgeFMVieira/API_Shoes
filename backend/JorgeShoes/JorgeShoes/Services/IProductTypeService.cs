@@ -7,8 +7,8 @@ namespace JorgeShoes.Services
     {
         Task<ProductTypeResponse> GetProductsType(int page, float entries, string search);
         Task<ProductType> GetProductType(int id);
-        Task Create(ProductType productType);
+        Task<ProductTypeResponse> Create(ProductType productType);
         Task Update(ProductType productType);
-        Task<bool> Delete(ProductType productType);
+        Task Delete(ProductType productType);
     }
 }

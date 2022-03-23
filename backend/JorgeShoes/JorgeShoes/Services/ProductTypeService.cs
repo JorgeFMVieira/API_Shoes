@@ -91,13 +91,25 @@ namespace JorgeShoes.Services
             return product;
         }
 
-        public async Task Create(ProductType productType)
+        public async Task<ProductTypeResponse> Create(ProductType productType)
         {
             try
             {
-                productType.DateCreated = DateTime.Now;
-                _context.ProductTypes.Add(productType);
-                await _context.SaveChangesAsync();
+                ProductTypeResponse productTypeResponse = new();
+                var checkExist = _context.ProductTypes.Where(x => x.Type == productType.Type && x.DateDeleted == null);
+                if (checkExist.Any())
+                {
+                    productTypeResponse.Error = true;
+                    productTypeResponse.ErrorMsg = "That product type already exists.";
+                    return productTypeResponse;
+                }
+                else
+                {
+                    productType.DateCreated = DateTime.Now;
+                    _context.ProductTypes.Add(productType);
+                    await _context.SaveChangesAsync();
+                }
+                return productTypeResponse;
             }
             catch
             {
@@ -119,14 +131,13 @@ namespace JorgeShoes.Services
             }
         }
 
-        public async Task<bool> Delete(ProductType productType)
+        public async Task Delete(ProductType productType)
         {
             try
             {
                 productType.DateDeleted = DateTime.Now;
                 _context.Entry(productType).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
-                return true;
             }
             catch
             {
