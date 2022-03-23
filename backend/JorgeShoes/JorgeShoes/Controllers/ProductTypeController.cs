@@ -4,6 +4,7 @@ using JorgeShoes.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace JorgeShoes.Controllers
@@ -56,8 +57,19 @@ namespace JorgeShoes.Controllers
             {
                 if (productType.ProductTypeID == id)
                 {
-                    await _productTypeService.Update(productType);
-                    return Ok($"Product Type {productType.Type} was edited");
+                    var checkExist = _context.ProductTypes.Where(x => x.Type == productType.Type && x.DateDeleted == null && x.ProductTypeID != productType.ProductTypeID).FirstOrDefault();
+                    if (checkExist == null)
+                    {
+                        await _productTypeService.Update(productType);
+                        return Ok(productType);
+                    }
+                    else
+                    {
+                        ProductTypeResponse productTypeResponse = new();
+                        productTypeResponse.Error = true;
+                        productTypeResponse.ErrorMsg = "That product type already exists.";
+                        return Ok(productTypeResponse);
+                    }
                 }
                 else
                 {

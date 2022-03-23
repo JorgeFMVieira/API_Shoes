@@ -405,18 +405,18 @@ function Products() {
           <div className="searchItems-Inputs">
             {
               showSearchInput ?
-                <input className="search todo" type="text" placeholder="Search..." name="search" autoComplete="off" onChange={(e) => (setSearchBy("all"), setSearchTable(e.target.value))} />
+                <input className="search todo" type="search" placeholder="Search..." name="search" autoComplete="off" onChange={(e) => (setSearchBy("all"), setSearchTable(e.target.value))} />
                 : null
             }
             {
               showInputId ?
-                <input className="search soId" type="text" placeholder="Search ID..." name="searchId" autoComplete="off" onChange={(e) => (setSearchBy("id"), setSearchTable(e.target.value))} />
+                <input className="search soId" type="search" placeholder="Search ID..." name="searchId" autoComplete="off" onChange={(e) => (setSearchBy("id"), setSearchTable(e.target.value))} />
                 : null
             }
 
             {
               showInputName ?
-                <input className="search soNome" type="text" placeholder="Search Name..." name="searchName" autoComplete="off" onChange={(e) => (setSearchBy("name"), setSearchTable(e.target.value))} />
+                <input className="search soNome" type="search" placeholder="Search Name..." name="searchName" autoComplete="off" onChange={(e) => (setSearchBy("name"), setSearchTable(e.target.value))} />
                 : null
             }
             <select name="optionSearch" defaultValue={'all'} className="search search-options" onChange={(e) => changeOptionSearch(e.target.value)}>

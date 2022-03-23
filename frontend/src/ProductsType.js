@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Nav from './Nav';
 
 function ProductsType() {
- const [page, setPage] = useState(1);
+  const [page, setPage] = useState(1);
   const [pageFilter, setPageFilter] = useState(1);
   const [entriesPerTable, setEntriesPerTable] = useState(5);
   const [searchTable, setSearchTable] = useState("");
@@ -21,19 +21,9 @@ function ProductsType() {
   const [showCreate, setShowCreate] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
-  const [showSearch, setShowSearch] = useState(false);
-
-  const [filteredResults, setFilteredResults] = useState([]);
-
-
-  const [produto, setProduto] = useState([]);
 
   const [showErroNoID, setShowErroNoId] = useState(false);
-  const [showTable, setShowTable] = useState(true);
 
-  const [showInputId, setShowInputId] = useState(false);
-  const [showInputName, setShowInputName] = useState(false);
-  const [showSearchInput, setShowSearchInput] = useState(true);
   const [showNoProducts, setShowNoProducts] = useState(false);
 
   // Create the state of productInfoSelected
@@ -81,9 +71,7 @@ function ProductsType() {
     await axios.post(urlAPI, productInfoSelected)
       .then(response => {
         if(response.data.productTypeID != 0){
-          setProductDB(productDB.concat(response.data));
           setShowCreate(false);
-          setFilteredResults("");
           toast.success('A new product with the id ' + response.data.type + ' has been created!');
         }else{
           toast.error('A product type with the type of ' + response.data.type + ' already exists.');
@@ -98,7 +86,7 @@ function ProductsType() {
     const urlWithId = ("https://localhost:44384/api/ProductType/" + id);
     await axios.delete(urlWithId)
       .then(response => {
-        console.log(response.data);
+        requestGet();
         setShowDelete(false);
         toast.success('The product type: ' + response.data.type + ' was deleted');
         if (response.data == true && data.length == 1) {
@@ -108,7 +96,6 @@ function ProductsType() {
             setShowNoProducts(true);
           }
         }
-        requestGet();
       }).catch(error => {
         console.log(error);
       });
@@ -122,15 +109,13 @@ function ProductsType() {
     const urlEdit = ("https://localhost:44384/api/ProductType/" + productInfoSelected.productTypeID);
     await axios.put(urlEdit, productInfoSelected)
       .then(response => {
-        productDB.map(product => {
-            console.log(productInfoSelected);
-          if (product.productTypeID === productInfoSelected.productTypeID) {
-            product.type = response.data.type;
-          }
-        });
+        if(response.data.error == true){
+          toast.error('The product: ' + productInfoSelected.type + ' already exists');
+        }else{
+          setShowEdit(false);
+          toast.success('The product: ' + productInfoSelected.type + ' was edited');
+        }
         requestGet();
-        setShowEdit(false);
-        toast.success('The product: ' + productInfoSelected.type + ' was edited');
       }).catch(error => {
         console.log(error);
       })
@@ -282,12 +267,12 @@ function ProductsType() {
         <div className="tableHeader">
           <h1>Products Type</h1>
         </div>
-        <button className="btn createNew" onClick={() => setShowCreate(true)}>Create New Product</button>
+        <button className="btn createNew" onClick={() => setShowCreate(true)}>Create New Product Type</button>
 
         <div className="searchItems">
           <div className="searchItems-Inputs">
 
-            <input className="search todo" type="text" placeholder="Search..." name="search" autoComplete="off" onChange={(e) => setSearchTable(e.target.value)} />
+            <input className="search todo" type="search" placeholder="Search..." name="search" autoComplete="off" onChange={(e) => setSearchTable(e.target.value)} />
           </div>
           {/* <input type="number" name="" id="" onInput={(e) => changeEntriesPerTable(e.target.value)} /> */}
           <select className="search todo" onInput={(e) => changeEntriesPerTable(e.target.value)} >
@@ -374,35 +359,16 @@ function ProductsType() {
         showEdit ?
           <div className="modalWindow">
             <div className="containerModal">
-              <div className="modalTitle"><h3>Edit Product - {productInfoSelected.type}</h3></div>
+              <div className="modalTitle"><h3>Edit Product</h3></div>
               <div className="modalBody">
                 <div className="modalItem">
-                  <label htmlFor="name">Type:</label>
-                  <input type="text" id="name" name="name" value={productInfoSelected.type} onChange={inputProductData} />
+                  <label htmlFor="type">Type:</label>
+                  <input type="text" id="type" name="type" value={productInfoSelected.type} onChange={inputProductData} />
                 </div>
               </div>
               <div className="modalBtns">
                 <button className="btn createNew" onClick={() => requestPut(parseInt(productInfoSelected.productTypeID))}>Save</button>
                 <button className="btn cancelBtn" onClick={() => setShowEdit(false)}>Cancel</button>
-              </div>
-            </div>
-          </div> : null
-      }
-
-      {
-        showSearch ?
-          <div className="modalWindow">
-            <div className="containerModal">
-              <div className="modalTitle"><h3>Product - </h3></div>
-              <div className="modalBody">
-                <div className="modalItem">
-                  <label htmlFor="name">Type:</label>
-                  <input type="text" id="name" name="name" />
-                </div>
-              </div>
-              <div className="modalBtns">
-                <button className="btn createNew">Save</button>
-                <button className="btn cancelBtn">Cancel</button>
               </div>
             </div>
           </div> : null

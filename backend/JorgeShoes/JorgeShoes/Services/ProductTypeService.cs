@@ -91,6 +91,13 @@ namespace JorgeShoes.Services
             return product;
         }
 
+
+        public async Task<ProductType> GetProduct(int id)
+        {
+            var product = await _context.ProductTypes.FindAsync(id);
+            return product;
+        }
+
         public async Task<ProductTypeResponse> Create(ProductType productType)
         {
             try
@@ -121,7 +128,7 @@ namespace JorgeShoes.Services
         {
             try
             {
-                 productType.DateEdited = DateTime.Now;
+                productType.DateEdited = DateTime.Now;
                 _context.Entry(productType).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
