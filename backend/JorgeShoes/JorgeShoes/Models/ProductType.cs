@@ -8,7 +8,7 @@ namespace JorgeShoes.Models
     {
 
         [Key]
-        public int ProductTypeID { get; set; }
+        public int ProductTypeId { get; set; }
 
         [Required]
         [MaxLength(200)]

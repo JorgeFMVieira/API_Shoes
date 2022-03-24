@@ -37,21 +37,27 @@ function Products() {
   const [showInputName, setShowInputName] = useState(false);
   const [showSearchInput, setShowSearchInput] = useState(true);
   const [showNoProducts, setShowNoProducts] = useState(false);
+  const [showBtnCreate, setShowBtnCreate] = useState(true);
+  const [showSearchOption, setShowSearchOption] = useState(true);
+  const [showEntries, setShowEntries] = useState(false);
+  
 
   // Create the state of productInfoSelected
   const [productInfoSelected, setProductInfoSelected] = useState({
     id: '',
     name: '',
     description: '',
+    quantity: '',
     price: '',
-    type: ''
+    productTypeId: ''
   });
 
   const [productTypeSelect, setProductTypeSelect] = useState({
     name: '',
     description: '',
+    quantity: '',
     price: '',
-    productTypeID: ''
+    productTypeId: ''
   })
 
   // Save the productDB that the user will insert into the form
@@ -69,7 +75,6 @@ function Products() {
     setProductTypeSelect({
       ...productTypeSelect, [name]: value
     });
-    console.log(productTypeSelect);
   }
 
   const [totalpages, setTotalPages] = useState(0);
@@ -97,6 +102,11 @@ function Products() {
     await axios.get("https://localhost:44384/api/ProductType/id:int")
         .then(response => {
           setDataType(response.data);
+          if(response.data.length === 0){
+            setShowTable(false);
+          }else{
+            setShowTable(true);
+          }
         }).catch(error => {
           console.log(error);
         })
@@ -119,21 +129,14 @@ function Products() {
       return;
     }
 
-    if(productTypeSelect.price == 50){
-      productTypeSelect.price = 33;
-    }
-
-
-    console.log(productTypeSelect);
-
     productTypeSelect.price = parseFloat(productTypeSelect.price)
     await axios.post(urlAPI, productTypeSelect)
       .then(response => {
-        console.log(response.data);
         setProductDB(productDB.concat(response.data));
         setShowCreate(false);
         setFilteredResults("");
-        toast.success('A new product with the id ' + response.data.id + ' has been created!');
+        console.log(response.data);
+        toast.success('A new product with the name ' + response.data.name + ' has been created!');
         requestGet();
       }).catch(error => {
         toast.error('We weren´t able to create the product');
@@ -146,7 +149,7 @@ function Products() {
     await axios.delete(urlWithId)
       .then(response => {
         setShowDelete(false);
-        toast.success('The product with the id ' + id + ' was deleted');
+        toast.success('The product with the name ' + response.data.name + ' was deleted');
         if (response.data == true && data.length == 1) {
           if (page != 1) {
             setPage(page - 1);
@@ -176,23 +179,19 @@ function Products() {
 
     productInfoSelected.price = parseFloat(productInfoSelected.price)
 
+    setProductInfoSelected(productTypeSelect);
+    console.log(productInfoSelected);
+
     const urlEdit = ("https://localhost:44384/api/Products/" + productInfoSelected.id);
     await axios.put(urlEdit, productInfoSelected)
       .then(response => {
-        console.log(response.data);
-        productDB.map(product => {
-          if (product.id === productInfoSelected.id) {
-            product.name = response.data.name;
-            product.description = response.data.description;
-            product.price = response.data.price;
-            product.type = response.data.type;
-          }
-        });
         requestGet();
         setShowEdit(false);
-        toast.success('The product with the id ' + productInfoSelected.id + ' was edited');
+        toast.success('The product with the name ' + productInfoSelected.name + ' was edited');
+        console.log(productInfoSelected);
       }).catch(error => {
         console.log(error);
+        console.log(productInfoSelected);
       })
   }
 
@@ -205,57 +204,6 @@ function Products() {
     }
   }
 
-  const requestFindById = async (searchId) => {
-    const urlFind = (urlAPI + "/ProductById?id=" + searchId);
-    await axios.get(urlFind)
-      .then(response => {
-        setShowErroNoId(false);
-        setShowTable(true);
-        if (searchId !== '') {
-          setProduto(response.data);
-          setFilteredResults(" ");
-        } else {
-          setFilteredResults("");
-        }
-      }).catch(() => {
-        if (searchId == '') {
-          setShowTable(true);
-          setFilteredResults("");
-        } else {
-          setShowTable(false);
-          setShowErroNoId(true);
-        }
-      })
-  }
-
-  const requestSearch = async (search) => {
-    const urlFind = (urlAPI + "&search=" + search);
-    await axios.get(urlFind)
-      .then(response => {
-        // Desativa os erros, caso estejam ativos
-        setShowErroNoId(false);
-        // Mostra a tabela caso esteja vazia
-        setShowTable(true);
-        if (search !== '') {
-          setProduto(response.data);
-          // Coloca o filtro com algo dentro para mostrar a tabela filtrada
-          setFilteredResults(" ");
-        } else {
-          setShowTable(true);
-          setFilteredResults("");
-        }
-      }).catch(() => {
-        if (search == '') {
-          setShowTable(true);
-          setFilteredResults("");
-        } else {
-          setShowTable(false);
-          setShowErroNoId(true);
-        }
-      })
-  }
-
-
   const changeEntriesPerTable = async (e) => {
     await axios.get(urlAPI)
       .then(response => {
@@ -266,32 +214,7 @@ function Products() {
       });
   }
 
-  const requestFindByName = async (searchName) => {
-    const urlFind = ("https://localhost:44384/api/Products/ProductByName?page=" + pageFilter + "&name=" + searchName);
-    await axios.get(urlFind)
-      .then(response => {
-        setData(response.data.products);
-        setTotalPagesFilter(response.data.pages);
-        if (searchName !== '') {
-          setFilteredResults(" ");
-        } else {
-          requestGet();
-          setFilteredResults("");
-        }
-      }).catch(() => {
-        toast.error('Please contact an administrator!');
-      });
-  }
-
   const changeOptionSearch = async (searchOption) => {
-    if (searchOption == "id") {
-      setShowInputId(true);
-      setShowInputName(false);
-      setShowSearchInput(false);
-      setShowErroNoId(false);
-      return;
-    }
-
     if (searchOption == "name") {
       setShowInputName(true);
       setShowInputId(false);
@@ -436,18 +359,16 @@ function Products() {
         <div className="tableHeader">
           <h1>Products</h1>
         </div>
-        <button className="btn createNew" onClick={() => setShowCreate(true)}>Create New Product</button>
+            <button className="btn createNew" onClick={() => setShowCreate(true)}>Create New Product</button>
 
+        {
+          showTable ?
+          <div>
         <div className="searchItems">
           <div className="searchItems-Inputs">
             {
               showSearchInput ?
                 <input className="search todo" type="search" placeholder="Search..." name="search" autoComplete="off" onChange={(e) => (setSearchBy("all"), setSearchTable(e.target.value))} />
-                : null
-            }
-            {
-              showInputId ?
-                <input className="search soId" type="search" placeholder="Search ID..." name="searchId" autoComplete="off" onChange={(e) => (setSearchBy("id"), setSearchTable(e.target.value))} />
                 : null
             }
 
@@ -456,32 +377,35 @@ function Products() {
                 <input className="search soNome" type="search" placeholder="Search Name..." name="searchName" autoComplete="off" onChange={(e) => (setSearchBy("name"), setSearchTable(e.target.value))} />
                 : null
             }
-            <select name="optionSearch" defaultValue={'all'} className="search search-options" onChange={(e) => changeOptionSearch(e.target.value)}>
-              <option value="all">All</option>
-              <option value="id">Id</option>
-              <option value="name">Name</option>
-            </select>
+            {
+              showSearchOption ?
+              <select name="optionSearch" defaultValue={'all'} className="search search-options" onChange={(e) => changeOptionSearch(e.target.value)}>
+                <option value="all">All</option>
+                <option value="name">Name</option>
+              </select>
+              : null
+            }
           </div>
-          {/* <input type="number" name="" id="" onInput={(e) => changeEntriesPerTable(e.target.value)} /> */}
-          <select className="search todo" onInput={(e) => changeEntriesPerTable(e.target.value)} >
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="15">15</option>
-            <option value="20">20</option>
-            <option value="40">40</option>
-            <option value="60">60</option>
-            <option value="80">80</option>
-            <option value="100">100</option>
-          </select>
+            <select className="search todo" onInput={(e) => changeEntriesPerTable(e.target.value)} >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="40">40</option>
+              <option value="60">60</option>
+              <option value="80">80</option>
+              <option value="100">100</option>
+            </select>
         </div>
         
+
           <div className="content-table">
             <table>
               <thead>
                 <tr>
-                  <th>Id</th>
                   <th>Name</th>
                   <th>Description</th>
+                  <th>Quantity</th>
                   <th>Price</th>
                   <th>Type</th>
                   <th>Options</th>
@@ -490,9 +414,9 @@ function Products() {
               <tbody>
                 {data.map(product => (
                   <tr key={product.id}>
-                    <td>{product.id}</td>
                     <td>{product.name}</td>
                     <td>{product.description}</td>
+                    <td>{product.quantity}</td>
                     <td>{product.price}</td>
                     <td>{product.type}</td>
                     <td>
@@ -505,6 +429,9 @@ function Products() {
             </table>
             <CheckPages />
           </div>
+          </div>
+          : null
+        }
 
         {
           showNoProducts ?
@@ -529,15 +456,19 @@ function Products() {
                   <input type="text" id="description" name="description" onChange={productTypeData} />
                 </div>
                 <div className="modalItem">
+                  <label htmlFor="quantity">Quantity:</label>
+                  <input type="text" id="quantity" name="quantity" onChange={productTypeData} />
+                </div>
+                <div className="modalItem">
                   <label htmlFor="price">Price:</label>
                   <input type="text" id="price" name="price" onChange={productTypeData} />
                 </div>
                 <div className="modalItem">
                   <label htmlFor="type">Type:</label>
-                  <select name="productTypeID" onChange={productTypeData} type="text">
+                  <select name="productTypeId" onChange={productTypeData} type="text">
                       <option key="1" defaultValue="Choose an option" hidden>Choose an option</option>
                       {dataType.map((productType, index) => (
-                        <option key={index} value={productType.productTypeID}>{productType.productTypeID}</option>
+                        <option key={index} value={productType.id}>{productType.type}</option>
                       ))}
                   </select>
                 </div>
@@ -583,40 +514,26 @@ function Products() {
                   <input type="text" id="description" name="description" value={productInfoSelected.description} onChange={inputProductData} />
                 </div>
                 <div className="modalItem">
+                  <label htmlFor="quantity">Quantity:</label>
+                  <input type="text" id="quantity" name="quantity" value={productInfoSelected.quantity} onChange={inputProductData} />
+                </div>
+                <div className="modalItem">
                   <label htmlFor="price">Price:</label>
                   <input type="text" id="price" name="price" value={productInfoSelected.price} onChange={inputProductData} />
+                </div>
+                <div className="modalItem">
+                  <label htmlFor="type">Type:</label>
+                  <select name="productTypeId" onChange={inputProductData} type="text">
+                      <option key="1" defaultValue={productInfoSelected.id} hidden>{productInfoSelected.type}</option>
+                      {dataType.map((productType, index) => (
+                        <option key={index} value={productType.id}>{productType.type}</option>
+                      ))}
+                  </select>
                 </div>
               </div>
               <div className="modalBtns">
                 <button className="btn createNew" onClick={() => requestPut(parseInt(productInfoSelected.id))}>Save</button>
                 <button className="btn cancelBtn" onClick={() => setShowEdit(false)}>Cancel</button>
-              </div>
-            </div>
-          </div> : null
-      }
-
-      {
-        showSearch ?
-          <div className="modalWindow">
-            <div className="containerModal">
-              <div className="modalTitle"><h3>Product - </h3></div>
-              <div className="modalBody">
-                <div className="modalItem">
-                  <label htmlFor="name">Name:</label>
-                  <input type="text" id="name" name="name" />
-                </div>
-                <div className="modalItem">
-                  <label htmlFor="description">Description:</label>
-                  <input type="text" id="description" name="description" />
-                </div>
-                <div className="modalItem">
-                  <label htmlFor="price">Price:</label>
-                  <input type="text" id="price" name="price" />
-                </div>
-              </div>
-              <div className="modalBtns">
-                <button className="btn createNew">Save</button>
-                <button className="btn cancelBtn">Cancel</button>
               </div>
             </div>
           </div> : null

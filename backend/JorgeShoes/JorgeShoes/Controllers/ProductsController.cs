@@ -75,7 +75,7 @@ namespace JorgeShoes.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> UpdateProduct(int id, [FromBody]Product product)
+        public async Task<ActionResult> UpdateProduct(int id, [FromBody]EditProductDTO product)
         {
             try
             {

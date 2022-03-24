@@ -69,9 +69,9 @@ namespace JorgeShoes.Controllers
         {
             try
             {
-                if (productType.ProductTypeID == id)
+                if (productType.ProductTypeId == id)
                 {
-                    var checkExist = _context.ProductTypes.Where(x => x.Type == productType.Type && x.DateDeleted == null && x.ProductTypeID != productType.ProductTypeID).FirstOrDefault();
+                    var checkExist = _context.ProductTypes.Where(x => x.Type == productType.Type && x.DateDeleted == null && x.ProductTypeId != productType.ProductTypeId).FirstOrDefault();
                     if (checkExist == null)
                     {
                         await _productTypeService.Update(productType);

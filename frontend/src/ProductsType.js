@@ -21,6 +21,7 @@ function ProductsType() {
   const [showCreate, setShowCreate] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const [noProducts, setNoProducts] = useState(true);
 
   const [showErroNoID, setShowErroNoId] = useState(false);
 
@@ -28,7 +29,7 @@ function ProductsType() {
 
   // Create the state of productInfoSelected
   const [productInfoSelected, setProductInfoSelected] = useState({
-    productTypeID: '',
+    productTypeId: '',
     type: ''
   });
 
@@ -52,8 +53,11 @@ function ProductsType() {
         setShowNoProducts(false);
         if(response.data.productType.length == 0){
           setShowNoProducts(true);
+          setNoProducts(false);
+        }else{
+          setShowErroNoId(false);
+          setNoProducts(true);
         }
-        setShowErroNoId(false);
         if(response.data.erro == "SearchError"){
           setShowNoProducts(true);
         }
@@ -63,16 +67,16 @@ function ProductsType() {
   }
 
   const requestPost = async () => {
-    delete productInfoSelected.productTypeID;
+    delete productInfoSelected.productTypeId;
     if (productInfoSelected.type == "") {
       toast.error('Please, fill  all fields!');
       return;
     }
     await axios.post(urlAPI, productInfoSelected)
       .then(response => {
-        if(response.data.productTypeID != 0){
+        if(response.data.productTypeId != 0){
           setShowCreate(false);
-          toast.success('A new product with the id ' + response.data.type + ' has been created!');
+          toast.success('A new product type: ' + response.data.type + ' has been created!');
         }else{
           toast.error('A product type with the type of ' + response.data.type + ' already exists.');
         }
@@ -86,7 +90,6 @@ function ProductsType() {
     const urlWithId = ("https://localhost:44384/api/ProductType/" + id);
     await axios.delete(urlWithId)
       .then(response => {
-        requestGet();
         setShowDelete(false);
         toast.success('The product type: ' + response.data.type + ' was deleted');
         if (response.data == true && data.length == 1) {
@@ -96,6 +99,7 @@ function ProductsType() {
             setShowNoProducts(true);
           }
         }
+        requestGet();
       }).catch(error => {
         console.log(error);
       });
@@ -106,7 +110,7 @@ function ProductsType() {
         toast.error('Please, fill  all fields!');
         return;
       }
-    const urlEdit = ("https://localhost:44384/api/ProductType/" + productInfoSelected.productTypeID);
+    const urlEdit = ("https://localhost:44384/api/ProductType/" + productInfoSelected.productTypeId);
     await axios.put(urlEdit, productInfoSelected)
       .then(response => {
         if(response.data.error == true){
@@ -269,46 +273,54 @@ function ProductsType() {
         </div>
         <button className="btn createNew" onClick={() => setShowCreate(true)}>Create New Product Type</button>
 
-        <div className="searchItems">
-          <div className="searchItems-Inputs">
+          
+            <div className="searchItems">
+            <div className="searchItems-Inputs">
 
-            <input className="search todo" type="search" placeholder="Search..." name="search" autoComplete="off" onChange={(e) => setSearchTable(e.target.value)} />
+
+                <input className="search todo" type="search" placeholder="Search..." name="search" autoComplete="off" onChange={(e) => setSearchTable(e.target.value)} />
+              
+            </div>
+            <select className="search todo" onInput={(e) => changeEntriesPerTable(e.target.value)} >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="40">40</option>
+              <option value="60">60</option>
+              <option value="80">80</option>
+              <option value="100">100</option>
+            </select>
           </div>
-          {/* <input type="number" name="" id="" onInput={(e) => changeEntriesPerTable(e.target.value)} /> */}
-          <select className="search todo" onInput={(e) => changeEntriesPerTable(e.target.value)} >
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="15">15</option>
-            <option value="20">20</option>
-            <option value="40">40</option>
-            <option value="60">60</option>
-            <option value="80">80</option>
-            <option value="100">100</option>
-          </select>
-        </div>
 
+          {
+          noProducts ?
           <div className="content-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Type</th>
-                  <th>Options</th>
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Options</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map(product => (
+                <tr key={product.productTypeId}>
+                  <td>{product.type}</td>
+                  <td>
+                    <button className="btn edit-btn" onClick={() => selectProduct(product, "Edit")}>Edit</button>
+                    <button className="btn delete-btn" onClick={() => selectProduct(product, "Delete")}>Delete</button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {data.map(product => (
-                  <tr key={product.productTypeID}>
-                    <td>{product.type}</td>
-                    <td>
-                      <button className="btn edit-btn" onClick={() => selectProduct(product, "Edit")}>Edit</button>
-                      <button className="btn delete-btn" onClick={() => selectProduct(product, "Delete")}>Delete</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <CheckPages />
+              ))}
+            </tbody>
+          </table>
+          <CheckPages />
           </div>
+          : null
+        }
+
+
 
         {
           showNoProducts ?
@@ -348,7 +360,7 @@ function ProductsType() {
                 </div>
               </div>
               <div className="modalBtns">
-                <button className="btn cancelBtn" onClick={() => requestDelete(parseInt(productInfoSelected.productTypeID))}>Delete</button>
+                <button className="btn cancelBtn" onClick={() => requestDelete(parseInt(productInfoSelected.productTypeId))}>Delete</button>
                 <button className="btn createNew" onClick={() => setShowDelete(false)}>Cancel</button>
               </div>
             </div>
@@ -367,7 +379,7 @@ function ProductsType() {
                 </div>
               </div>
               <div className="modalBtns">
-                <button className="btn createNew" onClick={() => requestPut(parseInt(productInfoSelected.productTypeID))}>Save</button>
+                <button className="btn createNew" onClick={() => requestPut(parseInt(productInfoSelected.productTypeId))}>Save</button>
                 <button className="btn cancelBtn" onClick={() => setShowEdit(false)}>Cancel</button>
               </div>
             </div>

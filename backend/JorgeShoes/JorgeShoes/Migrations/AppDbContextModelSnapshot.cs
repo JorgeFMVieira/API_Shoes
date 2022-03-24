@@ -48,19 +48,22 @@ namespace JorgeShoes.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("ProductTypeID")
+                    b.Property<int>("ProductTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductTypeID");
+                    b.HasIndex("ProductTypeId");
 
                     b.ToTable("Products");
                 });
 
             modelBuilder.Entity("JorgeShoes.Models.ProductType", b =>
                 {
-                    b.Property<int>("ProductTypeID")
+                    b.Property<int>("ProductTypeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -79,7 +82,7 @@ namespace JorgeShoes.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.HasKey("ProductTypeID");
+                    b.HasKey("ProductTypeId");
 
                     b.ToTable("ProductTypes");
                 });
@@ -88,7 +91,7 @@ namespace JorgeShoes.Migrations
                 {
                     b.HasOne("JorgeShoes.Models.ProductType", "Type")
                         .WithMany("Products")
-                        .HasForeignKey("ProductTypeID")
+                        .HasForeignKey("ProductTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

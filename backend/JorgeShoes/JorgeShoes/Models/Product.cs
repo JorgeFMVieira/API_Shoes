@@ -18,6 +18,9 @@ namespace JorgeShoes.Models
         public string Description { get; set; }
 
         [Required]
+        public int Quantity { get; set; }
+
+        [Required]
         public decimal Price { get; set; }
 
         public DateTime DateCreated { get; set; }
@@ -26,7 +29,7 @@ namespace JorgeShoes.Models
         public DateTimeOffset? DateDeleted { get; set; }
 
         [Required]
-        public int ProductTypeID  { get; set; }
+        public int ProductTypeId  { get; set; }
         public ProductType Type { get; set; }
         //public ProductType ProductType { get; set; }
 

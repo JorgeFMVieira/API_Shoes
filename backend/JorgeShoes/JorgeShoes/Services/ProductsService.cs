@@ -31,7 +31,7 @@ namespace JorgeShoes.Services
                 {
                     if (searchBy == "all")
                     {
-                        pageCount = Math.Ceiling(_context.Products.Include(x => x.Type).Where(n => n.DateDeleted == null && (n.Id.ToString().Contains(search) || n.Name.Contains(search) || n.Description.Contains(search) || n.Price.ToString().Contains(search))).Count() / entries);
+                        pageCount = Math.Ceiling(_context.Products.Include(x => x.Type).Where(n => n.DateDeleted == null && (n.Id.ToString().Contains(search) || n.Name.Contains(search) || n.Description.Contains(search) || n.Price.ToString().Contains(search) || n.Quantity.ToString().Contains(search))).Count() / entries);
                     }
                     else if(searchBy == "name")
                     {
@@ -43,7 +43,7 @@ namespace JorgeShoes.Services
                     }
                     else
                     {
-                        pageCount = Math.Ceiling(_context.Products.Include(x => x.Type).Where(n => n.DateDeleted == null && (n.Id.ToString().Contains(search) || n.Name.Contains(search) || n.Description.Contains(search) || n.Price.ToString().Contains(search))).Count() / entries);
+                        pageCount = Math.Ceiling(_context.Products.Include(x => x.Type).Where(n => n.DateDeleted == null && (n.Id.ToString().Contains(search) || n.Name.Contains(search) || n.Description.Contains(search) || n.Price.ToString().Contains(search) || n.Quantity.ToString().Contains(search))).Count() / entries);
                     }
                 }
 
@@ -59,13 +59,15 @@ namespace JorgeShoes.Services
                     if(searchBy == "all")
                     {
                         products = await _context.Products
-                        .Where(n => n.DateDeleted == null && (n.Id.ToString().Contains(search) || n.Name.Contains(search) || n.Description.Contains(search) || n.Price.ToString().Contains(search)))
+                        .Include(x => x.Type)
+                        .Where(n => n.DateDeleted == null && (n.Id.ToString().Contains(search) || n.Name.Contains(search) || n.Description.Contains(search) || n.Price.ToString().Contains(search) || n.Quantity.ToString().Contains(search)))
                         .Skip((page - 1) * (int)entries)
                         .Take((int)entries)
                         .ToListAsync();
                     }else if(searchBy == "name")
                     {
                         products = await _context.Products
+                         .Include(x => x.Type)
                         .Where(n => n.DateDeleted == null && n.Name.Contains(search))
                         .Skip((page - 1) * (int)entries)
                         .Take((int)entries)
@@ -74,6 +76,7 @@ namespace JorgeShoes.Services
                     else if (searchBy == "id")
                     {
                         products = await _context.Products
+                         .Include(x => x.Type)
                         .Where(n => n.DateDeleted == null && n.Id.ToString().Contains(search))
                         .Skip((page - 1) * (int)entries)
                         .Take((int)entries)
@@ -82,11 +85,28 @@ namespace JorgeShoes.Services
                     else
                     {
                         products = await _context.Products
-                        .Where(n => n.DateDeleted == null && (n.Id.ToString().Contains(search) || n.Name.Contains(search) || n.Description.Contains(search) || n.Price.ToString().Contains(search)))
+                        .Include(x => x.Type)
+                        .Where(n => n.DateDeleted == null && (n.Id.ToString().Contains(search) || n.Name.Contains(search) || n.Description.Contains(search) || n.Price.ToString().Contains(search) || n.Quantity.ToString().Contains(search)))
                         .Skip((page - 1) * (int)entries)
                         .Take((int)entries)
                         .ToListAsync();
                     }
+                }
+
+                ProductResponse produto = new();
+                produto.Products = products.Select(t => new ListProductType(t)).ToList();
+                produto.Pages = (int)pageCount;
+                produto.CurrentPage = page;
+                produto.Entries = entries;
+                produto.Search = search;
+                produto.SearchBy = searchBy;
+                produto.Order = order;
+
+                if (page < 1)
+                {
+                    produto.Success = false;
+                    produto.Erro = "The page minium is 1";
+                    return produto;
                 }
 
                 //switch (order)
@@ -117,22 +137,6 @@ namespace JorgeShoes.Services
                 //        break;
                 //}
 
-                ProductResponse produto = new();
-                produto.Products = products.Select(t => new ListProductType(t)).ToList();
-                produto.Pages = (int)pageCount;
-                produto.CurrentPage = page;
-                produto.Entries = entries;
-                produto.Search = search;
-                produto.SearchBy = searchBy;
-                produto.Order = order;
-
-                if (page < 1)
-                {
-                    produto.Success = false;
-                    produto.Erro = "The page minium is 1";
-                    return produto;
-                }
-
                 return produto;
             }
             catch
@@ -155,10 +159,10 @@ namespace JorgeShoes.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateProduct(Product product)
+        public async Task UpdateProduct(EditProductDTO product)
         {
             product.DateEdited = DateTime.Now;
-            _context.Entry(product).State = EntityState.Modified;
+            _context.Entry(product.ToEntity()).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
 
@@ -182,7 +186,7 @@ namespace JorgeShoes.Services
             IEnumerable<Product> products;
             if (!string.IsNullOrEmpty(search)) 
             { 
-                products = await _context.Products.Where(n => n.Id.ToString().Contains(search.ToString()) || n.Name.Contains(search) || n.Description.Contains(search) || n.Price.ToString().Contains(search.ToString())).ToListAsync();
+                products = await _context.Products.Where(n => n.Id.ToString().Contains(search.ToString()) || n.Quantity.ToString().Contains(search.ToString()) || n.Name.Contains(search) || n.Description.Contains(search) || n.Price.ToString().Contains(search.ToString())).ToListAsync();
             }
             else
             {

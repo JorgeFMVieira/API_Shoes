@@ -12,7 +12,7 @@ namespace JorgeShoes.Services
         Task<ProductResponse> GetProducts(int page, float entries, string searchBy, string search, string order);
         Task<Product> GetProduct(int id);
         Task CreateProduct(CreateDTO product);
-        Task UpdateProduct(Product product);
+        Task UpdateProduct(EditProductDTO product);
         Task<bool> DeleteProduct(Product product);
     }
 }

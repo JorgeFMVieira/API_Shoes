@@ -136,7 +136,8 @@
       padding-bottom: 0px;
   }
   
-  .modalItem input{
+  .modalItem input,
+  .modalItem select{
       outline: none;
       border: none;
       width: 450px;
