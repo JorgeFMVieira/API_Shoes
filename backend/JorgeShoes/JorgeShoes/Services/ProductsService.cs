@@ -109,33 +109,6 @@ namespace JorgeShoes.Services
                     return produto;
                 }
 
-                //switch (order)
-                //{
-                //    case "id_desc":
-                //        produto.Products = products.OrderByDescending(s => s.Id).ToList();
-                //        break;
-                //    case "name_asc":
-                //        produto.Products = products.OrderBy(s => s.Name).ToList();
-                //        break;
-                //    case "name_desc":
-                //        produto.Products = products.OrderByDescending(s => s.Name).ToList();
-                //        break;
-                //    case "descriptions_asc":
-                //        produto.Products = products.OrderBy(s => s.Description).ToList();
-                //        break;
-                //    case "descriptions_desc":
-                //        produto.Products = products.OrderByDescending(s => s.Description).ToList();
-                //        break;
-                //    case "price_asc":
-                //        produto.Products = products.OrderBy(s => s.Price).ToList();
-                //        break;
-                //    case "price_desc":
-                //        produto.Products = products.OrderByDescending(s => s.Price).ToList();
-                //        break;
-                //    default:
-                //        produto.Products = products.OrderBy(s => s.Id).ToList();
-                //        break;
-                //}
 
                 return produto;
             }

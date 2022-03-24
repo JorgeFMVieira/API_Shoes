@@ -149,7 +149,7 @@ function Products() {
     await axios.delete(urlWithId)
       .then(response => {
         setShowDelete(false);
-        toast.success('The product with the name ' + response.data.name + ' was deleted');
+        toast.success('The product with the id ' + response.data.id + ' was deleted');
         if (response.data == true && data.length == 1) {
           if (page != 1) {
             setPage(page - 1);
@@ -361,8 +361,6 @@ function Products() {
         </div>
             <button className="btn createNew" onClick={() => setShowCreate(true)}>Create New Product</button>
 
-        {
-          showTable ?
           <div>
         <div className="searchItems">
           <div className="searchItems-Inputs">
@@ -430,8 +428,6 @@ function Products() {
             <CheckPages />
           </div>
           </div>
-          : null
-        }
 
         {
           showNoProducts ?

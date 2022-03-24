@@ -273,7 +273,9 @@ function ProductsType() {
         </div>
         <button className="btn createNew" onClick={() => setShowCreate(true)}>Create New Product Type</button>
 
-          
+        {
+          noProducts ?
+          <div>
             <div className="searchItems">
             <div className="searchItems-Inputs">
 
@@ -293,8 +295,7 @@ function ProductsType() {
             </select>
           </div>
 
-          {
-          noProducts ?
+
           <div className="content-table">
           <table>
             <thead>
@@ -316,6 +317,7 @@ function ProductsType() {
             </tbody>
           </table>
           <CheckPages />
+          </div>
           </div>
           : null
         }
