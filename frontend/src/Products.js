@@ -124,18 +124,23 @@ function Products() {
       productTypeSelect.price = priceReplaced;
     }
 
-    if (isNaN(productInfoSelected.price)) {
+    productTypeSelect.price = parseFloat(productTypeSelect.price);
+
+    if (isNaN(productTypeSelect.price)) {
       toast.error('The price has to be a number.');
       return;
     }
 
-    productTypeSelect.price = parseFloat(productTypeSelect.price)
+    if(isNaN(productTypeSelect.quantity)){
+      toast.error('The quantity has to be a integer number.');
+      return;
+    }
+
     await axios.post(urlAPI, productTypeSelect)
       .then(response => {
         setProductDB(productDB.concat(response.data));
         setShowCreate(false);
         setFilteredResults("");
-        console.log(response.data);
         toast.success('A new product with the name ' + response.data.name + ' has been created!');
         requestGet();
       }).catch(error => {
@@ -359,9 +364,11 @@ function Products() {
         <div className="tableHeader">
           <h1>Products</h1>
         </div>
+        {
+  showTable ?
+          <div>
             <button className="btn createNew" onClick={() => setShowCreate(true)}>Create New Product</button>
 
-          <div>
         <div className="searchItems">
           <div className="searchItems-Inputs">
             {
@@ -428,6 +435,8 @@ function Products() {
             <CheckPages />
           </div>
           </div>
+          : null
+        }
 
         {
           showNoProducts ?
@@ -539,3 +548,5 @@ function Products() {
 }
 
 export default Products;
+
+

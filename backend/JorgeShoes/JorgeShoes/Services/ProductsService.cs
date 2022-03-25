@@ -22,7 +22,7 @@ namespace JorgeShoes.Services
         }
 
 
-        public async Task<ProductResponse> GetProducts(int page, float entries, string searchBy, string search, string order)
+        public async Task<ProductResponse> GetProducts(int page, float entries, string searchBy, string search, string order, string option)
         {
             try
             {
@@ -108,6 +108,34 @@ namespace JorgeShoes.Services
                     produto.Erro = "The page minium is 1";
                     return produto;
                 }
+
+                //switch (option)
+                //{
+                //    case "id_desc":
+                //        products = (List<Product>)_context.Products.OrderByDescending(s => s.Id);
+                //        break;
+                //    case "name":
+                //        products = (List<Product>)_context.Products.OrderBy(s => s.Name);
+                //        break;
+                //    case "name_desc":
+                //        products = (List<Product>)_context.Products.OrderByDescending(s => s.Name);
+                //        break;
+                //    case "description":
+                //        products = (List<Product>)_context.Products.OrderBy(s => s.Description);
+                //        break;
+                //    case "description_desc":
+                //        products = (List<Product>)_context.Products.OrderByDescending(s => s.Description);
+                //        break;
+                //    case "price":
+                //        products = (List<Product>)_context.Products.OrderBy(s => s.Price).ToList();
+                //        break;
+                //    case "price_desc":
+                //        products = (List<Product>)_context.Products.OrderByDescending(s => s.Price);
+                //        break;
+                //    default:
+                //        products = (List<Product>)_context.Products.OrderBy(s => s.Id);
+                //        break;
+                //}
 
 
                 return produto;
