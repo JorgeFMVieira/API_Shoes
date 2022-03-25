@@ -23,23 +23,14 @@ function Products() {
   const [showCreate, setShowCreate] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
-  const [showSearch, setShowSearch] = useState(false);
 
-  const [filteredResults, setFilteredResults] = useState([]);
-
-
-  const [produto, setProduto] = useState([]);
-
-  const [showErroNoID, setShowErroNoId] = useState(false);
   const [showTable, setShowTable] = useState(true);
 
-  const [showInputId, setShowInputId] = useState(false);
   const [showInputName, setShowInputName] = useState(false);
   const [showSearchInput, setShowSearchInput] = useState(true);
+  const [showSearchType, setShowInputType] = useState(false);
   const [showNoProducts, setShowNoProducts] = useState(false);
-  const [showBtnCreate, setShowBtnCreate] = useState(true);
   const [showSearchOption, setShowSearchOption] = useState(true);
-  const [showEntries, setShowEntries] = useState(false);
   
 
   // Create the state of productInfoSelected
@@ -67,7 +58,6 @@ function Products() {
     setProductInfoSelected({
       ...productInfoSelected, [name]: value
     });
-    console.log(productInfoSelected);
   }
 
   const productTypeData = e => {
@@ -78,7 +68,6 @@ function Products() {
   }
 
   const [totalpages, setTotalPages] = useState(0);
-  const [totalpagesFilter, setTotalPagesFilter] = useState(0);
 
   const requestGet = async () => {
     await axios.get(urlAPI)
@@ -89,7 +78,6 @@ function Products() {
         if(response.data.products.length == 0){
           setShowNoProducts(true);
         }
-        setShowErroNoId(false);
         if(response.data.erro == "SearchError"){
           setShowNoProducts(true);
         }
@@ -140,7 +128,6 @@ function Products() {
       .then(response => {
         setProductDB(productDB.concat(response.data));
         setShowCreate(false);
-        setFilteredResults("");
         toast.success('A new product with the name ' + response.data.name + ' has been created!');
         requestGet();
       }).catch(error => {
@@ -185,7 +172,6 @@ function Products() {
     productInfoSelected.price = parseFloat(productInfoSelected.price)
 
     setProductInfoSelected(productTypeSelect);
-    console.log(productInfoSelected);
 
     const urlEdit = ("https://localhost:44384/api/Products/" + productInfoSelected.id);
     await axios.put(urlEdit, productInfoSelected)
@@ -193,10 +179,8 @@ function Products() {
         requestGet();
         setShowEdit(false);
         toast.success('The product with the name ' + productInfoSelected.name + ' was edited');
-        console.log(productInfoSelected);
       }).catch(error => {
         console.log(error);
-        console.log(productInfoSelected);
       })
   }
 
@@ -219,20 +203,34 @@ function Products() {
       });
   }
 
+  const searchTableConverthTable = async (e) => {
+    if(e.includes(',')){
+      const replaced = e.replace(',', '.');
+      setSearchTable(replaced);
+    }else{
+      setSearchTable(e);
+    }
+  }
+
   const changeOptionSearch = async (searchOption) => {
     if (searchOption == "name") {
       setShowInputName(true);
-      setShowInputId(false);
       setShowSearchInput(false);
-      setShowErroNoId(false);
+      setShowInputType(false);
       return;
     }
 
     if (searchOption == "all") {
       setShowSearchInput(true);
-      setShowInputId(false);
       setShowInputName(false);
-      setShowErroNoId(false);
+      setShowInputType(false);
+      return;
+    }
+
+    if (searchOption == "type") {
+      setShowSearchInput(false);
+      setShowInputName(false);
+      setShowInputType(true);
       return;
     }
   }
@@ -279,7 +277,7 @@ function Products() {
     if (page <= 1 && page + 1 > totalpages) {
       return <div className="btn-Page">
         <button onClick={() => (setPage(page - 1), setInputValue(page -1))} disabled>Previous</button>
-        <input type="text" className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
+        <input type="text" autoFocus className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
         <button onClick={() => (setPage(page + 1), setInputValue(page + 1))} disabled>Next</button>
       </div>;
     }
@@ -288,7 +286,7 @@ function Products() {
     if (page + 1 > totalpages) {
       return <div className="btn-Page">
         <button onClick={() => (setPage(page - 1), setInputValue(page -1))}>Previous</button>
-        <input type="text" className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
+        <input type="text" autoFocus className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
         <button onClick={() => (setPage(page + 1), setInputValue(page + 1))} disabled>Next</button>
       </div>;
     }
@@ -296,7 +294,7 @@ function Products() {
     if (page <= 1) {
       return <div className="btn-Page">
         <button onClick={() => (setPage(page - 1), setInputValue(page -1))} disabled>Previous</button>
-        <input type="text" className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
+        <input type="text" autoFocus className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
         <button onClick={() => (setPage(page + 1), setInputValue(page + 1))}>Next</button>
       </div>;
     }
@@ -304,56 +302,20 @@ function Products() {
     if (page) {
       return <div className="btn-Page">
         <button onClick={() => (setPage(page - 1), setInputValue(page -1))}>Previous</button>
-        <input type="text" className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
+        <input type="text" autoFocus className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
         <button onClick={() => (setPage(page + 1), setInputValue(page + 1))}>Next</button>
-      </div>;
-    }
-  }
-
-  function CheckPagesFilter() {
-    if (pageFilter <= 1 && pageFilter + 1 > totalpagesFilter) {
-      return <div className="btn-Page">
-        <button onClick={() => setPageFilter(pageFilter - 1)} disabled>Previous</button>
-        <button className='btnCurrentPage'>{pageFilter}</button>
-        <button onClick={() => setPageFilter(pageFilter + 1)} disabled>Next</button>
-      </div>;
-    }
-
-
-    if (pageFilter + 1 > totalpagesFilter) {
-      return <div className="btn-Page">
-        <button onClick={() => setPageFilter(pageFilter - 1)}>Previous</button>
-        <button className='btnCurrentPage'>{pageFilter}</button>
-        <button onClick={() => setPageFilter(pageFilter + 1)} disabled>Next</button>
-      </div>;
-    }
-
-    if (pageFilter <= 1) {
-      return <div className="btn-Page">
-        <button onClick={() => setPageFilter(pageFilter - 1)} disabled>Previous</button>
-        <button className='btnCurrentPage'>{pageFilter}</button>
-        <button onClick={() => setPageFilter(pageFilter + 1)}>Next</button>
-      </div>;
-    }
-
-    if (pageFilter) {
-      return <div className="btn-Page">
-        <button onClick={() => setPageFilter(pageFilter - 1)}>Previous</button>
-        <button className='btnCurrentPage'>{pageFilter}</button>
-        <button onClick={() => setPageFilter(pageFilter + 1)}>Next</button>
       </div>;
     }
   }
 
   useEffect(() => {
     setPage(1);
-    setInputValue(1);
   }, [entriesPerTable]);
 
   useEffect(() => {
     requestGet();
     requestGetType();
-  }, [entriesPerTable, page, inputValue, searchBy, searchTable]);
+  }, [entriesPerTable, page, searchBy, searchTable]);
 
   return (
     <div className="Products">
@@ -365,7 +327,7 @@ function Products() {
           <h1>Products</h1>
         </div>
         {
-  showTable ?
+        showTable ?
           <div>
             <button className="btn createNew" onClick={() => setShowCreate(true)}>Create New Product</button>
 
@@ -373,13 +335,19 @@ function Products() {
           <div className="searchItems-Inputs">
             {
               showSearchInput ?
-                <input className="search todo" type="search" placeholder="Search..." name="search" autoComplete="off" onChange={(e) => (setSearchBy("all"), setSearchTable(e.target.value))} />
+                <input className="search todo" type="search" placeholder="Search..." name="search" autoComplete="off" onChange={(e) => (setSearchBy("all"), searchTableConverthTable(e.target.value), setPage(1))} />
                 : null
             }
 
             {
               showInputName ?
-                <input className="search soNome" type="search" placeholder="Search Name..." name="searchName" autoComplete="off" onChange={(e) => (setSearchBy("name"), setSearchTable(e.target.value))} />
+                <input className="search soNome" type="search" placeholder="Search Name..." name="searchName" autoComplete="off" onChange={(e) => (setSearchBy("name"), searchTableConverthTable(e.target.value), setPage(1))} />
+                : null
+            }
+
+            {
+              showSearchType ?
+                <input className="search soNome" type="search" placeholder="Search Name..." name="searchType" autoComplete="off" onChange={(e) => (setSearchBy("type"), searchTableConverthTable(e.target.value), setPage(1))} />
                 : null
             }
             {
@@ -387,6 +355,7 @@ function Products() {
               <select name="optionSearch" defaultValue={'all'} className="search search-options" onChange={(e) => changeOptionSearch(e.target.value)}>
                 <option value="all">All</option>
                 <option value="name">Name</option>
+                <option value="type">Type</option>
               </select>
               : null
             }
