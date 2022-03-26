@@ -115,8 +115,7 @@ namespace JorgeShoes.Services
                         break;
                 }
 
-                products = await _context.Products.AsQueryable()
-                                                  .ToListAsync();
+                products = await _context.Products.AsQueryable();
 
                 ProductResponse produto = new();
                 produto.Products = products.Select(t => new ListProductType(t)).ToList();
