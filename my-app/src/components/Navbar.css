@@ -1,0 +1,38 @@
+.navbar{
+    width: 100%;
+    height: fit-content;
+    background-color: var(--background-nav);
+    display: flex;
+    align-items: center;
+    padding: 15px;
+}
+
+.logo{
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.nav-items{
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+.nav-item{
+    padding: 10px;
+    cursor: pointer;
+}
+
+.nav-item{
+    text-decoration: none;
+}
+
+.href{
+    text-decoration: none;
+    color: var(--text-color);
+    transition: 0.3s all ease-in-out;
+}
+
+.href:hover{
+    color: var(--primary-color);
+}
