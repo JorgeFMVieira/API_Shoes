@@ -2,6 +2,7 @@ import { iProductsList } from '../../interfaces/iProductsList';
 import { ProductService } from '../../services';
 import React, { useState, useEffect } from 'react';
 import './Table.css';
+import { stringify } from 'querystring';
 
 function Table() {
 
@@ -31,16 +32,6 @@ function Table() {
             name: "Price"
         }
     ];
-
-    service.getAll().then(result => {
-        setTotalPages(result.pages);
-        setCurrentPage(result.currentPage);
-        setEntries(result.entries);
-        setSearch(result.search);
-        setSearchBy(result.searchBy);
-        setData(result.products);
-    });
-
 
 
     function CheckPages(): JSX.Element {
@@ -87,8 +78,15 @@ function Table() {
     console.log(data);
 
     useEffect(() => {
-        service.getAll();
-    }, [currentPage]);
+        service.getAll(currentPage, entries).then(result => {
+            setTotalPages(result.pages);
+            setCurrentPage(result.currentPage);
+            setEntries(result.entries);
+            setSearch(result.search);
+            setSearchBy(result.searchBy);
+            setData(result.products);
+        });
+    }, [currentPage, totalPages, search, searchBy]);
 
     return (
         <div className="tableContainer">
