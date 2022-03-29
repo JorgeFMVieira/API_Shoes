@@ -32,86 +32,91 @@ function Table() {
         }
     ];
 
+    service.getAll().then(result => {
+        setTotalPages(result.pages);
+        setCurrentPage(result.currentPage);
+        setEntries(result.entries);
+        setSearch(result.search);
+        setSearchBy(result.searchBy);
+        setData(result.products);
+    });
+
 
 
     function CheckPages(): JSX.Element {
         if (currentPage <= 1 && currentPage + 1 > totalPages) {
-          return <div className="btn-currentPage">
-            <button onClick={() => setCurrentPage(currentPage - 1)} disabled>Previous</button>
-            <div className='currentPageInput'>{currentPage}</div>
-            <button onClick={() => setCurrentPage(currentPage + 1)} disabled>Next</button>
-          </div>;
+            return <div className="btn-Page">
+                <button onClick={() => setCurrentPage(currentPage - 1)} disabled>Previous</button>
+                <div className='currentPageInput'>{currentPage}</div>
+                <button onClick={() => setCurrentPage(currentPage + 1)} disabled>Next</button>
+            </div>;
         }
-    
-    
+
+
         if (currentPage + 1 > totalPages) {
-          return <div className="btn-currentPage">
-            <button onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
-            <div className='currentPageInput'>{currentPage}</div>
-            <button onClick={() => setCurrentPage(currentPage + 1)} disabled>Next</button>
-          </div>;
+            return <div className="btn-Page">
+                <button onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
+                <div className='currentPageInput'>{currentPage}</div>
+                <button onClick={() => setCurrentPage(currentPage + 1)} disabled>Next</button>
+            </div>;
         }
-    
+
         if (currentPage <= 1) {
-          return <div className="btn-currentPage">
-            <button onClick={() => setCurrentPage(currentPage - 1)} disabled>Previous</button>
-            <div className='currentPageInput'>{currentPage}</div>
-            <button onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
-          </div>;
+            return <div className="btn-Page">
+                <button onClick={() => setCurrentPage(currentPage - 1)} disabled>Previous</button>
+                <div className='currentPageInput'>{currentPage}</div>
+                <button onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
+            </div>;
         }
-    
+
         if (currentPage) {
-          return <div className="btn-currentPage">
-            <button onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
-            <div className='currentPageInput'>{currentPage}</div>
-            <button onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
-          </div>;
+            return <div className="btn-Page">
+                <button onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
+                <div className='currentPageInput'>{currentPage}</div>
+                <button onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
+            </div>;
         }
         return <div>
             <p>Erro</p>
         </div>;
-      }
+    }
 
-      useEffect(() => {
-        service.getAll().then(result => {
-            setTotalPages(result.pages);
-            setCurrentPage(result.currentPage);
-            setEntries(result.entries);
-            setSearch(result.search);
-            setSearchBy(result.searchBy);
-            setData(result.products);
-            console.log("Info: ");
-            console.log(totalPages);
-            console.log(currentPage);
-            console.log(result);
-        });
-    }, []);
+    console.log("Info: ");
+    console.log(totalPages);
+    console.log(currentPage);
+    console.log(data);
 
-  return (
-    <div className="content-table">
-        <table>
-            <thead>
-                <tr>
-                    {thead.map((item, index) => {
-                        return <th key={index}>{item.name}</th>
-                    })}
-                </tr>
-            </thead>
-            <tbody>
-                {data.map(item => (
-                    <tr key={item.id}>
-                        <td>{item.name}</td>
-                        <td>{item.description}</td>
-                        <td>{item.type}</td>
-                        <td>{item.quantity}</td>
-                        <td>{item.price}</td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
-        <CheckPages />
-    </div>
-  )
+    useEffect(() => {
+        service.getAll();
+    }, [currentPage]);
+
+    return (
+        <div className="tableContainer">
+            <div className="content-table">
+                <table>
+                    <thead>
+                        <tr>
+                            {thead.map((item, index) => {
+                                return <th key={index}>{item.name}</th>
+                            })}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data.map(item => (
+                            <tr key={item.id}>
+                                <td>{item.id}</td>
+                                <td>{item.description}</td>
+                                <td>{item.type}</td>
+                                <td>{item.quantity}</td>
+                                <td>{item.price}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                <CheckPages />
+            </div>
+        </div>
+    )
 }
 
 export default Table

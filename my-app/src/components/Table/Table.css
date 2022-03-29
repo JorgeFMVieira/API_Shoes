@@ -1,3 +1,6 @@
+table{
+    border-collapse: collapse;
+}
 .tableContainer {
     height: fit-content;
     border-radius: 10px;
@@ -5,10 +8,6 @@
     scrollbar-width: none; /* for Firefox */
     overflow-y: scroll; 
     padding: 3%;
-}
-
-table{
-    border-collapse: collapse;
 }
 
 .tableContainer::-webkit-scrollbar {
