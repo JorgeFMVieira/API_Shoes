@@ -216,7 +216,7 @@ function Table({errorHandler}: any) {
               <tbody>
                 {data.map(item => (
                   <tr key={item.id}>
-                    <td>{item.id}</td>
+                    <td>{item.name}</td>
                     <td>{item.description}</td>
                     <td>{item.type}</td>
                     <td>{item.quantity}</td>

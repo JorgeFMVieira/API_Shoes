@@ -277,7 +277,7 @@ function Products() {
     if (page <= 1 && page + 1 > totalpages) {
       return <div className="btn-Page">
         <button onClick={() => (setPage(page - 1), setInputValue(page -1))} disabled>Previous</button>
-        <input type="text" autoFocus className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
+        <input type="text" className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
         <button onClick={() => (setPage(page + 1), setInputValue(page + 1))} disabled>Next</button>
       </div>;
     }
@@ -286,7 +286,7 @@ function Products() {
     if (page + 1 > totalpages) {
       return <div className="btn-Page">
         <button onClick={() => (setPage(page - 1), setInputValue(page -1))}>Previous</button>
-        <input type="text" autoFocus className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
+        <input type="text" className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
         <button onClick={() => (setPage(page + 1), setInputValue(page + 1))} disabled>Next</button>
       </div>;
     }
@@ -294,7 +294,7 @@ function Products() {
     if (page <= 1) {
       return <div className="btn-Page">
         <button onClick={() => (setPage(page - 1), setInputValue(page -1))} disabled>Previous</button>
-        <input type="text" autoFocus className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
+        <input type="text" className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
         <button onClick={() => (setPage(page + 1), setInputValue(page + 1))}>Next</button>
       </div>;
     }
@@ -302,7 +302,7 @@ function Products() {
     if (page) {
       return <div className="btn-Page">
         <button onClick={() => (setPage(page - 1), setInputValue(page -1))}>Previous</button>
-        <input type="text" autoFocus className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
+        <input type="text" className='currentPageInput' value={inputValue} onChange={(e) => setChoosePage(e.target.value)} size="1" />
         <button onClick={() => (setPage(page + 1), setInputValue(page + 1))}>Next</button>
       </div>;
     }
@@ -517,5 +517,3 @@ function Products() {
 }
 
 export default Products;
-
-

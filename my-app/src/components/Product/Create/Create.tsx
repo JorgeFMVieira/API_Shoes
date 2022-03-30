@@ -9,18 +9,20 @@ function Create() {
         setOpen(false);
         if (openModal === "open") {
             setOpen(true);
-        } else if (openModal === 'close') {
+        } else if (openModal === "close") {
             setOpen(false);
         }
     }
 
+    const [choose, setChoose] = useState('');
+    
     return (
         <div>
-            <button className="btn createNew" onClick={() => setOpen(true)}>Create New Product</button>
+            <button className="btn createNew" onClick={() => (openModal("open"), setChoose("create"))}>Create New Product</button>
             {
                 open ?
-                    <Modal openModal={openModal} />
-                    : null
+                    <Modal openModal={openModal} choose={choose} />
+                : null
             }
         </div>
     )
