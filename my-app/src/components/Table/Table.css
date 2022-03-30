@@ -91,88 +91,6 @@ table tr td button{
     background-color: #ff3939;
 }
 
-.modalWindow{
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: rgb(59, 59, 59, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-}
-
-.containerModal{
-    width: fit-content;
-    height: auto;
-    background-color: #FFFFFF;
-    border-radius: 5px;
-    margin: 20px;
-}
-
-.modalTitle{
-    width: 100%;
-    padding: 15px;
-    border-bottom: 1px solid #000000;
-}
-
-.modalItem{
-    display: flex;
-    flex-direction: column;
-    padding: 25px;
-    padding-bottom: 0px;
-}
-
-.modalItem input,
-.modalItem select{
-    outline: none;
-    border: none;
-    width: 450px;
-    height: 35px;
-    background-color: #FFFFFF;
-    text-indent: 5px;
-    font-size: 12.6pt;
-    border-radius: 5px;
-    border: solid 1.5px #D3D3D3;
-    -webkit-transition: 1s; /* Safari */
-    transition: 1s;
-}
-
-.modalItem input[type=text]:hover{
-  box-shadow: 0 0 5pt 0.5pt #D3D3D3;
-}
-
-.modalItem input[type=text]:focus {
-  box-shadow: 0 0 5pt 2pt #D3D3D3;
-  outline-width: 0px;
-}
-
-.modalBtns .createNew, .modalBtns .cancelBtn{
-    padding: 10px 25px;
-    text-align: center;
-    margin-top: 30px;
-}
-
-.modalBtns .cancelBtn{
-    background-color: #ff3939;
-}
-
-.modalBtns {
-    display: flex;
-    float: right;
-    padding: 5px;
-}
-
-.modalBtns button{
-    margin: 5px;
-}
-
-.error{
-    color: #ff3939;
-}
-
 .search{
     display: flex;
     padding: 10px;
@@ -191,7 +109,7 @@ table tr td button{
     outline-width: 0px;
 }
 
-.errorFindId{
+.error{
     padding: 15px;
     padding-left: 0px;
     color: #ff3939;
