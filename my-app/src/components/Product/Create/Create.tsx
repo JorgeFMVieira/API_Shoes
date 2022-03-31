@@ -8,6 +8,8 @@ import { iProductTypeList } from '../../../interfaces/iProductTypeList';
 export type createProps = {
     show: boolean;
     onCancel: () => void;
+    handlerError: (errorMsg: string) => void;
+    handlerSuccess: (successMsg: string) => void;
 }
 
 function Create(props: createProps) {
@@ -28,48 +30,42 @@ function Create(props: createProps) {
 
 
     const createProduct = async (product: CreateProductDTO) => {
-
-
-
-        if (product.name == "" || product.description == "" || product.price == "") {
-            toast.error('Please, fill  all fields!');
+        if (product.name == "" || product.description == "" || product.price == "" || product.quantity.toString() == "" || product.productTypeId == 0) {
+            props.handlerError("Please, fill  all fields!");
             return;
-          }
-      
+        }
 
-          const price = product.price.toString();
-          if (price.includes(',')) {
-            const priceReplaced = price.replace(',', '.');
-            product.price = parseFloat(priceReplaced);
-          }
-      
-          if (isNaN(product.price)) {
-            toast.error('The price has to be a number.');
+        if (product.price.includes(',')) {
+            const priceReplaced = product.price;
+            product.price = priceReplaced.replace(',', '.');
+        }
+
+        if (isNaN(parseFloat(product.price))) {
+            props.handlerError("Price must be a number!");
             return;
-          }
-      
-          if(isNaN(product.quantity)){
-            toast.error('The quantity has to be a integer number.');
+        }
+
+        if (isNaN(product.quantity)) {
+            props.handlerError("Quantity must be a number!");
             return;
-          }
+        }
 
 
-        await Api.post('Products', { ...product } )
+        await Api.post('Products', { ...product })
             .then(response => {
+                props.handlerSuccess("Product created successfully!");
                 setData(data.concat(response.data));
             }).catch(error => {
                 console.log(error);
             })
         setProduct(new CreateProductDTO());
 
-        console.log(product);
-
         props.onCancel();
     }
 
     useEffect(() => {
         requestGetType();
-    }, []);
+    }, [product]);
 
     return (
         <div>
@@ -95,12 +91,12 @@ function Create(props: createProps) {
                                         </div>
                                         <div className="modalItem">
                                             <label htmlFor="price">Price:</label>
-                                            <input type="text" id="price" name="price" onChange={(e) => setProduct({ ...product, price: parseInt(e.target.value) })} />
+                                            <input type="text" id="price" name="price" onChange={(e) => setProduct({ ...product, price: e.target.value })} />
                                         </div>
                                         <div className="modalItem">
                                             <label htmlFor="productTypeId">Type:</label>
-                                            <select name="productTypeId" id="productTypeId" onChange={(e) => (setProduct({ ...product, productTypeId: parseInt(e.target.value) }), console.log(e.target.value))}>
-                                                <option defaultValue="Choose an Option">Choose an Option</option>
+                                            <select name="productTypeId" id="productTypeId" onChange={(e) => setProduct({ ...product, productTypeId: parseInt(e.target.value) })}>
+                                                <option defaultValue="Choose an Option" hidden>Choose an Option</option>
                                                 {dataType.map((productType) => (
                                                     <option key={productType.id} value={productType.id}>{productType.type}</option>
                                                 ))}

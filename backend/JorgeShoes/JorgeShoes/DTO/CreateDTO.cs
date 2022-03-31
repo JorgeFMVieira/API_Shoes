@@ -13,7 +13,8 @@ namespace JorgeShoes.DTO
                 Description = this.Description,
                 Quantity = this.Quantity,
                 Price = this.Price,
-                ProductTypeId = this.ProductTypeId
+                ProductTypeId = this.ProductTypeId,
+                DateCreated = this.DateCreated
             };
         }
 

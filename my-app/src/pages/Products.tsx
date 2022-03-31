@@ -2,10 +2,6 @@ import Table from '../components/Table/Table';
 import { useState } from 'react';
 import './Products.css';
 import { AiFillWarning, AiOutlineClose } from "react-icons/ai";
-import ReactDOM from 'react-dom';
-import { iProductsList } from '../interfaces/iProductsList';
-import { CreateProductDTO } from '../Models/Products/CreateProductDTO';
-import { Api } from '../providers/api';
 
 function Products() {
 
