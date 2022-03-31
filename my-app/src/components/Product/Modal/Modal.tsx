@@ -45,7 +45,7 @@ function Modal(props: dadosCreate) {
         const entries = 5;
         const searchBy = "all";
         const search = "";
-        service.getAll('Products?page=' + page + '&entries=' + entries + '&searchBy=' + searchBy + '&search=' + search);
+        // service.getAll('Products?page=' + page + '&entries=' + entries + '&searchBy=' + searchBy + '&search=' + search);
     }
 
     return (
