@@ -15,19 +15,6 @@ function Create(props: createProps) {
     const [product, setProduct] = useState<CreateProductDTO>(new CreateProductDTO());
     const [data, setData] = useState<iProductsList[]>([]);
 
-
-    const createProduct = async (product: CreateProductDTO) => {
-        await Api.post('Products', { ...product })
-            .then(response => {
-                setData(data.concat(response.data));
-            }).catch(error => {
-                console.log(error);
-            })
-        setProduct(new CreateProductDTO());
-
-        props.onCancel();
-    }
-
     const [dataType, setDataType] = useState<iProductTypeList[]>([]);
     const requestGetType = async () => {
         await Api.get("ProductType/id:int")
@@ -38,17 +25,54 @@ function Create(props: createProps) {
             })
     }
 
+
+
+    const createProduct = async (product: CreateProductDTO) => {
+
+
+
+        if (product.name == "" || product.description == "" || product.price == "") {
+            toast.error('Please, fill  all fields!');
+            return;
+          }
+      
+
+          const price = product.price.toString();
+          if (price.includes(',')) {
+            const priceReplaced = price.replace(',', '.');
+            product.price = parseFloat(priceReplaced);
+          }
+      
+          if (isNaN(product.price)) {
+            toast.error('The price has to be a number.');
+            return;
+          }
+      
+          if(isNaN(product.quantity)){
+            toast.error('The quantity has to be a integer number.');
+            return;
+          }
+
+
+        await Api.post('Products', { ...product } )
+            .then(response => {
+                setData(data.concat(response.data));
+            }).catch(error => {
+                console.log(error);
+            })
+        setProduct(new CreateProductDTO());
+
+        console.log(product);
+
+        props.onCancel();
+    }
+
     useEffect(() => {
         requestGetType();
     }, []);
 
     return (
         <div>
-            {
-                dataType.map((item: iProductTypeList) => {
-                    console.log(item.id);
-                })
-            }
             {
                 props.show ?
                     <div>
@@ -75,9 +99,10 @@ function Create(props: createProps) {
                                         </div>
                                         <div className="modalItem">
                                             <label htmlFor="productTypeId">Type:</label>
-                                            <select name="productTypeId" id="productTypeId" onChange={(e) => setProduct({ ...product, productTypeId: parseInt(e.target.value) })}>
-                                                {dataType.map((productType, index) => (
-                                                    <option key={index} value={productType.id}>{productType.id}</option>
+                                            <select name="productTypeId" id="productTypeId" onChange={(e) => (setProduct({ ...product, productTypeId: parseInt(e.target.value) }), console.log(e.target.value))}>
+                                                <option defaultValue="Choose an Option">Choose an Option</option>
+                                                {dataType.map((productType) => (
+                                                    <option key={productType.id} value={productType.id}>{productType.type}</option>
                                                 ))}
                                             </select>
                                         </div>
