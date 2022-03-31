@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Navbar from './components/Navbar';
 import Home from './components/Home';
 import Products from './pages/Products';
+import ApiError from './pages/ApiError';
 
 ReactDOM.render(
     <React.StrictMode>
@@ -13,6 +14,7 @@ ReactDOM.render(
             <Routes>
                 <Route path='/' element={<Home />} />
                 <Route path='/Products' element={<Products />} />
+                <Route path='/ApiError' element={<ApiError />} />
             </Routes>
         </BrowserRouter>
     </React.StrictMode>,

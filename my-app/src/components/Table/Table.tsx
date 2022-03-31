@@ -145,6 +145,8 @@ function Table({errorHandler}: any) {
     setInputValue(1);
   }
 
+  const [show, setShow] = useState<boolean>(false);
+
   useEffect(() => {
     service.getAll(currentPage, entries, searchBy, search).then(result => {
       setTotalPages(result.pages);
@@ -156,12 +158,13 @@ function Table({errorHandler}: any) {
         setSearch("");
       }
     });
-  }, [currentPage, totalPages, searchBy, search, entries]);
+  }, [currentPage, totalPages, searchBy, search, entries, show]);
 
 
   return (
     <div className="tableContainer">
-      <Create />
+      <button className="btn createNew" onClick={() => (setShow(true))}>Create New Product</button>
+      <Create show={show} onCancel={() => {setShow(false)}} />
       <div className="searchItems">
         <div className="searchItems-Inputs">
           {
