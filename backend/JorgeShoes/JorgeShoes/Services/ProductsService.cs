@@ -92,33 +92,33 @@ namespace JorgeShoes.Services
                     }
                 }
 
-                //switch (option)
-                //{
-                //    case "id_desc":
-                //        products = _context.Products.OrderByDescending(s => s.Id);
-                //        break;
-                //    case "name":
-                //        products = _context.Products.OrderBy(s => s.Name);
-                //        break;
-                //    case "name_desc":
-                //        products = _context.Products.OrderByDescending(s => s.Name);
-                //        break;
-                //    case "description":
-                //        products = _context.Products.OrderBy(s => s.Description);
-                //        break;
-                //    case "description_desc":
-                //        products = _context.Products.OrderByDescending(s => s.Description);
-                //        break;
-                //    case "price":
-                //        products = _context.Products.OrderBy(s => s.Price);
-                //        break;
-                //    case "price_desc":
-                //        products = _context.Products.OrderByDescending(s => s.Price);
-                //        break;
-                //    default:
-                //        products = _context.Products.OrderBy(s => s.Id);
-                //        break;
-                //}
+                switch (option)
+                {
+                    case "id_desc":
+                        products = _context.Products.OrderByDescending(s => s.Id);
+                        break;
+                    case "name":
+                        products = _context.Products.OrderBy(s => s.Name);
+                        break;
+                    case "name_desc":
+                        products = _context.Products.OrderByDescending(s => s.Name);
+                        break;
+                    case "description":
+                        products = _context.Products.OrderBy(s => s.Description);
+                        break;
+                    case "description_desc":
+                        products = _context.Products.OrderByDescending(s => s.Description);
+                        break;
+                    case "price":
+                        products = _context.Products.OrderBy(s => s.Price);
+                        break;
+                    case "price_desc":
+                        products = _context.Products.OrderByDescending(s => s.Price);
+                        break;
+                    default:
+                        products = _context.Products.OrderBy(s => s.Id);
+                        break;
+                }
 
                 ProductResponse produto = new();
                 produto.Products = products.Select(t => new ListProductType(t)).ToList();

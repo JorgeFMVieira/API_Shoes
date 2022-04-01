@@ -13,12 +13,12 @@ export type deleteProps = {
 function Delete(props: deleteProps) {
   
       const deleteProduct = async () => {
-          await Api.delete('Products/' + props.currentProduct)
+          await Api.delete('ProductType/' + props.currentProduct)
               .then(response => {
-                  props.handlerSuccess("Product deleted successfully!");
+                  props.handlerSuccess("Type deleted successfully!");
                   props.onCancel();
               }).catch(error => {
-                  props.handlerError("We were unable to delete the product!");
+                  props.handlerError("We were unable to delete the type!");
                   console.log(error);
                   props.onCancel();
               })
@@ -33,10 +33,10 @@ function Delete(props: deleteProps) {
             {
               <div className="modalWindow">
                 <div className="containerModal">
-                  <div className="modalTitle"><h3>Delete Product</h3></div>
+                  <div className="modalTitle"><h3>Delete Type</h3></div>
                   <div className="modalBody">
                     <div className="modalItem">
-                      <span>Are you sure you want to delete the product?</span>
+                      <span>Are you sure you want to delete the type?</span>
                     </div>
                   </div>
                   <div className="modalBtns">

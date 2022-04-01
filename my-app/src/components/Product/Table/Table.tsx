@@ -1,12 +1,12 @@
-import { iProductsList } from '../../interfaces/iProductsList';
-import { IProductsEdit } from '../../interfaces/IProductsEdit';
-import { iProductTypeList } from '../../interfaces/iProductTypeList';
-import { ProductService } from '../../services';
+import { iProductsList } from '../../../interfaces/Products/iProductsList';
+import { IProductsEdit } from '../../../interfaces/Products/IProductsEdit';
+import { iProductTypeList } from '../../../interfaces/Products/iProductTypeList';
+import { ProductService } from '../../../services';
 import React, { useState, useEffect } from 'react';
 import './Table.css';
-import Create from '../Product/Create/Create';
-import Delete from '../Product/Delete/Delete';
-import Edit from '../Product/Edit/Edit';
+import Create from '../Create/Create';
+import Delete from '../Delete/Delete';
+import Edit from '../Edit/Edit';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -58,7 +58,7 @@ function Table({ errorHandler }: any) {
     }
 
     if (isNaN(inputValue)) {
-      toast.error("The price has to be a number!");
+      toast.error("The page has to be a number!");
       return;
     }
 

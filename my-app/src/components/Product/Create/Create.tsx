@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { CreateProductDTO } from '../../../Models/Products/CreateProductDTO';
-import { iProductsList } from '../../../interfaces/iProductsList';
+import { iProductsList } from '../../../interfaces/Products/iProductsList';
 import { Api } from '../../../providers/api';
 import '../../Product/Modal.css';
-import { iProductTypeList } from '../../../interfaces/iProductTypeList';
+import { iProductTypeList } from '../../../interfaces/Products/iProductTypeList';
 
 export type createProps = {
     show: boolean;

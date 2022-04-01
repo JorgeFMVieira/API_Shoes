@@ -1,1 +1,1 @@
-export * from './iProducts'
+export * from './Products/iProducts'

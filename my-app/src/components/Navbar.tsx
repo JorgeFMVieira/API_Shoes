@@ -13,6 +13,9 @@ function Navbar() {
             <div className="nav-item">
             <Link to="/Products" className='href'>Products</Link>
             </div>
+            <div className="nav-item">
+            <Link to="/ProductsType" className='href'>Products Type</Link>
+            </div>
         </div>
     </div>
   )

@@ -33,7 +33,7 @@ namespace JorgeShoes.Services
                 if(search != null)
                 {
                     pageCount = Math.Ceiling(_context.ProductTypes
-                                    .Where(n => n.DateDeleted == null && n.Type.Contains(search))
+                                    .Where(n => n.DateDeleted == null && n.Type.Contains(search) || n.ProductTypeId.ToString().Contains(search))
                                     .Count() / entries);
                 }
 
@@ -80,7 +80,7 @@ namespace JorgeShoes.Services
                 if(search != null)
                 {
                     productsTypes = await _context.ProductTypes
-                                    .Where(n => n.DateDeleted == null && n.Type.Contains(search))
+                                    .Where(n => n.DateDeleted == null && n.Type.Contains(search) || n.ProductTypeId.ToString().Contains(search))
                                     .Skip((page - 1) * (int)entries)
                                     .Take((int)entries)
                                     .ToListAsync();

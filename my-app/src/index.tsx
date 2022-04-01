@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Navbar from './components/Navbar';
 import Home from './components/Home';
 import Products from './pages/Products';
+import ProductsType from './pages/ProductsType';
 import ApiError from './pages/ApiError';
 
 ReactDOM.render(
@@ -14,6 +15,7 @@ ReactDOM.render(
             <Routes>
                 <Route path='/' element={<Home />} />
                 <Route path='/Products' element={<Products />} />
+                <Route path='/ProductsType' element={<ProductsType />} />
                 <Route path='/ApiError' element={<ApiError />} />
             </Routes>
         </BrowserRouter>

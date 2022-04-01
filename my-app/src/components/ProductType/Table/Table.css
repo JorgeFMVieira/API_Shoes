@@ -1,0 +1,249 @@
+table{
+    border-collapse: collapse;
+}
+.tableContainer {
+    height: fit-content;
+    border-radius: 10px;
+    -ms-overflow-style: none; /* for Internet Explorer, Edge */
+    scrollbar-width: none; /* for Firefox */
+    overflow-y: scroll; 
+    padding: 3%;
+}
+
+.tableContainer::-webkit-scrollbar {
+  display: none; /* for Chrome, Safari, and Opera */
+}
+
+.tableContainer ::-webkit-scrollbar{
+  width: 1px;
+  height: 10px;
+}
+
+.tableContainer ::-webkit-scrollbar-track{
+  box-shadow: black;
+}
+
+.tableContainer ::-webkit-scrollbar-thumb{
+  background-color: rgb(116, 106, 255);
+}
+
+.tableContainer table {
+    width: 100%;
+    border-collapse: collapse;
+    padding: 2%;
+    table-layout:fixed;
+    overflow-x: scroll;
+    margin-top: 30px;
+}
+
+table tr td{
+    text-align: center;
+    padding: 15px;
+}
+
+table th{
+    padding: 15px;
+    background-color: #01987A;
+    color: #FFFFFF;
+}
+
+table th:first-child{
+    border-radius: 5px 0px 0px 0px;
+}
+
+table th:last-child{
+    border-radius: 0px 5px 0px 0px;
+}
+
+table tr:nth-child(odd){
+    background-color: #dbdbdb;
+}
+
+table tr:nth-child(even){
+    background-color: #FFFFFF;
+}
+
+.btn{
+    transition: 0.3s all ease-in-out;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    color: #FFFFFF;
+}
+
+.createNew{
+    padding: 15px 25px;
+    text-align: center;
+    background-color: #01987A;
+    margin-top: 30px;
+}
+
+table tr td button{
+    margin: 5px;
+    padding: 10px 15px;
+}
+
+.edit-btn{
+    background-color: #0059ff;
+}
+
+.delete-btn{
+    background-color: #ff3939;
+}
+
+.search{
+    display: flex;
+    padding: 10px;
+    margin-top: 20px;
+    outline: none;
+    border-radius: 5px;
+    border: solid 1.5px #D3D3D3;
+}
+
+.search:hover{
+    box-shadow: 0 0 5pt 0.5pt #D3D3D3;
+}
+
+.search:focus{
+    box-shadow: 0 0 5pt 2pt #D3D3D3;
+    outline-width: 0px;
+}
+
+.error{
+    padding: 15px;
+    padding-left: 0px;
+    color: #ff3939;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.iconFilterSearch{
+    margin-left: auto;
+    font-size: 30px;
+    cursor: pointer;
+    transition: 0.3s all ease-in-out;
+}
+
+.filter{
+    position: absolute;
+    top: 45px;
+    right: 40px;
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    padding: 10px
+}
+
+.iconFilterSearch:hover{
+    transition: 0.3s all ease-in-out;
+    color: #01987A;
+}
+
+.tableHeader{
+    display: flex;
+}
+
+.filterOptions{
+    width: fit-content;
+    height: auto;
+    transition: 0.3s all ease-in-out;
+    text-align: right;
+    border-radius: 0px 0px 15px 15px;
+}
+
+.filterOptions ul li{
+    padding: 5px 15px;
+}
+
+li{
+    border-bottom: rgb(0,0,0,0.3);
+}
+
+ul li{
+    list-style-type: none;
+    cursor: pointer;
+}
+
+.searchItems{
+    display: block;
+}
+
+.search-options{
+    margin-left: 10px;
+    text-transform: uppercase;
+}
+
+.btn-Page{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-Page button{
+    margin: 15px;
+    padding: 10px 15px;
+    background-color: #01987A;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    color: #FFFFFF;
+    cursor: pointer;
+    transition: 0.3s all ease-in-out;
+}
+
+.btn-Page button[disabled]{
+    background-color: #67857f;
+    cursor: auto;
+}
+
+.btn-Page button:hover{
+    transition: 0.3s all ease-in-out;
+    background-color: #2bbb9e;
+}
+
+.btn-Page button[disabled]:hover{
+    background-color: #67857f;
+}
+
+.createNew:hover{
+    transition: 0.3s all ease-in-out;
+    background-color: #2bbb9e;
+}
+
+.delete-btn:hover,
+.cancelBtn:hover{
+    transition: 0.3s all ease-in-out;
+    background-color: #e71414;
+}
+
+.edit-btn:hover{
+    transition: 0.3s all ease-in-out;
+    background-color: #3679f7;
+}
+
+.btnCurrentPage{
+    cursor: auto !important;
+}
+
+.btnCurrentPage:hover{
+    transition: 0.3s all ease-in-out;
+    background-color: #01987A !important;
+}
+
+.searchItems-Inputs{
+    display: flex;
+}
+
+.currentPageInput{
+    background-color: #01987A;
+    color: #FFFFFF;
+    text-align: center;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 10px;
+}
+::placeholder {
+    color: #c9c9c9;
+}
