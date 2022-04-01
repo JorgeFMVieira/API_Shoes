@@ -25,11 +25,11 @@ namespace JorgeShoes.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IAsyncEnumerable<Product>>> GetProducts(int page, float entries, string searchBy, string search, string option)
+        public async Task<ActionResult<IAsyncEnumerable<Product>>> GetProducts(int page, float entries, string searchBy, string search, string order)
         {
             try
             {
-                var products = await _productService.GetProducts(page, entries, searchBy, search, option);
+                var products = await _productService.GetProducts(page, entries, searchBy, search, order);
                 return Ok(products);
             }
             catch
