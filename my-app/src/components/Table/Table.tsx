@@ -1,5 +1,6 @@
 import { iProductsList } from '../../interfaces/iProductsList';
 import { IProductsEdit } from '../../interfaces/IProductsEdit';
+import { iProductTypeList } from '../../interfaces/iProductTypeList';
 import { ProductService } from '../../services';
 import React, { useState, useEffect } from 'react';
 import './Table.css';
@@ -20,6 +21,8 @@ function Table({ errorHandler }: any) {
   const [showInputName, setShowInputName] = useState(false);
   const [showSearchInput, setShowSearchInput] = useState(true);
   const [showSearchType, setShowInputType] = useState(false);
+
+  const [dataType, setDataType] = useState<iProductTypeList[]>([]);
 
   const service = new ProductService();
 
@@ -260,7 +263,7 @@ function Table({ errorHandler }: any) {
           </div>
         }
       </div>
-      <Edit showEdit={showEdit} onCancel={() => setShowEdit(false)} currentProduct={currentProduct} handlerError={handlerError} handlerSuccess={handlerSuccess} />
+      <Edit dataType={dataType} showEdit={showEdit} onCancel={() => setShowEdit(false)} currentProduct={currentProduct} handlerError={handlerError} handlerSuccess={handlerSuccess} />
       <Delete showDelete={showDelete} onCancel={() => setShowDelete(false)} currentProduct={currentProduct} handlerError={handlerError} handlerSuccess={handlerSuccess} />
     </div>
   )

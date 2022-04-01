@@ -12,6 +12,7 @@ export type createProps = {
     handlerError: (errorMsg: string) => void;
     handlerSuccess: (successMsg: string) => void;
     currentProduct: number;
+    dataType:  iProductTypeList[];
 }
 
 function Edit(props: createProps) {
@@ -22,20 +23,22 @@ function Edit(props: createProps) {
         if (props.currentProduct != 0) {
             await Api.get("Products/" + props.currentProduct)
                 .then(response => {
-                    setProduct(response.data);
-                    console.log(product);
+                    setProductInfoSelected(response.data);
+                    console.log(response.data);
                 }).catch(error => {
                     console.log(error);
                 })
         }
     }
 
+
+    // Criar um  getType para colocar o id e receber o type
     const [dataType, setDataType] = useState<iProductTypeList[]>([]);
     const requestGetType = async () => {
         await Api.get("ProductType/id:int")
             .then(response => {
                 setDataType(response.data);
-                console.log(dataType);
+                console.log(response.data);
             }).catch(error => {
                 console.log(error);
             })
@@ -47,13 +50,14 @@ function Edit(props: createProps) {
         description: '',
         quantity: '',
         price: '',
-        productTypeId: ''
+        productTypeId: 0,
+        type: ''
     });
 
     const inputProductData = (e: { target: { name: any; value: any; }; }) => {
         const { name, value } = e.target;
         setProductInfoSelected({
-            ...productInfoSelected, [name]: value
+            ...productInfoSelected, [name]: value,
         });
     }
 
@@ -68,11 +72,10 @@ function Edit(props: createProps) {
                 console.log(error);
             })
     }
-
     useEffect(() => {
         requestGetType();
         getProductById();
-    }, [props.currentProduct, product]);
+    }, [props.currentProduct]);
 
     return (
         <div>
@@ -103,10 +106,11 @@ function Edit(props: createProps) {
                                         <div className="modalItem">
                                             <label htmlFor="type">Type:</label>
                                             <select name="productTypeId" onChange={inputProductData}>
-                                                <option key="1" defaultValue={productInfoSelected.id} hidden>{productInfoSelected.productTypeId}</option>
-                                                {dataType.map((productType, index) => (
-                                                    <option key={index} value={productType.id}>{productType.type}</option>
-                                                ))}
+                                                {dataType.map((productType, index) => {
+                                                    (productType.id === productInfoSelected.productTypeId) ?
+                                                        <option value={productType.id} selected>{productType.type}</option>
+                                                    : <option value={productType.id}>{productType.type}</option>
+                                                })}
                                             </select>
                                         </div>
                                     </div>
@@ -120,6 +124,13 @@ function Edit(props: createProps) {
                     </div>
                     : null
             }
+
+<p>AQUI</p>
+            {dataType.map(item => {
+                (item.id === productInfoSelected.productTypeId) ?
+                    <p>{item.type}</p>
+                : <p></p>
+            })}
         </div>
     )
 }

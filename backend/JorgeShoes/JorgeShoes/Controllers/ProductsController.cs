@@ -38,7 +38,6 @@ namespace JorgeShoes.Controllers
             }
         }
 
-
         [HttpGet("{id:int}", Name="GetProduct")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
