@@ -1,5 +1,5 @@
 import React from 'react'
-import './Delete.css'
+import '../../Product/Modal.css';
 import { Api } from '../../../providers/api';
 
 export type deleteProps = {
@@ -15,7 +15,7 @@ function Delete(props: deleteProps) {
       const deleteProduct = async () => {
           await Api.delete('Products/' + props.currentProduct)
               .then(response => {
-                props.handlerSuccess("Product deleted successfully!");
+                  props.handlerSuccess("Product deleted successfully!");
                   props.onCancel();
               }).catch(error => {
                   props.handlerError("We were unable to delete the product!");

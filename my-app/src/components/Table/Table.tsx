@@ -1,9 +1,11 @@
 import { iProductsList } from '../../interfaces/iProductsList';
+import { IProductsEdit } from '../../interfaces/IProductsEdit';
 import { ProductService } from '../../services';
 import React, { useState, useEffect } from 'react';
 import './Table.css';
 import Create from '../Product/Create/Create';
 import Delete from '../Product/Delete/Delete';
+import Edit from '../Product/Edit/Edit';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -53,17 +55,17 @@ function Table({ errorHandler }: any) {
     }
 
     if (isNaN(inputValue)) {
-      errorHandler("The page has to be a number");
+      toast.error("The price has to be a number!");
       return;
     }
 
     if (inputValue > totalPages) {
-      errorHandler("You exceded the page limit.");
+      toast.error("You exceeded the number of pages!");
       return;
     }
 
     if (inputValue < 1) {
-      errorHandler("The page minium is 1");
+      toast.error("The miniumum number of pages is 1!");
       return;
     }
 
@@ -156,11 +158,15 @@ function Table({ errorHandler }: any) {
 
   const handlerSuccess = (successMsg: string) => {
       toast.success(successMsg);
+      setCurrentPage(1);
   }
 
   const [show, setShow] = useState<boolean>(false);
   const [showDelete, setShowDelete] = useState<boolean>(false);
   const [currentProduct, setCurrentProduct] = useState(0);
+
+  const [showEdit, setShowEdit] = useState<boolean>(false);
+
 
   useEffect(() => {
     service.getAll(currentPage, entries, searchBy, search).then(result => {
@@ -173,7 +179,7 @@ function Table({ errorHandler }: any) {
         setSearch("");
       }
     });
-  }, [currentPage, totalPages, searchBy, search, entries, show, showDelete]);
+  }, [currentPage, totalPages, searchBy, search, entries, show, showDelete, showEdit]);
 
 
 
@@ -243,7 +249,7 @@ function Table({ errorHandler }: any) {
                     <td>{item.quantity}</td>
                     <td>{item.price}</td>
                     <td>
-                      <button className="btn edit-btn">Edit</button>
+                      <button className="btn edit-btn" onClick={() => (setShowEdit(true), setCurrentProduct(item.id))}>Edit</button>
                       <button className="btn delete-btn" onClick={() => (setShowDelete(true), setCurrentProduct(item.id))}>Delete</button>
                     </td>
                   </tr>
@@ -254,6 +260,7 @@ function Table({ errorHandler }: any) {
           </div>
         }
       </div>
+      <Edit showEdit={showEdit} onCancel={() => setShowEdit(false)} currentProduct={currentProduct} handlerError={handlerError} handlerSuccess={handlerSuccess} />
       <Delete showDelete={showDelete} onCancel={() => setShowDelete(false)} currentProduct={currentProduct} handlerError={handlerError} handlerSuccess={handlerSuccess} />
     </div>
   )

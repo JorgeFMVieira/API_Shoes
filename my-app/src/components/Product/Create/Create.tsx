@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { CreateProductDTO } from '../../../Models/Products/CreateProductDTO';
 import { iProductsList } from '../../../interfaces/iProductsList';
 import { Api } from '../../../providers/api';
-import './Create.css';
+import '../../Product/Modal.css';
 import { iProductTypeList } from '../../../interfaces/iProductTypeList';
 
 export type createProps = {
@@ -56,6 +56,7 @@ function Create(props: createProps) {
                 props.handlerSuccess("Product created successfully!");
                 setData(data.concat(response.data));
             }).catch(error => {
+                props.handlerError("We weren´t able to create the product.");
                 console.log(error);
             })
         setProduct(new CreateProductDTO());
