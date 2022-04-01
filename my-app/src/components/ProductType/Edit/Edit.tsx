@@ -44,6 +44,7 @@ function Edit(props: createProps) {
                     props.handlerSuccess("Type edited successfully!");
                     props.onCancel();
                   }
+                  
             }).catch(error => {
                 props.handlerError("We were unable to edit the type!");
                 console.log(error);

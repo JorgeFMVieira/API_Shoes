@@ -22,10 +22,17 @@ namespace JorgeShoes.Services
         }
 
 
-        public async Task<ProductResponse> GetProducts(int page, float entries, string searchBy, string search, string order, string option)
+        public async Task<ProductResponse> GetProducts(int page, float entries, string searchBy, string search, string option)
         {
             try
             {
+                var products = await _context.Products
+                                .Include(x => x.Type)
+                                .Where(n => n.DateDeleted == null)
+                                .Skip((page - 1) * (int)entries)
+                                .Take((int)entries)
+                                .ToListAsync();
+
                 var pageCount = Math.Ceiling(_context.Products.Include(x => x.Type).Where(n => n.DateDeleted == null).Count() / entries);
                 if (search != null)
                 {
@@ -33,7 +40,7 @@ namespace JorgeShoes.Services
                     {
                         pageCount = Math.Ceiling(_context.Products.Include(x => x.Type).Where(n => n.DateDeleted == null && (n.Id.ToString().Contains(search) || n.Type.Type.Contains(search) || n.Name.Contains(search) || n.Description.Contains(search) || n.Price.ToString().Contains(search) || n.Quantity.ToString().Contains(search))).Count() / entries);
                     }
-                    else if(searchBy == "name")
+                    else if (searchBy == "name")
                     {
                         pageCount = Math.Ceiling(_context.Products.Where(n => n.DateDeleted == null && n.Name.Contains(search)).Count() / entries);
                     }
@@ -47,16 +54,38 @@ namespace JorgeShoes.Services
                     }
                 }
 
-                var products = await _context.Products
-                                .Include(x => x.Type)
-                                .Where(n => n.DateDeleted == null)
-                                .Skip((page - 1) * (int)entries)
-                                .Take((int)entries)
-                                .ToListAsync();
+                switch (option)
+                {
+                    case "id_desc":
+                        products = _context.Products.OrderByDescending(s => s.Id).ToList();
+                        break;
+                    case "name":
+                        products = _context.Products.OrderBy(s => s.Name).ToList();
+                        break;
+                    case "name_desc":
+                        products = _context.Products.OrderByDescending(s => s.Name).ToList();
+                        break;
+                    case "description":
+                        products = _context.Products.OrderBy(s => s.Description).ToList();
+                        break;
+                    case "description_desc":
+                        products = _context.Products.OrderByDescending(s => s.Description).ToList();
+                        break;
+                    case "price":
+                        products = _context.Products.OrderBy(s => s.Price).ToList();
+                        break;
+                    case "price_desc":
+                        products = _context.Products.OrderByDescending(s => s.Price).ToList();
+                        break;
+                    default:
+                        products = _context.Products.OrderBy(s => s.Id).ToList();
+                        break;
+                }
+
 
                 if (search != null)
                 {
-                    if(searchBy == "all")
+                    if (searchBy == "all")
                     {
                         products = await _context.Products
                         .Include(x => x.Type)
@@ -64,7 +93,8 @@ namespace JorgeShoes.Services
                         .Skip((page - 1) * (int)entries)
                         .Take((int)entries)
                         .ToListAsync();
-                    }else if(searchBy == "name")
+                    }
+                    else if (searchBy == "name")
                     {
                         products = await _context.Products
                         .Where(n => n.DateDeleted == null && n.Name.Contains(search))
@@ -92,34 +122,6 @@ namespace JorgeShoes.Services
                     }
                 }
 
-                switch (option)
-                {
-                    case "id_desc":
-                        products = _context.Products.OrderByDescending(s => s.Id);
-                        break;
-                    case "name":
-                        products = _context.Products.OrderBy(s => s.Name);
-                        break;
-                    case "name_desc":
-                        products = _context.Products.OrderByDescending(s => s.Name);
-                        break;
-                    case "description":
-                        products = _context.Products.OrderBy(s => s.Description);
-                        break;
-                    case "description_desc":
-                        products = _context.Products.OrderByDescending(s => s.Description);
-                        break;
-                    case "price":
-                        products = _context.Products.OrderBy(s => s.Price);
-                        break;
-                    case "price_desc":
-                        products = _context.Products.OrderByDescending(s => s.Price);
-                        break;
-                    default:
-                        products = _context.Products.OrderBy(s => s.Id);
-                        break;
-                }
-
                 ProductResponse produto = new();
                 produto.Products = products.Select(t => new ListProductType(t)).ToList();
                 produto.Pages = (int)pageCount;
@@ -127,7 +129,7 @@ namespace JorgeShoes.Services
                 produto.Entries = entries;
                 produto.Search = search;
                 produto.SearchBy = searchBy;
-                produto.Order = order;
+                produto.Option = option;
 
                 if (page < 1)
                 {

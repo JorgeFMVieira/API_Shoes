@@ -9,7 +9,7 @@ namespace JorgeShoes.Services
 {
     public interface IProductService
     {
-        Task<ProductResponse> GetProducts(int page, float entries, string searchBy, string search, string order, string option);
+        Task<ProductResponse> GetProducts(int page, float entries, string searchBy, string search, string option);
         Task<Product> GetProduct(int id);
         Task CreateProduct(CreateDTO product);
         Task UpdateProduct(EditProductDTO product);
