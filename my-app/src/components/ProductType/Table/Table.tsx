@@ -8,6 +8,7 @@ import Delete from '../Delete/Delete';
 import Edit from '../Edit/Edit';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { AiOutlineArrowUp, AiOutlineArrowDown } from "react-icons/ai";
 
 function Table() {
 
@@ -22,9 +23,6 @@ function Table() {
   const thead = [
     {
       name: "Type"
-    },
-    {
-      name: "Options"
     }
   ];
 
@@ -117,9 +115,25 @@ function Table() {
 
   const [showEdit, setShowEdit] = useState<boolean>(false);
 
+  const [order, setOrder] = useState("");
+
+  const onClickSort = async (e: string) => {
+    if(order === "") {
+      return setOrder(e);
+    }
+    if(order === e) {
+      return setOrder(e + "_desc");
+    }
+
+    if(order === e.concat("_desc")){
+      return setOrder("");
+    }
+    setOrder(e);
+  }
+
 
   useEffect(() => {
-    service.getAll(currentPage, entries, search).then(result => {
+    service.getAll(currentPage, entries, search, order).then(result => {
       setTotalPages(result.pages);
       setCurrentPage(result.currentPage);
       setEntries(result.entries);
@@ -128,7 +142,7 @@ function Table() {
         setSearch("");
       }
     });
-  }, [currentPage, totalPages, search, entries, show, showDelete, showEdit]);
+  }, [currentPage, totalPages, search, order, entries, show, showDelete, showEdit]);
 
 
 
@@ -164,8 +178,13 @@ function Table() {
               <thead>
                 <tr>
                   {thead.map((item, index) => {
-                    return <th key={index}>{item.name}</th>
+                    return <th key={index} aria-label={item.name} onClick={(e) => onClickSort(e.currentTarget.ariaLabel!.valueOf())} >
+                    {item.name}
+                    { order === item.name ? <AiOutlineArrowDown /> : null}
+                    { order === (item.name + "_desc") ? <AiOutlineArrowUp /> : null}
+                  </th>
                   })}
+                  <th>Options</th>
                 </tr>
               </thead>
               <tbody>

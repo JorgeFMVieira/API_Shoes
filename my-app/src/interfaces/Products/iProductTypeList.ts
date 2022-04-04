@@ -1,4 +1,4 @@
 export interface iProductTypeList{
-    id: number;
+    productTypeId: number;
     type: string;
 }

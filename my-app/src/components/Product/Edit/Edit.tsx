@@ -3,6 +3,7 @@ import { Api } from '../../../providers/api';
 import '../../Product/Modal.css';
 import { iProductTypeList } from '../../../interfaces/Products/iProductTypeList';
 import { IProductsEdit } from '../../../interfaces/Products/IProductsEdit';
+import { toast } from 'react-toastify';
 
 export type createProps = {
     showEdit: boolean;
@@ -19,7 +20,7 @@ function Edit(props: createProps) {
         if (props.currentProduct != 0) {
             await Api.get("Products/" + props.currentProduct)
                 .then(response => {
-                    setProductInfoSelected({id: response.data.id, name: response.data.name, price: response.data.price, quantity: response.data.quantity, description: response.data.description, productTypeId: response.data.productTypeId});
+                    setProductInfoSelected({ id: response.data.id, name: response.data.name, price: response.data.price, quantity: response.data.quantity, description: response.data.description, productTypeId: response.data.productTypeId });
                 }).catch(error => {
                     console.log(error);
                 })
@@ -40,18 +41,37 @@ function Edit(props: createProps) {
 
     const [productInfoSelected, setProductInfoSelected] = useState<IProductsEdit>(new IProductsEdit());
 
-    const inputProductData = (e: { target: { name: any; value: any; }; }) => {
-        const { name, value } = e.target;
-        setProductInfoSelected({
-            ...productInfoSelected, [name]: value,
-        });
-
-        console.log(productInfoSelected);
-    }
-
-
     const editProduct = async () => {
-        console.log(productInfoSelected);
+
+        if (productInfoSelected.description == "" || productInfoSelected.name == "" || productInfoSelected.price == null || productInfoSelected.quantity.toString() == "" || productInfoSelected.productTypeId.toString() == "") {
+            toast.error("Please, fill  all fields!");
+            return;
+        }
+
+        const price = productInfoSelected.price.toString();
+        if (price.includes(',')) {
+            const priceReplaced = price;
+            productInfoSelected.price = priceReplaced.replace(',', '.');
+        }
+
+        if (isNaN(parseFloat(productInfoSelected.price))) {
+            toast.error("Price must be a number!");
+            return;
+        }
+
+        if (productInfoSelected.quantity.includes(',') || productInfoSelected.quantity.includes('.')) {
+            toast.error("Quantity must be a integer number.");
+            return;
+        }
+
+        if (isNaN(parseInt(productInfoSelected.quantity))) {
+            toast.error("Quantity must be a number");
+            return;
+        }
+
+        parseInt(productInfoSelected.quantity);
+
+
         await Api.put("Products/" + props.currentProduct, productInfoSelected)
             .then(response => {
                 props.handlerSuccess("Product edited successfully!");
@@ -91,13 +111,13 @@ function Edit(props: createProps) {
                                         <div className="modalItem">
                                             <label htmlFor="quantity">Quantity:</label>
                                             <input type="text" id="quantity" name="quantity" value={productInfoSelected.quantity} onChange={(e) => setProductInfoSelected({
-                                                ...productInfoSelected, quantity: parseInt(e.target.value),
+                                                ...productInfoSelected, quantity: e.target.value,
                                             })} />
                                         </div>
                                         <div className="modalItem">
                                             <label htmlFor="price">Price:</label>
                                             <input type="text" id="price" name="price" value={productInfoSelected.price} onChange={(e) => setProductInfoSelected({
-                                                ...productInfoSelected, price: parseInt(e.target.value),
+                                                ...productInfoSelected, price: e.target.value,
                                             })} />
                                         </div>
                                         <div className="modalItem">
@@ -106,10 +126,10 @@ function Edit(props: createProps) {
                                                 ...productInfoSelected, productTypeId: parseInt(e.target.value),
                                             })}>
                                                 {dataType.map(productType => (
-                                                    (productInfoSelected.productTypeId == productType.id) ?
-                                                        <option key={productType.id} defaultValue={productInfoSelected.id} selected>{productType.type}</option>
+                                                    (productInfoSelected.productTypeId == productType.productTypeId) ?
+                                                        <option key={productType.productTypeId} defaultValue={productInfoSelected.id}>{productType.type}</option>
                                                         :
-                                                        <option key={productType.id} value={productType.id}>{productType.type}</option>
+                                                        <option key={productType.productTypeId} value={productType.productTypeId}>{productType.type}</option>
 
                                                 ))}
                                             </select>

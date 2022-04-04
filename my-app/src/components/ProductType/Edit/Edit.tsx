@@ -16,8 +16,9 @@ function Edit(props: createProps) {
 
     const getTypeById = async () => {
         if (props.currentProduct != 0) {
-            await Api.get("ProductType?page=1&entries=1&search=" + props.currentProduct)
+            await Api.get("ProductType?page=1&entries=1&search=" + props.currentProduct + "&searchBy=Id")
                 .then(response => {
+                    console.log(response.data);
                     setProductInfoSelected({productTypeId: response.data.productType[0].productTypeId, type: response.data.productType[0].type});
                 }).catch(error => {
                     console.log(error);

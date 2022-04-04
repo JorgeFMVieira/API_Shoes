@@ -6,11 +6,11 @@ namespace JorgeShoes.DTO
     {
         public ProductTypeDTO(ProductType productType)
         {
-            Id = productType.ProductTypeId;
+            ProductTypeId = productType.ProductTypeId;
             Type = productType.Type;
         }
 
-        public int Id { get; set; }
+        public int ProductTypeId { get; set; }
         public string Type { get; set; }
     }
 }

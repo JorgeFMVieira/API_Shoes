@@ -30,18 +30,8 @@ function Create(props: createProps) {
 
 
     const createProduct = async (product: CreateProductDTO) => {
-        if (product.name == "" || product.description == "" || product.price == "" || product.quantity.toString() == "" || product.productTypeId == 0) {
+        if (product.name == "" || product.description == "" || product.price == null || product.quantity.toString() == "" || product.productTypeId == null) {
             props.handlerError("Please, fill  all fields!");
-            return;
-        }
-
-        if (product.price.includes(',')) {
-            const priceReplaced = product.price;
-            product.price = priceReplaced.replace(',', '.');
-        }
-
-        if (isNaN(parseFloat(product.price))) {
-            props.handlerError("Price must be a number!");
             return;
         }
 
@@ -50,7 +40,8 @@ function Create(props: createProps) {
             return;
         }
 
-
+        console.log(product.productTypeId);
+        console.log(product);
         await Api.post('Products', { ...product })
             .then(response => {
                 props.handlerSuccess("Product created successfully!");
@@ -92,14 +83,14 @@ function Create(props: createProps) {
                                         </div>
                                         <div className="modalItem">
                                             <label htmlFor="price">Price:</label>
-                                            <input type="text" id="price" name="price" onChange={(e) => setProduct({ ...product, price: e.target.value })} />
+                                            <input type="text" id="price" name="price" onChange={(e) => setProduct({ ...product, price: parseInt(e.target.value) })} />
                                         </div>
                                         <div className="modalItem">
                                             <label htmlFor="productTypeId">Type:</label>
-                                            <select name="productTypeId" id="productTypeId" onChange={(e) => setProduct({ ...product, productTypeId: parseInt(e.target.value) })}>
-                                                <option defaultValue="Choose an Option" hidden>Choose an Option</option>
+                                            <select name="productTypeId" id="productTypeId" onChange={(e) => (setProduct({ ...product, productTypeId: parseInt(e.target.value) }), console.log(e.target.value))}>
+                                                <option defaultValue="Choose an option">Choose an option</option>
                                                 {dataType.map((productType) => (
-                                                    <option key={productType.id} value={productType.id}>{productType.type}</option>
+                                                    <option key={productType.productTypeId} value={productType.productTypeId}>{productType.type}</option>
                                                 ))}
                                             </select>
                                         </div>

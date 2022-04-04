@@ -25,69 +25,49 @@ namespace JorgeShoes.Services
             return table;
         }
 
-        public async Task<ProductTypeResponse> GetProductsType(int page, float entries, string search)
+        public async Task<ProductTypeResponse> GetProductsType(int page, float entries, string search, string searchBy, string order)
         {
             try
             {
-                var pageCount = Math.Ceiling(_context.ProductTypes.Where(n => n.DateDeleted == null).Count() / entries);
-                if(search != null)
+                var mostrar = new ProductTypeResponse();
+
+                IQueryable<ProductType> products = _context.ProductTypes.Where(x => x.DateDeleted == null);
+
+                if (search != null)
                 {
-                    pageCount = Math.Ceiling(_context.ProductTypes
-                                    .Where(n => n.DateDeleted == null && n.Type.Contains(search) || n.ProductTypeId.ToString().Contains(search))
-                                    .Count() / entries);
+                    switch (searchBy)
+                    {
+                        case "Id":
+                            products = products.Where(n => (n.DateDeleted == null && n.ProductTypeId.ToString().Contains(search)));
+                            break;
+                        default:
+                            products = products.Where(n => (n.DateDeleted == null && n.Type.Contains(search)));
+                            break;
+                    }
                 }
 
-                ProductTypeResponse productTypeResponse = new();
-                productTypeResponse.Pages = (int)pageCount;
-                productTypeResponse.CurrentPage = page;
-                productTypeResponse.Entries = entries;
-                productTypeResponse.Search = search;
-
-                if(page < 1)
+                products = order switch
                 {
-                    productTypeResponse.Error = true;
-                    productTypeResponse.ErrorMsg = "The page minium is 1.";
-                    return productTypeResponse;
-                }
+                    "Id" => products.OrderBy(c => c.ProductTypeId),
+                    "Id_desc" => products.OrderByDescending(c => c.ProductTypeId),
+                    "Type" => products.OrderBy(c => c.Type),
+                    "Type_desc" => products.OrderByDescending(c => c.Type),
 
-                if(page > pageCount)
-                {
-                    productTypeResponse.Error = true;
-                    productTypeResponse.ErrorMsg = "The page is bigger than the total pages.";
-                    return productTypeResponse;
-                }
+                    _ => products.OrderBy(c => c.ProductTypeId),
+                };
 
-                if(page.ToString() == "")
-                {
-                    productTypeResponse.Error = true;
-                    productTypeResponse.ErrorMsg = "You need to specify a page.";
-                    return productTypeResponse;
-                }
+                products = products
+                       .Skip((page - 1) * (int)entries)
+                       .Take((int)entries);
 
-                if(entries < 1)
-                {
-                    productTypeResponse.Error = true;
-                    productTypeResponse.ErrorMsg = "The minium entries should be 1 in minium.";
-                    return productTypeResponse;
-                }
-
-                var productsTypes = await _context.ProductTypes
-                    .Where(n => n.DateDeleted == null)
-                    .Skip((page - 1) * (int)entries)
-                    .Take((int)entries)
-                    .ToListAsync();
-
-                if(search != null)
-                {
-                    productsTypes = await _context.ProductTypes
-                                    .Where(n => n.DateDeleted == null && n.Type.Contains(search) || n.ProductTypeId.ToString().Contains(search))
-                                    .Skip((page - 1) * (int)entries)
-                                    .Take((int)entries)
-                                    .ToListAsync();
-                }
-
-                productTypeResponse.ProductType = productsTypes;
-                return productTypeResponse;
+                mostrar.ProductType = await products.Select(t => new ProductTypeDTO(t)).ToListAsync();
+                mostrar.CurrentPage = page;
+                mostrar.Order = order;
+                mostrar.Pages = ((int)Math.Ceiling(_context.ProductTypes.Where(x => x.DateDeleted == null).Count() / entries));
+                mostrar.Entries = entries;
+                mostrar.SearchBy = searchBy;
+                mostrar.Search = search;
+                return mostrar;
             }
             catch
             {

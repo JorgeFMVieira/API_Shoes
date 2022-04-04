@@ -9,12 +9,14 @@ import Delete from '../Delete/Delete';
 import Edit from '../Edit/Edit';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { AiOutlineArrowUp, AiOutlineArrowDown } from "react-icons/ai";
 
 function Table({ errorHandler }: any) {
 
   const [data, setData] = useState<iProductsList[]>([]);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [order, setOrder] = useState("");
   const [entries, setEntries] = useState(5);
   const [search, setSearch] = useState("");
   const [searchBy, setSearchBy] = useState("all");
@@ -41,9 +43,6 @@ function Table({ errorHandler }: any) {
     },
     {
       name: "Price"
-    },
-    {
-      name: "Options"
     }
   ];
 
@@ -170,19 +169,33 @@ function Table({ errorHandler }: any) {
 
   const [showEdit, setShowEdit] = useState<boolean>(false);
 
+  const onClickSort = async (e: string) => {
+    if(order === "") {
+      return setOrder(e);
+    }
+    if(order === e) {
+      return setOrder(e + "_desc");
+    }
+
+    if(order === e.concat("_desc")){
+      return setOrder("");
+    }
+    setOrder(e);
+  }
 
   useEffect(() => {
-    service.getAll(currentPage, entries, searchBy, search).then(result => {
+    service.getAll(currentPage, entries, searchBy, search, order).then(result => {
       setTotalPages(result.pages);
       setCurrentPage(result.currentPage);
       setEntries(result.entries);
       setSearchBy(result.searchBy);
+      setOrder(result.order);
       setData(result.products);
       if (result.search === null) {
         setSearch("");
       }
     });
-  }, [currentPage, totalPages, searchBy, search, entries, show, showDelete, showEdit]);
+  }, [currentPage, totalPages, searchBy, search, entries, order, show, showDelete, showEdit]);
 
 
 
@@ -239,8 +252,13 @@ function Table({ errorHandler }: any) {
               <thead>
                 <tr>
                   {thead.map((item, index) => {
-                    return <th key={index}>{item.name}</th>
+                    return <th key={index} aria-label={item.name} onClick={(e) => onClickSort(e.currentTarget.ariaLabel!.valueOf())} >
+                      {item.name}
+                      { order === item.name ? <AiOutlineArrowDown /> : null}
+                      { order === (item.name + "_desc") ? <AiOutlineArrowUp /> : null}
+                    </th>
                   })}
+                  <th>Options</th>
                 </tr>
               </thead>
               <tbody>
