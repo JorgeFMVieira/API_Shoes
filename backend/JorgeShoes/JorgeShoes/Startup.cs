@@ -47,6 +47,10 @@ namespace JorgeShoes
                     };
                 });
 
+            services.AddMvc();
+            services.AddRazorPages();
+
+
             services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
@@ -81,12 +85,15 @@ namespace JorgeShoes
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
+
             app.UseRouting();
 
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapRazorPages();
                 endpoints.MapControllers();
             });
         }
