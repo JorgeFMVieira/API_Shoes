@@ -1,9 +1,12 @@
-﻿using JorgeShoes.Models;
+﻿using JorgeShoes.DTO;
+using JorgeShoes.Models;
+using JorgeShoes.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace JorgeShoes.Controllers
 {
@@ -11,8 +14,15 @@ namespace JorgeShoes.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        private readonly IUserService _userService;
+
+        public UserController(IUserService userService)
+        {
+            _userService = userService;
+        }
+
         [HttpGet("Admins")]
-        [Authorize]
+        [Authorize(Roles = "Admin,Seller")]
         public IActionResult Admins()
         {
             var currentUser = GetCurrentUser();
@@ -44,6 +54,20 @@ namespace JorgeShoes.Controllers
                 };
             }
             return null;
+        }
+
+        [HttpPost("Create")]
+        public async Task<ActionResult> CreateUser(CreateUserDTO user)
+        {
+            try
+            {
+                await _userService.CreateUser(user);
+                return Ok(user);
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }

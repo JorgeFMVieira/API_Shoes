@@ -2,6 +2,7 @@
 using JorgeShoes.DTO;
 using JorgeShoes.Models;
 using JorgeShoes.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using JorgeShoes.Controllers;
+using System.Security.Claims;
 
 namespace JorgeShoes.Controllers
 {
@@ -22,6 +25,26 @@ namespace JorgeShoes.Controllers
         public ProductsController(IProductService productService)
         {
             _productService = productService;
+        }
+
+        private UserModel GetCurrentUser()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+
+            if (identity != null)
+            {
+                var userClaims = identity.Claims;
+
+                return new UserModel
+                {
+                    Username = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value,
+                    Email = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value,
+                    GivenName = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value,
+                    Surname = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.Surname)?.Value,
+                    Role = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value,
+                };
+            }
+            return null;
         }
 
         [HttpGet]
@@ -60,8 +83,10 @@ namespace JorgeShoes.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Seller")]
         public async Task<ActionResult> Create(CreateDTO product)
         {
+            var currentUser = GetCurrentUser();
             try
             {
                 await _productService.CreateProduct(product);
@@ -74,8 +99,10 @@ namespace JorgeShoes.Controllers
         }
 
         [HttpPut("{id:int}")]
+        [Authorize(Roles = "Admin,Seller")]
         public async Task<ActionResult> UpdateProduct(int id, [FromBody]EditProductDTO product)
         {
+            var currentUser = GetCurrentUser();
             try
             {
                 if(product.Id == id)
@@ -95,8 +122,10 @@ namespace JorgeShoes.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = "Admin,Seller")]
         public async Task<ActionResult> DeleteProduct(int id)
         {
+            var currentUser = GetCurrentUser();
             try
             {
                 var product = await _productService.GetProduct(id);
@@ -119,20 +148,5 @@ namespace JorgeShoes.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"We weren´t able to edit the product");
             }
         }
-
-        //[HttpGet("Order")]
-        //public async Task<ActionResult<IAsyncEnumerable<Product>>> Order(string option)
-        //{
-            
-        //    try
-        //    {
-        //        var product = await _productService.Order(option);
-        //        return (ActionResult)product;
-        //    }
-        //    catch
-        //    {
-        //        throw;
-        //    }
-        //}
     }
 }

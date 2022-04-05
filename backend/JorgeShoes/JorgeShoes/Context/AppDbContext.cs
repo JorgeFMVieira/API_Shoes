@@ -14,6 +14,8 @@ namespace JorgeShoes.Context
 
         public DbSet<Product> Products { get; set; }
 
+        public DbSet<UserModel> User { get; set; }
+
         public DbSet<ProductType> ProductTypes { get; set; }
     }
 }

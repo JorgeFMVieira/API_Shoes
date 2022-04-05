@@ -24,6 +24,15 @@ namespace JorgeShoes.Models
                 Surname = "Hills",
                 Role = "Admin",
             },
+            new UserModel()
+            {
+                Username = "hillary",
+                Email = "hilary@gmail.com",
+                Password = "1234",
+                GivenName = "Hillary",
+                Surname = "Clinton",
+                Role = "Seller",
+            },
         };
     }
 }

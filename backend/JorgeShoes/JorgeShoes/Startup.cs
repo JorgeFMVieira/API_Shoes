@@ -58,6 +58,7 @@ namespace JorgeShoes
 
             services.AddScoped<IProductService, ProductsService>();
             services.AddScoped<IProductTypeService, ProductTypeService>();
+            services.AddScoped<IUserService, UserService>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

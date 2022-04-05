@@ -131,40 +131,5 @@ namespace JorgeShoes.Services
             }
             return products;
         }
-
-        //public async Task<IEnumerable<Product>> Order(string option)
-        //{
-
-        //    var produtos = from s in _context.Products
-        //                   select s;
-        //    switch (option)
-        //    {
-        //        case "id_desc":
-        //            produtos = produtos.OrderByDescending(s => s.Id);
-        //            break;
-        //        case "name":
-        //            produtos = produtos.OrderBy(s => s.Name);
-        //            break;
-        //        case "name_desc":
-        //            produtos = produtos.OrderByDescending(s => s.Name);
-        //            break;
-        //        case "description":
-        //            produtos = produtos.OrderBy(s => s.Description);
-        //            break;
-        //        case "description_desc":
-        //            produtos = produtos.OrderByDescending(s => s.Description);
-        //            break;
-        //        case "price":
-        //            produtos = produtos.OrderBy(s => s.Price);
-        //            break;
-        //        case "price_desc":
-        //            produtos = produtos.OrderByDescending(s => s.Price);
-        //            break;
-        //        default:
-        //            produtos = produtos.OrderBy(s => s.Id);
-        //            break;
-        //    }
-        //    return await produtos.AsNoTracking().ToListAsync();
-        //}
     }
 }
