@@ -39,8 +39,6 @@ namespace JorgeShoes.Controllers
                 {
                     Username = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value,
                     Email = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value,
-                    GivenName = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value,
-                    Surname = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.Surname)?.Value,
                     Role = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value,
                 };
             }
@@ -83,7 +81,7 @@ namespace JorgeShoes.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Seller")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Create(CreateDTO product)
         {
             var currentUser = GetCurrentUser();
@@ -99,7 +97,7 @@ namespace JorgeShoes.Controllers
         }
 
         [HttpPut("{id:int}")]
-        [Authorize(Roles = "Admin,Seller")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> UpdateProduct(int id, [FromBody]EditProductDTO product)
         {
             var currentUser = GetCurrentUser();
@@ -122,7 +120,7 @@ namespace JorgeShoes.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        [Authorize(Roles = "Admin,Seller")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteProduct(int id)
         {
             var currentUser = GetCurrentUser();

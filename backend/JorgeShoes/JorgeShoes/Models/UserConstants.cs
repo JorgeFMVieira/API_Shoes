@@ -31,7 +31,7 @@ namespace JorgeShoes.Models
                 Password = "1234",
                 GivenName = "Hillary",
                 Surname = "Clinton",
-                Role = "Seller",
+                Role = "Admin",
             },
         };
     }

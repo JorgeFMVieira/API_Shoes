@@ -24,5 +24,11 @@ namespace JorgeShoes.Models
 
         [Required]
         public string GivenName { get; set; }
+
+
+        public DateTime DateCreated { get; set; }
+        public DateTime? DateEdited { get; set; }
+
+        public DateTimeOffset? DateDeleted { get; set; }
     }
 }

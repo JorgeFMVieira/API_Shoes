@@ -21,21 +21,6 @@ namespace JorgeShoes.Controllers
             _userService = userService;
         }
 
-        [HttpGet("Admins")]
-        [Authorize(Roles = "Admin,Seller")]
-        public IActionResult Admins()
-        {
-            var currentUser = GetCurrentUser();
-
-            return Ok($"Hi {currentUser.GivenName}, you are an {currentUser.Role}");
-        }
-
-        [HttpGet("Public")]
-        public IActionResult Public()
-        {
-            return Ok("You are in public");
-        }
-
         private UserModel GetCurrentUser()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
@@ -54,6 +39,48 @@ namespace JorgeShoes.Controllers
                 };
             }
             return null;
+        }
+
+        [HttpGet("GetAllUsers")]
+        public async Task<ActionResult<UserModel>> GetAll()
+        {
+            try
+            {
+                var users = await _userService.GetAll();
+                if(users == null)
+                {
+                    return NotFound("We weren´t able to find users");
+                }
+                else
+                {
+                    return Ok(users);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("GetByUserId")]
+        public async Task<ActionResult<UserModel>> GetById(int id)
+        {
+            try
+            {
+                var user = await _userService.GetById(id);
+                if (user == null)
+                {
+                    return NotFound($"We weren´t able to find a user with the id of {id}");
+                }
+                else
+                {
+                    return Ok(user);
+                }
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         [HttpPost("Create")]
