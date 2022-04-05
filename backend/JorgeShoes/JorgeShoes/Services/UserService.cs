@@ -80,13 +80,25 @@ namespace JorgeShoes.Services
             }
         }
 
-        public async Task CreateUser(CreateUserDTO user)
+        public async Task<UserResponse> CreateUser(UserModel user)
         {
             try
             {
-                user.DateCreated = DateTime.Now;
-                _context.User.Add(user.ToEntity());
-                await _context.SaveChangesAsync();
+                UserResponse userResponse = new();
+                var checkExists = _context.User.Where(x => x.Email == user.Email && x.DateDeleted == null);
+                if (checkExists.Any())
+                {
+                    userResponse.Error = true;
+                    userResponse.ErrorMsg = "Already exists an user with that email";
+                    return userResponse;
+                }
+                else
+                {
+                    user.DateCreated = DateTime.Now;
+                    _context.User.Add(user);
+                    await _context.SaveChangesAsync();
+                }
+                return userResponse;
             }
             catch
             {

@@ -1,5 +1,6 @@
 ﻿using JorgeShoes.DTO;
 using JorgeShoes.Models;
+using JorgeShoes.Response;
 using JorgeShoes.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -33,8 +34,6 @@ namespace JorgeShoes.Controllers
                 {
                     Username = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value,
                     Email = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value,
-                    GivenName = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value,
-                    Surname = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.Surname)?.Value,
                     Role = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value,
                 };
             }
@@ -42,11 +41,11 @@ namespace JorgeShoes.Controllers
         }
 
         [HttpGet("GetAllUsers")]
-        public async Task<ActionResult<UserModel>> GetAll()
+        public async Task<ActionResult<UserModel>> GetAll(int page, float entries, string search, string searchBy, string order)
         {
             try
             {
-                var users = await _userService.GetAll();
+                var users = await _userService.GetAll(page, entries, search, searchBy, order);
                 if(users == null)
                 {
                     return NotFound("We weren´t able to find users");
@@ -84,12 +83,12 @@ namespace JorgeShoes.Controllers
         }
 
         [HttpPost("Create")]
-        public async Task<ActionResult> CreateUser(CreateUserDTO user)
+        public async Task<ActionResult<UserModel>> CreateUser(UserModel user)
         {
             try
             {
                 await _userService.CreateUser(user);
-                return Ok(user);
+                return user;
             }
             catch
             {

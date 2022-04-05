@@ -19,13 +19,6 @@ namespace JorgeShoes.Models
         [Required]
         public string Role { get; set; }
 
-        [Required]
-        public string Surname { get; set; }
-
-        [Required]
-        public string GivenName { get; set; }
-
-
         public DateTime DateCreated { get; set; }
         public DateTime? DateEdited { get; set; }
 

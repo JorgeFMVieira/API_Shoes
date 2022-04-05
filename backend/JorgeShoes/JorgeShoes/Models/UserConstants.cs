@@ -11,8 +11,6 @@ namespace JorgeShoes.Models
                 Username = "jorge10",
                 Email = "jorge@gmail.com",
                 Password = "1234",
-                GivenName = "Jorge",
-                Surname = "Vieira",
                 Role = "Client",
             },
             new UserModel()
@@ -20,8 +18,6 @@ namespace JorgeShoes.Models
                 Username = "josh",
                 Email = "josh@gmail.com",
                 Password = "1234",
-                GivenName = "Josh",
-                Surname = "Hills",
                 Role = "Admin",
             },
             new UserModel()
@@ -29,8 +25,6 @@ namespace JorgeShoes.Models
                 Username = "hillary",
                 Email = "hilary@gmail.com",
                 Password = "1234",
-                GivenName = "Hillary",
-                Surname = "Clinton",
                 Role = "Admin",
             },
         };
