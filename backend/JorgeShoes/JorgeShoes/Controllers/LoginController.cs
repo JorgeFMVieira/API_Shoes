@@ -1,4 +1,5 @@
-﻿using JorgeShoes.Models;
+﻿using JorgeShoes.Context;
+using JorgeShoes.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,9 +18,11 @@ namespace JorgeShoes.Controllers
     public class LoginController : ControllerBase
     {
         private IConfiguration _config;
+        private readonly AppDbContext _context;
 
-        public LoginController(IConfiguration config)
+        public LoginController(IConfiguration config, AppDbContext context)
         {
+            _context = context;
             _config = config;
         }
 
@@ -61,7 +64,7 @@ namespace JorgeShoes.Controllers
 
         private UserModel Authenticate(UserLogin userLogin)
         {
-            var currentUser = UserConstants.Users.FirstOrDefault(x => x.Username.ToLower() == userLogin.UserName.ToLower() && x.Password == userLogin.Password);
+            var currentUser = _context.User.FirstOrDefault(x => x.Email.ToLower() == userLogin.Email.ToLower() && x.Password == userLogin.Password);
 
             if(currentUser != null)
             {

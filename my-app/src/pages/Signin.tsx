@@ -7,33 +7,20 @@ import Signup from './Signup'
 import axios from 'axios'
 import { Api } from '../providers/api'
 import { AuthenticationService } from '../services/AuthenticationService'
+import { LoginDTO } from '../Models/Auth/LoginDTO'
 
 function Signin() {
 
-    const [id, setId] = useState(3);
-
-    const getAll = async () => {
-        await axios.get('https://localhost:44384/api/User/GetByUserId?id=3')
-            .then(response => {
-                console.log(response.data);
-                return response.data;
-            }).catch(error => {
-                console.log(error);
-            });
-    }
+    const [user, setUser] = useState<LoginDTO>(new LoginDTO());
 
     const service = new AuthenticationService();
 
     useEffect(() => {
-        service.loginUser()
+        service.loginUser(user)
             .then(result => {
-                
+                console.log(result);
             })
     }, []);
-
-    useEffect(() => {
-        getAll();
-    }, [id]);
 
     return (
         <div>
@@ -43,11 +30,11 @@ function Signin() {
                 <div className="sign-form">
                     <div className="sign-form-item">
                         <div className="sign-form-icon"><AiOutlineUser /></div>
-                        <input type="text" className="sign-form-item-input" placeholder='Email' />
+                        <input type="text" className="sign-form-item-input" placeholder='Email' onChange={(e) => setUser({ ...user,  email: e.target.value })} />
                     </div>
                     <div className="sign-form-item">
                         <div className="sign-form-icon"><AiOutlineLock /></div>
-                        <input type="password" className="sign-form-item-input" placeholder='Password' />
+                        <input type="password" className="sign-form-item-input" placeholder='Password' onChange={(e) => setUser({ ...user,  password: e.target.value })} />
                     </div>
                     <div className="sign-form-item">
                         <button className='sign-button'>SIGN IN</button>
