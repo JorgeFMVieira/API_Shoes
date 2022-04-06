@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 import Signup from './Signup'
 import axios from 'axios'
 import { Api } from '../providers/api'
+import { AuthenticationService } from '../services/AuthenticationService'
 
 function Signin() {
 
@@ -20,6 +21,15 @@ function Signin() {
                 console.log(error);
             });
     }
+
+    const service = new AuthenticationService();
+
+    useEffect(() => {
+        service.loginUser()
+            .then(result => {
+                
+            })
+    }, []);
 
     useEffect(() => {
         getAll();

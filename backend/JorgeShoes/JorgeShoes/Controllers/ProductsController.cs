@@ -81,7 +81,6 @@ namespace JorgeShoes.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Create(CreateDTO product)
         {
             var currentUser = GetCurrentUser();
