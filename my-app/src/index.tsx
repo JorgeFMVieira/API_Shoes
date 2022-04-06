@@ -8,19 +8,11 @@ import ProductsType from './pages/ProductsType';
 import ApiError from './pages/ApiError';
 import Signup from './pages/Signup';
 import Signin from './pages/Signin';
+import App from './App';
 
 ReactDOM.render(
     <React.StrictMode>
-        <BrowserRouter>
-            <Routes>
-                <Route path='/' element={<Signin />} />
-                <Route path='/Signup' element={<Signup />} />
-                <Route path='/Signin' element={<Signin />} />
-                <Route path='/Products' element={<Products />} />
-                <Route path='/ProductsType' element={<ProductsType />} />
-                <Route path='/ApiError' element={<ApiError />} />
-            </Routes>
-        </BrowserRouter>
+        <App />
     </React.StrictMode>,
     document.getElementById('root')
 );

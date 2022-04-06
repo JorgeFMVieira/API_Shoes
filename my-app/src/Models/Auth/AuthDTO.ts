@@ -1,7 +1,6 @@
-export interface AuthDTO {
-    id?: number;
-    email?: string;
-    password?: string;
-    username?: string;
-    role?: string[];
+export class AuthDTO {
+    email: string = "";
+    password: string = "";
+    username: string = "";
+    role: string = "";
 }

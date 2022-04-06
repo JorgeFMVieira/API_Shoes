@@ -62,7 +62,7 @@ namespace JorgeShoes.Services
                 mostrar.User = await products.Select(t => new ListUserDTO(t)).ToListAsync();
                 mostrar.CurrentPage = page;
                 mostrar.Order = order;
-                mostrar.Pages = ((int)Math.Ceiling(_context.ProductTypes.Where(x => x.DateDeleted == null).Count() / entries));
+                mostrar.Pages = (int)Math.Ceiling(_context.User.Where(x => x.DateDeleted == null).Count() / entries);
                 mostrar.Entries = entries;
                 mostrar.SearchBy = searchBy;
                 mostrar.Search = search;
