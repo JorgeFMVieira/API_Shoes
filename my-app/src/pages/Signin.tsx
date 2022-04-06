@@ -6,11 +6,16 @@ import { Link } from 'react-router-dom'
 import Signup from './Signup'
 import { AuthenticationService } from '../services/AuthenticationService'
 import { LoginDTO } from '../Models/Auth/LoginDTO'
-import { toast } from 'react-toastify'
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import CheckRoutes from '../components/Routes/CheckRoutes'
 
 function Signin() {
 
     const [user, setUser] = useState<LoginDTO>(new LoginDTO());
+
+    const [userRoles, setUserRoles] = useState("");
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const service = new AuthenticationService();
 
@@ -18,7 +23,12 @@ function Signin() {
         if(user.email != "" && user.password != ""){
             service.loginUser(user)
             .then(result => {
-                console.log(result);
+                if(result.error == true){
+                    toast.error(result.errorMsg);
+                }else{
+                    setUserRoles(result.user[0].role);
+                    setIsLoggedIn(true);
+                }
             });
             return;
         }else{
@@ -28,12 +38,12 @@ function Signin() {
     }
 
     useEffect(() => {
-        tryAuthenticate();
-    }, [user]);
+        service.loginUser(user);
+    }, [user, userRoles]);
 
     return (
         <div>
-            <NavbarSign />
+            <ToastContainer />
             <div className="sign">
                 <div className="sign-title"><h1>Sign in</h1></div>
                 <div className="sign-form">
@@ -60,6 +70,7 @@ function Signin() {
                     </div>
                 </div>
             </div>
+            <CheckRoutes userRoles={userRoles} isLoggedIn={isLoggedIn} />
         </div>
     )
 }
