@@ -8,6 +8,7 @@ import ProductsType from './pages/ProductsType';
 import ApiError from './pages/ApiError';
 import Signup from './pages/Signup';
 import Signin from './pages/Signin';
+import { AuthService } from './services/AuthService';
 
 function App() {
         

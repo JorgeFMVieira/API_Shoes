@@ -1,4 +1,5 @@
 ﻿using JorgeShoes.Context;
+using JorgeShoes.DTO;
 using JorgeShoes.Models;
 using JorgeShoes.Response;
 using Microsoft.AspNetCore.Authorization;
@@ -79,6 +80,35 @@ namespace JorgeShoes.Controllers
             }
 
             return null;
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("[action]")]
+        public IActionResult GetUser()
+        {
+            LoginResponse<ListUserDTO> response = new LoginResponse<ListUserDTO>();
+
+            try
+            {
+                response.success = true;
+                response.message = "";
+                response.obj = new ListUserDTO();
+                {
+                    Token = HttpContext.Session.GetString("token") ?? null,
+                    UserName = HttpContext.Session.GetString("username") ?? null,
+                    Id = HttpContext.Session.GetString("id") ?? null,
+                    Role = HttpContext.Session.GetString("roles")?.Split(",") ?? null,
+                };
+            }
+            catch (Exception ex)
+            {
+                response.Error = true;
+                response.ErrorMsg = ex.Message;
+                response.obj = null;
+            }
+
+            return Ok(response);
         }
     }
 }
