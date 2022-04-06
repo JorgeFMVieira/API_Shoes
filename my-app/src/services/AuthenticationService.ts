@@ -5,11 +5,11 @@ import { ListUser } from "../interfaces/Authentication/IAuthentication";
 import { AuthDTO } from "../Models/Auth/AuthDTO";
     export class AuthenticationService {
         async loginUser(authenticate: LoginDTO): Promise<ListUser<LoginDTO>> {
-            return await Api.post('Login', {...authenticate})
+            return await Api.post('Login', {...authenticate}, {withCredentials: true})
                 .then(response => {
                     return response.data;
                 }).catch(error => {
-                    window.location.replace('http://localhost:3000/ApiError');
+                    //window.location.replace('http://localhost:3000/ApiError');
                     console.log(error);
                 });
         }

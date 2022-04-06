@@ -63,8 +63,17 @@ namespace JorgeShoes
             services.AddMvc();
             services.AddRazorPages();
 
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder => {
+                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); 
+                builder.WithOrigins("http://localhost:3000", "https://localhost:3000")
+                .AllowAnyMethod()                        
+                .AllowAnyHeader()                        
+                .AllowCredentials();             
+            }));
 
-            services.AddDbContext<AppDbContext>(options =>
+
+
+services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
@@ -90,12 +99,7 @@ namespace JorgeShoes
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "JorgeShoes v1"));
             }
 
-            app.UseCors(options =>
-            {
-                options.WithOrigins("http://localhost:3000");
-                options.AllowAnyMethod();
-                options.AllowAnyHeader();
-            });
+            app.UseCors("MyPolicy");
 
             app.UseHttpsRedirection();
 
