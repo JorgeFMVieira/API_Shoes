@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace JorgeShoes.Models
@@ -23,5 +24,10 @@ namespace JorgeShoes.Models
         public DateTime? DateEdited { get; set; }
 
         public DateTimeOffset? DateDeleted { get; set; }
+
+        public static implicit operator List<object>(UserModel v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

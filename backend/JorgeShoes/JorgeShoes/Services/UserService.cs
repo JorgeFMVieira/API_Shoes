@@ -3,8 +3,13 @@ using JorgeShoes.DTO;
 using JorgeShoes.Models;
 using JorgeShoes.Response;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace JorgeShoes.Services
@@ -12,9 +17,11 @@ namespace JorgeShoes.Services
     public class UserService : IUserService
     {
         private readonly AppDbContext _context;
-        public UserService(AppDbContext context)
+        private readonly IConfiguration _config;
+        public UserService(AppDbContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
         }
 
         public async Task<UserResponse> GetAll(int page, float entries, string search, string searchBy, string order)

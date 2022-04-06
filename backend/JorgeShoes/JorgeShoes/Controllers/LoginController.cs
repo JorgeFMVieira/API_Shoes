@@ -1,5 +1,6 @@
 ﻿using JorgeShoes.Context;
 using JorgeShoes.Models;
+using JorgeShoes.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ namespace JorgeShoes.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private IConfiguration _config;
+        private readonly IConfiguration _config;
         private readonly AppDbContext _context;
 
         public LoginController(IConfiguration config, AppDbContext context)
@@ -28,17 +29,23 @@ namespace JorgeShoes.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult Login([FromBody] UserLogin userLogin)
+        public ActionResult<LoginResponse> Login([FromBody] UserLogin userLogin)
         {
             var user = Authenticate(userLogin);
+            var users = new LoginResponse();
 
-            if(user != null)
+            if (user != null)
             {
                 var token = Generate(user);
-                return Ok(token);
+                users.Token = token;
+                users.User = _context.User.Where(x => x.Email == userLogin.Email).ToList();
+                return users;
             }
 
-            return NotFound("User not found");
+
+            users.Error = true;
+            users.ErrorMsg = "User not found";
+            return users;
         }
 
         private string Generate(UserModel user)

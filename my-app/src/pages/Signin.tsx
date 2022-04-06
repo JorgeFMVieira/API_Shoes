@@ -4,10 +4,9 @@ import './Signin.css'
 import { AiOutlineUser, AiOutlineLock } from "react-icons/ai"
 import { Link } from 'react-router-dom'
 import Signup from './Signup'
-import axios from 'axios'
-import { Api } from '../providers/api'
 import { AuthenticationService } from '../services/AuthenticationService'
 import { LoginDTO } from '../Models/Auth/LoginDTO'
+import { toast } from 'react-toastify'
 
 function Signin() {
 
@@ -15,12 +14,22 @@ function Signin() {
 
     const service = new AuthenticationService();
 
-    useEffect(() => {
-        service.loginUser(user)
+    const tryAuthenticate = async () => {
+        if(user.email != "" && user.password != ""){
+            service.loginUser(user)
             .then(result => {
                 console.log(result);
-            })
-    }, []);
+            });
+            return;
+        }else{
+            toast.error("Please, fill all fields");
+            return;
+        }
+    }
+
+    useEffect(() => {
+        tryAuthenticate();
+    }, [user]);
 
     return (
         <div>
@@ -37,7 +46,7 @@ function Signin() {
                         <input type="password" className="sign-form-item-input" placeholder='Password' onChange={(e) => setUser({ ...user,  password: e.target.value })} />
                     </div>
                     <div className="sign-form-item">
-                        <button className='sign-button'>SIGN IN</button>
+                        <button className='sign-button' onClick={() => tryAuthenticate()}>SIGN IN</button>
                     </div>
                     <div className="sign-form-item">
                         <span className="redirect">
