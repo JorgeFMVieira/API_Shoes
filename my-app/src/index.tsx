@@ -15,6 +15,7 @@ ReactDOM.render(
             <Routes>
                 <Route path='/' element={<Signin />} />
                 <Route path='/Signup' element={<Signup />} />
+                <Route path='/Signin' element={<Signin />} />
                 <Route path='/Products' element={<Products />} />
                 <Route path='/ProductsType' element={<ProductsType />} />
                 <Route path='/ApiError' element={<ApiError />} />

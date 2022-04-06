@@ -8,13 +8,13 @@ import { AuthenticationService } from '../services/AuthenticationService'
 import { LoginDTO } from '../Models/Auth/LoginDTO'
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import CheckRoutes from '../components/Routes/CheckRoutes'
+import {CheckRoutes} from '../components/Routes/CheckRoutes'
 
 function Signin() {
 
     const [user, setUser] = useState<LoginDTO>(new LoginDTO());
 
-    const [userRoles, setUserRoles] = useState("");
+    const [userRole, setUserRole] = useState("");
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const service = new AuthenticationService();
@@ -26,7 +26,7 @@ function Signin() {
                 if(result.error == true){
                     toast.error(result.errorMsg);
                 }else{
-                    setUserRoles(result.user[0].role);
+                    setUserRole(result.user[0].role);
                     setIsLoggedIn(true);
                 }
             });
@@ -39,7 +39,7 @@ function Signin() {
 
     useEffect(() => {
         service.loginUser(user);
-    }, [user, userRoles]);
+    }, [user, userRole]);
 
     return (
         <div>
@@ -70,7 +70,7 @@ function Signin() {
                     </div>
                 </div>
             </div>
-            <CheckRoutes userRoles={userRoles} isLoggedIn={isLoggedIn} />
+            <CheckRoutes userRole={userRole} isLoggedIn={isLoggedIn} />
         </div>
     )
 }

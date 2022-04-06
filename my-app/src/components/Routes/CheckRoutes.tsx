@@ -3,42 +3,64 @@ import { Link } from 'react-router-dom';
 import '../Navbar.css'
 
 export type props = {
-    userRoles: any;
+    userRole: string;
     isLoggedIn: boolean;
 }
-function CheckRoutes(props: any) {
+export function CheckRoutes(props: props) {
 
-    var links: any[] = [];
+    type Routes = {
+        name: string;
+        link: string;
+    }
+
+    var links: Routes[] = [];
 
     if(props.isLoggedIn == true){
-        if(props.userRoles == "Admin"){
-            return links = [
+        if(props.userRole == "Admin"){
+            links = [
                 {
                     name: "Products",
+                    link: "/Products",
                 },
                 {
                     name: "ProductType",
+                    link: "/ProductsType",
                 }
             ]
-        }else if(props.userRoles == "Client"){
-            return links = [
+        }else if(props.userRole == "Client"){
+            links = [
                 {
                     name: "User",
+                    link: "/User",
                 },
                 {
                     name: "ProductType",
+                    link: "/ProductsType",
                 }
             ]
         }else{
-            return links = [
+            links = [
                 {
                     name: "Sign In",
+                    link: "/Signin",
                 },
                 {
                     name: "Sign Up",
+                    link: "/Signup",
                 }
             ]
         }
+    }else{
+        links = [
+            {
+                name: "Sign In",
+                link: "/Signin",
+            },
+            {
+                name: "Sign Up",
+                link: "/Signup",
+            }
+        ]
     }
 
   return (
@@ -48,7 +70,7 @@ function CheckRoutes(props: any) {
             {links.map((item, index) => {
                 return (
                     <div className="nav-item" key={index}>
-                        <Link to="/" className='href'>{item.name}</Link>
+                        <Link to={item.link} className='href'>{item.name}</Link>
                     </div>
                 )
             })}
