@@ -1,5 +1,6 @@
 ﻿using JorgeShoes.DTO;
 using JorgeShoes.Models;
+using JorgeShoes.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -13,12 +14,12 @@ namespace JorgeShoes.Controllers
 {
     public class AuthenticationController : ControllerBase
     {
-        private readonly IAuthenticationService _authenticationService;
+        private readonly IAuthenticationServices _authenticationService;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public AuthenticationController(UserManager<ApplicationUser> userManager, IAuthenticationService authService)
+        public AuthenticationController(UserManager<ApplicationUser> userManager, IAuthenticationServices authenticationService)
         {
-            _authenticationService = authService;
+            _authenticationService = authenticationService;
             _userManager = userManager;
         }
 
@@ -27,13 +28,13 @@ namespace JorgeShoes.Controllers
         [Route("[action]")]
         public IActionResult GetUser()
         {
-            MessagingHelper<AuthenticationDTO> response = new();
+            MessagingHelper<AuthenticationDTO> response = new MessagingHelper<AuthenticationDTO>();
 
             try
             {
-                response.success = true;
-                response.message = "";
-                response.obj = new AuthenticationDTO()
+                response.Success = true;
+                response.Message = "";
+                response.Obj = new AuthenticationDTO()
                 {
                     Token = HttpContext.Session.GetString("token") ?? null,
                     Username = HttpContext.Session.GetString("username") ?? null,
@@ -43,9 +44,9 @@ namespace JorgeShoes.Controllers
             }
             catch (Exception ex)
             {
-                response.success = false;
-                response.message = ex.Message;
-                response.obj = null;
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Obj = null;
             }
 
             return Ok(response);
@@ -60,11 +61,11 @@ namespace JorgeShoes.Controllers
 
             try
             {
-                CreateUserValidation validator = new CreateUserValidation();
+                CreateUserValidation validator = new();
                 var responseValidatorDTO = await validator.ValidateAsync(authDTO);
                 if (responseValidatorDTO.IsValid == false)
                 {
-                    result.message = responseValidatorDTO.Errors.FirstOrDefault()!.ErrorMessage;
+                    result.Message = responseValidatorDTO.Errors.FirstOrDefault()!.ErrorMessage;
                     return Ok(result);
                 }
 
@@ -72,8 +73,8 @@ namespace JorgeShoes.Controllers
                 var resultValidatePassword = await passwordValidator.ValidateAsync(_userManager, null!, authDTO.Password);
                 if (!resultValidatePassword.Succeeded)
                 {
-                    result.success = false;
-                    result.message = "Password is not following the requirements.";
+                    result.Success = false;
+                    result.Message = "Password is not following the requirements.";
                     return Ok(result);
                 }
 
@@ -85,7 +86,7 @@ namespace JorgeShoes.Controllers
                     {
                         Email = authDTO.Email,
                         EmailConfirmed = true,
-                        Name = authDTO.Username!,
+                        Name = authDTO.Email!,
                         UserName = authDTO.Email,
                     };
                     var resultCreateUserInDatabase = await _userManager.CreateAsync(userInDatabase, authDTO.Password);
@@ -93,26 +94,26 @@ namespace JorgeShoes.Controllers
                     await _userManager.AddToRoleAsync(userInDatabase, Roles.roles.Value);
                     if (resultCreateUserInDatabase.Succeeded)
                     {
-                        result.success = true;
-                        result.message = "The user was created sucessfully.";
+                        result.Success = true;
+                        result.Message = "The user was created sucessfully.";
                     }
                     else
                     {
-                        result.success = false;
-                        result.message = "We weren´t able to create the user.";
+                        result.Success = false;
+                        result.Message = "We weren´t able to create the user.";
                     }
                 }
 
                 else
                 {
-                    result.success = false;
-                    result.message = "Already exists an user with that email";
+                    result.Success = false;
+                    result.Message = "Already exists an user with that email";
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                result.success = false;
-                result.message = "We weren´t able to create the user.";
+                result.Success = false;
+                result.Message = "We weren´t able to create the user.";
             }
             return Ok(result);
         }
@@ -130,20 +131,20 @@ namespace JorgeShoes.Controllers
         [Route("[action]")]
         public IActionResult Logout()
         {
-            MessagingHelper<object> response = new();
+            MessagingHelper<object> response = new MessagingHelper<object>();
 
             try
             {
                 HttpContext.Session.Clear();
-                response.success = true;
-                response.message = "You have logged out!";
+                response.Success = true;
+                response.Message = "You have logged out!";
 
             }
             catch (Exception ex)
             {
-                response.success = false;
-                response.obj = null;
-                response.message = ex.Message;
+                response.Success = false;
+                response.Obj = null;
+                response.Message = ex.Message;
             }
             return Ok(response);
         }

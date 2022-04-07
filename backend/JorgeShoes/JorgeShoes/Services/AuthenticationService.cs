@@ -15,24 +15,21 @@ using System.Threading.Tasks;
 
 namespace JorgeShoes.Services
 {
-    public class AuthenticationService : IAuthenticationService
+    public class AuthenticationService : IAuthenticationServices
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _config;
 
         private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private IOptions<IdentityOptions> _optionsAccessor;
 
         public AuthenticationService(UserManager<ApplicationUser> userManager, IConfiguration config,
-            IPasswordHasher<ApplicationUser> passwordHasher, IHttpContextAccessor httpContextAccessor,
-            IOptions<IdentityOptions> optionsAccessor)
+            IPasswordHasher<ApplicationUser> passwordHasher, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _config = config;
             _passwordHasher = passwordHasher;
             _httpContextAccessor = httpContextAccessor;
-            _optionsAccessor = optionsAccessor;
         }
 
         public async Task<MessagingHelper<AuthenticationDTO>> Login(LoginDTO login)
@@ -58,26 +55,26 @@ namespace JorgeShoes.Services
                     };
 
                     SaveToken(responseObj);
-                    response.success = true;
-                    response.obj = responseObj;
+                    response.Success = true;
+                    response.Obj = responseObj;
                 }
                 else
                 {
-                    response.success = false;
-                    response.message = "Os dados estão incorretos.";
+                    response.Success = false;
+                    response.Message = "Os dados estão incorretos.";
                 }
             }
             catch (Exception ex)
             {
-                response.success = false;
-                response.message = ex.Message;
+                response.Success = false;
+                response.Message = ex.Message;
             }
             return response;
         }
 
         private async Task<ApplicationUser> AuthenticateUser(LoginDTO login)
         {
-            ApplicationUser? user = null;
+            ApplicationUser user = null;
             try
             {
                 //Se o utilizador existe
@@ -102,7 +99,7 @@ namespace JorgeShoes.Services
                 }
                 return user;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return user;
             }
@@ -152,17 +149,17 @@ namespace JorgeShoes.Services
             {
                 _httpContextAccessor.HttpContext.Session.SetString("token", user.Token);
                 _httpContextAccessor.HttpContext.Session.SetString("username", user.Username);
-                _httpContextAccessor.HttpContext.Session.SetInt32("id", user.Id);
+                _httpContextAccessor.HttpContext.Session.SetString("id", user.Id);
                 _httpContextAccessor.HttpContext.Session.SetString("roles", String.Join(",", user.Roles));
 
-                response.success = true;
-                response.obj = true;
+                response.Success = true;
+                response.Obj = true;
             }
             catch (Exception ex)
             {
-                response.success = false;
-                response.obj = false;
-                response.message = ex.Message;
+                response.Success = false;
+                response.Obj = false;
+                response.Message = ex.Message;
 
             }
 

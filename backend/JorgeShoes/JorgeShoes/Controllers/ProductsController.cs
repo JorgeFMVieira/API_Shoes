@@ -27,24 +27,6 @@ namespace JorgeShoes.Controllers
             _productService = productService;
         }
 
-        private UserModel GetCurrentUser()
-        {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-
-            if (identity != null)
-            {
-                var userClaims = identity.Claims;
-
-                return new UserModel
-                {
-                    Username = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value,
-                    Email = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value,
-                    Role = userClaims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value,
-                };
-            }
-            return null;
-        }
-
         [HttpGet]
         public async Task<ActionResult<IAsyncEnumerable<Product>>> GetProducts(int page, float entries, string searchBy, string search, string order)
         {
@@ -83,7 +65,6 @@ namespace JorgeShoes.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(CreateDTO product)
         {
-            var currentUser = GetCurrentUser();
             try
             {
                 await _productService.CreateProduct(product);
@@ -99,7 +80,6 @@ namespace JorgeShoes.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> UpdateProduct(int id, [FromBody]EditProductDTO product)
         {
-            var currentUser = GetCurrentUser();
             try
             {
                 if(product.Id == id)
@@ -122,7 +102,6 @@ namespace JorgeShoes.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteProduct(int id)
         {
-            var currentUser = GetCurrentUser();
             try
             {
                 var product = await _productService.GetProduct(id);

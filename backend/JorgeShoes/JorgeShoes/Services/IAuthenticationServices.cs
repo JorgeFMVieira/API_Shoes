@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace JorgeShoes.Services
 {
-    public interface IAuthenticationService
+    public interface IAuthenticationServices
     {
         Task<MessagingHelper<AuthenticationDTO>> Login(LoginDTO login);
     }
