@@ -8,11 +8,36 @@ import ProductsType from './pages/ProductsType';
 import ApiError from './pages/ApiError';
 import Signup from './pages/Signup';
 import Signin from './pages/Signin';
-import App from './App';
+import { AuthService } from './services/AuthService';
+import { AuthDTO } from './Models/Auth/AuthDTO';
+import { AuthProvider } from './Context/AuthContext';
+
+
+const service: AuthService = new AuthService();
+
+service.GetUser().then(result => {
+    var user: AuthDTO | null = null;
+
+    if (result.Success === true && result.Obj != null && result.Obj.token != null) {
+        user = result.Obj
+        console.log(user);
+    }
 
 ReactDOM.render(
     <React.StrictMode>
-        <App />
+        <AuthProvider user={user}>
+        <BrowserRouter>
+            <Routes>
+                <Route path='/' element={<Signin />} />
+                <Route path='/Signup' element={<Signup />} />
+                <Route path='/Signin' element={<Signin />} />
+                <Route path='/Products' element={<Products />} />
+                <Route path='/ProductsType' element={<ProductsType />} />
+                <Route path='/ApiError' element={<ApiError />} />
+            </Routes>
+        </BrowserRouter>,
+        </AuthProvider>
     </React.StrictMode>,
-    document.getElementById('root')
-);
+    document.getElementById('root'));
+
+});

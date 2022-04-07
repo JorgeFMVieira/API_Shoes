@@ -1,45 +1,48 @@
-import React, { useEffect, useState } from 'react'
-import NavbarSign from '../components/NavbarSign'
-import './Signin.css'
-import { AiOutlineUser, AiOutlineLock } from "react-icons/ai"
-import { Link } from 'react-router-dom'
-import Signup from './Signup'
-import { AuthenticationService } from '../services/AuthenticationService'
-import { LoginDTO } from '../Models/Auth/LoginDTO'
+import React, { useState } from 'react'
+import './Signin.css';
+import { AiOutlineUser, AiOutlineLock } from "react-icons/ai";
+import { Link, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {CheckRoutes} from '../components/Routes/CheckRoutes'
+import { AuthService } from '../services/AuthService'
+import { LoginDTO } from '../Models/Auth/LoginDTO'
+import { useAuth } from '../Context/AuthContext'
 
 function Signin() {
 
-    const [user, setUser] = useState<LoginDTO>(new LoginDTO());
+    const Navigate = useNavigate()
+    const service: AuthService = new AuthService();
+    const { setCurrentUser } = useAuth();
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+    const [UserRole, setUserRole] = useState<string[]>([]);
+    const [IsLoggin, setIsLoggin] = useState(false);
 
-    const [userRole, setUserRole] = useState("");
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const login = async () => {
+        
 
-    const service = new AuthenticationService();
-
-    const tryAuthenticate = async () => {
-        if(user.email != "" && user.password != ""){
-            service.loginUser(user)
-            .then(result => {
-                if(result.error == true){
-                    toast.error(result.errorMsg);
-                }else{
-                    setUserRole(result.user[0].role);
-                    setIsLoggedIn(true);
-                }
-            });
-            return;
-        }else{
-            toast.error("Please, fill all fields");
-            return;
+        const login: LoginDTO = {
+            email: email,
+            password: password
         }
-    }
+        if(login.email == "" || login.password == ""){
+            toast.error("Please, fill all fields.");
+        }
 
-    useEffect(() => {
-        service.loginUser(user);
-    }, [user, userRole]);
+        var response = await service.Login(login); 
+        
+
+        if (response.Success == true && response.Obj != null) {
+            setCurrentUser(response.Obj);         
+            toast.success("Signed In Sucessfully!");
+            setUserRole(response.Obj.roles);
+            setIsLoggin(true);
+            Navigate("/Products");
+        }
+        else {
+            console.log(response);           
+        }
+    }  
 
     return (
         <div>
@@ -49,14 +52,14 @@ function Signin() {
                 <div className="sign-form">
                     <div className="sign-form-item">
                         <div className="sign-form-icon"><AiOutlineUser /></div>
-                        <input type="text" className="sign-form-item-input" placeholder='Email' onChange={(e) => setUser({ ...user,  email: e.target.value })} />
+                        <input type="text" className="sign-form-item-input" placeholder='Email' onChange={(e) => setEmail(e.target.value)} />
                     </div>
                     <div className="sign-form-item">
                         <div className="sign-form-icon"><AiOutlineLock /></div>
-                        <input type="password" className="sign-form-item-input" placeholder='Password' onChange={(e) => setUser({ ...user,  password: e.target.value })} />
+                        <input type="password" className="sign-form-item-input" placeholder='Password' onChange={(e) => setPassword(e.target.value)} />
                     </div>
                     <div className="sign-form-item">
-                        <button className='sign-button' onClick={() => tryAuthenticate()}>SIGN IN</button>
+                        <button className='sign-button' type='submit' onClick={login}>SIGN IN</button>
                     </div>
                     <div className="sign-form-item">
                         <span className="redirect">
@@ -70,7 +73,6 @@ function Signin() {
                     </div>
                 </div>
             </div>
-            <CheckRoutes userRole={userRole} isLoggedIn={isLoggedIn} />
         </div>
     )
 }

@@ -7,7 +7,7 @@ interface AuthContextProps {
     children?: React.ReactNode,
     setCurrentUser: (user: AuthDTO | null) => void,
     isUserLoggedIn: boolean,
-    userrole: string,
+    userRoles: string[],
     isAdmin: () => boolean,
 }
 
@@ -15,7 +15,7 @@ const AuthContext = React.createContext<AuthContextProps>({
     currentUser: null,
     setCurrentUser: () => { },
     isUserLoggedIn: false,
-    userrole: "",
+    userRoles: [],
     isAdmin: () => { return false }
 });
 
@@ -25,9 +25,9 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = (props: AuthProviderProps) => {
-    const role: string = "Admin";
+    const Roles: string[] = ["Admin", "Client"];
     const [currentUser, setCurrentUser] = useState<AuthDTO | null>(props.user);
-    const [userrole, setUserrole] = useState<string>("");
+    const [userRoles, setUserRoles] = useState<string[]>([]);
     const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean>(props.user != null ? true : false);
 
     APIService.SetToken(currentUser?.token ?? null);
@@ -37,7 +37,7 @@ export const AuthProvider = (props: AuthProviderProps) => {
         if (isUserValid(user) === false) {
             setCurrentUser(null);
             setIsUserLoggedIn(false)
-            setUserrole("");
+            setUserRoles([]);
             return;
         }
 
@@ -48,7 +48,7 @@ export const AuthProvider = (props: AuthProviderProps) => {
 
 
         if (user != null) {
-            setUserrole(getrole(user))
+            setUserRoles(getRoles(user))
         }
 
     }
@@ -62,17 +62,19 @@ export const AuthProvider = (props: AuthProviderProps) => {
 
     }
 
-    const getrole = (user: AuthDTO): string => {
-        var role: string = "";
-        if (user.role !== null && typeof user.role !== "undefined" && user.role !== "") {
-            role;
+    const getRoles = (user: AuthDTO): string[] => {
+        var roles: string[] = [];
+        if (user.roles !== null && typeof user.roles !== "undefined" && user.roles !== []) {
+            user.roles.forEach((a: string) => {
+                roles.push(a)
+            });
         }
-        return role;
+        return roles;
     }
 
     const isAdmin = (): boolean => {
         if (currentUser == null) return false;
-        if (currentUser.role?.includes("Admin")) return true;
+        if (currentUser.roles?.findIndex(r => r.toUpperCase() === "ADMIN") !== -1) return true;
 
         return false;
     }
@@ -83,7 +85,7 @@ export const AuthProvider = (props: AuthProviderProps) => {
 
     return (
         <AuthContext.Provider value={{
-            currentUser, setCurrentUser: loginUser, isUserLoggedIn: isUserLoggedIn, userrole,
+            currentUser, setCurrentUser: loginUser, isUserLoggedIn: isUserLoggedIn, userRoles,
             isAdmin: isAdmin
         }}>
             {props.children}

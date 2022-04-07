@@ -13,7 +13,7 @@ class APIServiceClass {
             return response
         }, function(error){
             if(error.response.status === 401){
-                // service.Logout();
+                service.Logout();
                 window.location.href = "/Login";
             }
             return Promise.reject(error);
