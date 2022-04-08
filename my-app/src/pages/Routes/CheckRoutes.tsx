@@ -64,8 +64,6 @@ export function CheckRoutes() {
         ]
     }
 
-    console.log(currentUser);
-
     return (
         <div>
             <div className="navbar">
