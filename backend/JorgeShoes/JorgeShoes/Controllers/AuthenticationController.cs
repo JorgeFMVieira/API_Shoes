@@ -61,7 +61,7 @@ namespace JorgeShoes.Controllers
 
             try
             {
-                CreateUserValidation validator = new();
+                CreateUserValidation validator = new CreateUserValidation();
                 var responseValidatorDTO = await validator.ValidateAsync(authDTO);
                 if (responseValidatorDTO.IsValid == false)
                 {
@@ -86,8 +86,8 @@ namespace JorgeShoes.Controllers
                     {
                         Email = authDTO.Email,
                         EmailConfirmed = true,
-                        Name = authDTO.Email!,
                         UserName = authDTO.Email,
+                        Name = authDTO.Username!,
                     };
                     var resultCreateUserInDatabase = await _userManager.CreateAsync(userInDatabase, authDTO.Password);
 

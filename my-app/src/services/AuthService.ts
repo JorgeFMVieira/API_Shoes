@@ -12,16 +12,17 @@ export class AuthService{
             return response.data
         }
         catch(error){
-            return new MessagingHelper<AuthDTO | null>(false, "Erro ao fazer login", null);
+            return new MessagingHelper<AuthDTO | null>(false, "We weren´t able to sign you in.", null);
         }
     }
 
     async Register(register: AuthDTO): Promise<MessagingHelper<AuthDTO | null>>{
         try{
-            var response = await APIService.Axios().post(`${APIService.GetURL()}/Register`, {...register});
+            var response = await APIService.Axios().post(`${APIService.GetURL()}/Register?Email=` + register.email + `&Password=` + register.password + `&Username=` + register.username);
             return response.data;
         }catch(error){
-            return new MessagingHelper<AuthDTO| null>(false, "Erro ao criar a conta de administrador", null)
+            console.log(error);
+            return new MessagingHelper<AuthDTO| null>(false, "We weren´t able to create the account.", null)
         }
     }
 
@@ -33,7 +34,7 @@ export class AuthService{
             return response.data;
 
         }catch(error){
-            return new MessagingHelper<AuthDTO | null>(false, "Erro a buscar o user", null);
+            return new MessagingHelper<AuthDTO | null>(false, "We couldn´t find the user", null);
         }
     }
 
@@ -44,7 +45,7 @@ export class AuthService{
             });
             return response.data;
         }catch(error){
-            return new MessagingHelper<any>(false, "Erro ao fazer logout", null);
+            return new MessagingHelper<any>(false, "We couldn´t sign you out.", null);
         }
     }
 
