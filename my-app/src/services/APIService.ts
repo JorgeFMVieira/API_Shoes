@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from "axios";
 import { AuthService } from "./AuthService";
 
 class APIServiceClass {
-    private url: string  = "https://localhost:5001/api";
+    private url: string  = "https://localhost:5001";
     private token: string | null = null;
     private instance = axios.create();
     private authService = new AuthService();

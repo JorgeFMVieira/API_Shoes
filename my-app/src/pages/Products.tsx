@@ -1,12 +1,12 @@
 import Table from '../components/Product/Table/Table';
 import './StyleDefault.css';
-import Navbar from '../components/Navbar';
+import CheckRoutes from './Routes/CheckRoutes';
 
 function Products() {
 
     return (
         <div>
-            <Navbar />
+            <CheckRoutes />
             <Table />
         </div>
     )

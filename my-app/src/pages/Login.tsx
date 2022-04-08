@@ -1,47 +1,48 @@
-import React, { useState } from 'react';
-import './Signin.css';
-import { AiOutlineUser, AiOutlineLock } from "react-icons/ai";
+import React, { useState } from 'react'
+import { AiOutlineLock, AiOutlineUser } from 'react-icons/ai';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { AuthService } from '../services/AuthService';
-import { LoginDTO } from '../Models/Auth/LoginDTO';
 import { useAuth } from '../Context/AuthContext';
-import CheckRoutes from './Routes/CheckRoutes';
+import { LoginDTO } from '../Models/Auth/LoginDTO';
+import { AuthService } from '../services/AuthService';
+import { CheckRoutes } from './Routes/CheckRoutes';
+import './Signin.css';
 
 function Login() {
 
-    const Navigate = useNavigate()
+    const Navigate = useNavigate();
     const service: AuthService = new AuthService();
     const { setCurrentUser } = useAuth();
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [UserRole, setUserRole] = useState<string[] | undefined>([]);
-    const [IsLoggin, setIsLoggin] = useState(false);
+    const [signedIn, setSignedIn] = useState(false);
 
-    const login = async () => {
-        const login: LoginDTO = {
+    const Sign = async () => {
+        const Sign: LoginDTO = {
             email: email,
             password: password
         }
-        if(login.email == "" || login.password == ""){
+
+        if (Sign.email === "" || Sign.password === "") {
             toast.error("Please, fill all fields.");
+            return;
         }
 
-        var response = await service.Login(login); 
-        
+        var response = await service.Login(Sign);
 
-        if (response.Success == true && response.Obj != null) {
-            setCurrentUser(response.Obj);         
-            toast.success("Signed In Sucessfully!");
-            setUserRole(response.Obj.roles);
-            setIsLoggin(true);
+        if (response.success === true && response.obj != null) {
+            setCurrentUser(response.obj);
+            toast.success("Signed in sucessfully!");
+            setUserRole(response.obj.roles);
+            setSignedIn(true);
             Navigate("/Products");
         }
         else {
-            console.log(response);           
+            toast.error("We were unable to sign you in. Please, try again.");
         }
-    }  
+    }
+
 
     return (
         <div>
@@ -59,7 +60,7 @@ function Login() {
                         <input type="password" className="sign-form-item-input" placeholder='Password' onChange={(e) => setPassword(e.target.value)} />
                     </div>
                     <div className="sign-form-item">
-                        <button className='sign-button' type='submit' onClick={login}>SIGN IN</button>
+                        <button className='sign-button' type='submit' onClick={Sign}>SIGN IN</button>
                     </div>
                     <div className="sign-form-item">
                         <span className="redirect">
@@ -76,5 +77,4 @@ function Login() {
         </div>
     )
 }
-
 export default Login

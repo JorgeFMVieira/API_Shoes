@@ -12,7 +12,7 @@ export class AuthService{
             return response.data
         }
         catch(error){
-            return new MessagingHelper<AuthDTO | null>(false, "Error while trying to sigin", null);
+            return new MessagingHelper<AuthDTO | null>(false, "Erro ao fazer login", null);
         }
     }
 
@@ -21,7 +21,7 @@ export class AuthService{
             var response = await APIService.Axios().post(`${APIService.GetURL()}/Register`, {...register});
             return response.data;
         }catch(error){
-            return new MessagingHelper<AuthDTO| null>(false, "Error while signinup", null)
+            return new MessagingHelper<AuthDTO| null>(false, "Erro ao criar a conta de administrador", null)
         }
     }
 
@@ -33,7 +33,7 @@ export class AuthService{
             return response.data;
 
         }catch(error){
-            return new MessagingHelper<AuthDTO | null>(false, "Error while searching for user", null);
+            return new MessagingHelper<AuthDTO | null>(false, "Erro a buscar o user", null);
         }
     }
 
@@ -44,7 +44,7 @@ export class AuthService{
             });
             return response.data;
         }catch(error){
-            return new MessagingHelper<any>(false, "Error while signing out", null);
+            return new MessagingHelper<any>(false, "Erro ao fazer logout", null);
         }
     }
 

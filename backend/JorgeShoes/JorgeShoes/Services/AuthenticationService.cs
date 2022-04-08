@@ -1,4 +1,5 @@
-﻿using JorgeShoes.DTO;
+﻿using JorgeShoes.Context;
+using JorgeShoes.DTO;
 using JorgeShoes.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -19,17 +20,19 @@ namespace JorgeShoes.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _config;
+        private readonly AppDbContext _context;
 
         private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public AuthenticationService(UserManager<ApplicationUser> userManager, IConfiguration config,
-            IPasswordHasher<ApplicationUser> passwordHasher, IHttpContextAccessor httpContextAccessor)
+            IPasswordHasher<ApplicationUser> passwordHasher, IHttpContextAccessor httpContextAccessor, AppDbContext context)
         {
             _userManager = userManager;
             _config = config;
             _passwordHasher = passwordHasher;
             _httpContextAccessor = httpContextAccessor;
+            _context = context;
         }
 
         public async Task<MessagingHelper<AuthenticationDTO>> Login(LoginDTO login)
@@ -39,7 +42,7 @@ namespace JorgeShoes.Services
             {
                 var user = await AuthenticateUser(login);
 
-                var userRoles = (await _userManager.GetRolesAsync(user)).ToList();
+                    var userRoles = (await _userManager.GetRolesAsync(user)).ToList();
 
                 if (user != null)
                 {
@@ -61,13 +64,13 @@ namespace JorgeShoes.Services
                 else
                 {
                     response.Success = false;
-                    response.Message = "Os dados estão incorretos.";
+                    response.Message = "Something is wrong with your information.";
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 response.Success = false;
-                response.Message = ex.Message;
+                response.Message = "We werent´t able to find that account.";
             }
             return response;
         }

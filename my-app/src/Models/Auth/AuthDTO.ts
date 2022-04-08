@@ -1,8 +1,8 @@
-export interface AuthDTO {
+export interface AuthDTO{
     username?: string;
     id?: string;
     email?: string;
     password?: string;
     token?: string;
-    roles?: string[];  
+    roles?: string[];    
 }

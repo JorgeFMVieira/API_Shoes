@@ -3,85 +3,101 @@ import { toast } from 'react-toastify';
 import { useAuth } from '../../Context/AuthContext';
 import { AuthService } from '../../services/AuthService';
 import "../../components/Navbar.css";
+import { useEffect } from 'react';
 
 
 export function CheckRoutes() {
 
     type routes = {
         name: string;
-        path: string;
+        link: string;
     }
-
-    const {isUserLoggedIn , currentUser, isAdmin} = useAuth()
-
     const service = new AuthService();
-        const logout = async () => {
-            var response = await service.Logout();
-            if (response.Success !== true) {
-                toast.error("Não foi possível fechar a sessão corretamente!");              
-                return;
-            }
-            console.log(isUserLoggedIn);
-            window.location.href = "/Login";
-            
-        }
-        var Links: routes[] = [];
+    const { isUserLoggedIn, currentUser, isAdmin } = useAuth();
 
-        if (isUserLoggedIn === true && currentUser !== null) {
-            if (isAdmin()) {
-                Links = [
-                    {
-                        name: "Products",
-                        path: "/Products",
-                    },
-                    {
-                        name: "Products Types",
-                        path: "/ProductsTypes",
-                    },
-                ]
-            } if (!isAdmin()) {
-                Links = [
-                    {
-                        name: "User",
-                        path: "/user",
-                    },
-                    {
-                        name: "Products",
-                        path: "/Products",
-                    },
-                ]
-            }
-        } else {
+    const logout = async () => {
+        var response = await service.Logout();
+        if (response.success !== true) {
+            toast.error("We couldn´t sign you out.");
+            return;
+        }
+        console.log(isUserLoggedIn);
+        window.location.href = "/Login";
+
+    }
+    var Links: routes[] = [];
+
+    if (isUserLoggedIn === true && currentUser !== null) {
+        if (isAdmin()) {
             Links = [
                 {
-                    name: "Signup",
-                    path: "/Signup",
+                    name: "Products",
+                    link: "/Products",
+                },
+                {
+                    name: "ProductsTypes",
+                    link: "/ProductsTypes",
+                },
+                {
+                    name: "Logout",
+                    link: "/Logout",
+                },
+            ]
+        } if (!isAdmin()) {
+            Links = [
+                {
+                    name: "Products",
+                    link: "/Products",
+                },
+                {
+                    name: "ProductsTypes",
+                    link: "/ProductsTypes",
+                },
+                {
+                    name: "Logout",
+                    link: "/Logout",
                 },
             ]
         }
+    } else {
+        Links = [
+            {
+                name: "Signin",
+                link: "/Login",
+            },
+            {
+                name: "Signup",
+                link: "/Signup",
+            },
+        ]
+    }
 
-        return (
-            <div>
-                <div className="navbar">
-                    <div className="logo">My Products</div>
-                    <div className="nav-items">
-                        {Links.map((item, index) => {
-                            return (
-                                <div key={index} className="nav-item">
-                                    <Link to={item.path} className='href'>{item.name}</Link>                              
-                                </div>
-                            )
-                        })}
-                        {
-                            (isUserLoggedIn === true) ? 
-                            <button className="nav-item bg-transparent border-0" onClick={logout}>Signout</button>
-                            : 
+    console.log(currentUser);
+
+    return (
+        <div>
+            <div className="navbar">
+                <div className="logo">My Products</div>
+                <div className="nav-items">
+                    {Links.map((item, index) => {
+                        return (
+                            <div key={index} className="nav-item">
+                                <Link to={item.link} className='href'>{item.name}</Link>
+                            </div>
+                        )
+                    })}
+                    {
+                        (isUserLoggedIn === true) ?
+                            <div className="nav-item">
+                                <div onClick={logout} className='href'>Signout</div>
+                            </div>
+                            :
                             ""
-                        }
-                    </div>
+                    }
                 </div>
             </div>
-        )
-    }
+        </div>
+    )
+}
 
 export default CheckRoutes
