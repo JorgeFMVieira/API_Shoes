@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import './Signin.css';
 import { AiOutlineUser, AiOutlineLock } from "react-icons/ai";
 import { Link, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { AuthService } from '../services/AuthService'
-import { LoginDTO } from '../Models/Auth/LoginDTO'
-import { useAuth } from '../Context/AuthContext'
+import { AuthService } from '../services/AuthService';
+import { LoginDTO } from '../Models/Auth/LoginDTO';
+import { useAuth } from '../Context/AuthContext';
+import CheckRoutes from './Routes/CheckRoutes';
 
 function Signin() {
 
@@ -15,7 +16,7 @@ function Signin() {
     const { setCurrentUser } = useAuth();
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
-    const [UserRole, setUserRole] = useState<string[]>([]);
+    const [UserRole, setUserRole] = useState<string[] | undefined>([]);
     const [IsLoggin, setIsLoggin] = useState(false);
 
     const login = async () => {
@@ -47,6 +48,7 @@ function Signin() {
     return (
         <div>
             <ToastContainer />
+            <CheckRoutes />
             <div className="sign">
                 <div className="sign-title"><h1>Sign in</h1></div>
                 <div className="sign-form">

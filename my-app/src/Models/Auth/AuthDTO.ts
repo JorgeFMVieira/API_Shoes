@@ -4,5 +4,5 @@ export interface AuthDTO {
     email?: string;
     password?: string;
     token?: string;
-    roles: string[];  
+    roles?: string[];  
 }

@@ -25,7 +25,6 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = (props: AuthProviderProps) => {
-    const Roles: string[] = ["Admin", "Client"];
     const [currentUser, setCurrentUser] = useState<AuthDTO | null>(props.user);
     const [userRoles, setUserRoles] = useState<string[]>([]);
     const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean>(props.user != null ? true : false);
