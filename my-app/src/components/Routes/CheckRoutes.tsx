@@ -42,7 +42,7 @@ export function CheckRoutes(props: props) {
             links = [
                 {
                     name: "Sign In",
-                    link: "/Signin",
+                    link: "/Login",
                 },
                 {
                     name: "Sign Up",
@@ -54,7 +54,7 @@ export function CheckRoutes(props: props) {
         links = [
             {
                 name: "Sign In",
-                link: "/Signin",
+                link: "/Login",
             },
             {
                 name: "Sign Up",

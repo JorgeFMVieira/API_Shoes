@@ -7,7 +7,7 @@ import Products from './pages/Products';
 import ProductsType from './pages/ProductsType';
 import ApiError from './pages/ApiError';
 import Signup from './pages/Signup';
-import Signin from './pages/Login';
+import Login from './pages/Login';
 import { AuthService } from './services/AuthService';
 import { AuthDTO } from './Models/Auth/AuthDTO';
 import { AuthProvider } from './Context/AuthContext';
@@ -28,9 +28,9 @@ ReactDOM.render(
         <AuthProvider user={user}>
         <BrowserRouter>
             <Routes>
-                <Route path='/' element={<Signin />} />
+                <Route path='/' element={<Login />} />
                 <Route path='/Signup' element={<Signup />} />
-                <Route path='/Signin' element={<Signin />} />
+                <Route path='/Login' element={<Login />} />
                 <Route path='/Products' element={<Products />} />
                 <Route path='/ProductsType' element={<ProductsType />} />
                 <Route path='/ApiError' element={<ApiError />} />
