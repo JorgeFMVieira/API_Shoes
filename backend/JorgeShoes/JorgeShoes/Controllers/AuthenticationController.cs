@@ -91,7 +91,7 @@ namespace JorgeShoes.Controllers
                     };
                     var resultCreateUserInDatabase = await _userManager.CreateAsync(userInDatabase, authDTO.Password);
 
-                    await _userManager.AddToRoleAsync(userInDatabase, Roles.roles.Value);
+                    await _userManager.AddToRoleAsync(userInDatabase, Roles.Client.Value);
                     if (resultCreateUserInDatabase.Succeeded)
                     {
                         result.Success = true;

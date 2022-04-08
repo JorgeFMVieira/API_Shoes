@@ -21,7 +21,6 @@ export function CheckRoutes() {
             toast.error("We couldn´t sign you out.");
             return;
         }
-        console.log(isUserLoggedIn);
         window.location.href = "/Login";
 
     }
@@ -54,11 +53,11 @@ export function CheckRoutes() {
     } else {
         Links = [
             {
-                name: "Signin",
+                name: "Sign In",
                 link: "/Login",
             },
             {
-                name: "Signup",
+                name: "Sign Up",
                 link: "/Signup",
             },
         ]

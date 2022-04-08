@@ -21,7 +21,8 @@ namespace JorgeShoes.Models
 
     public sealed class Roles : SmartEnum<Roles, string>
     {
-        public static readonly Roles roles = new("Admin", "Client");
+        public static readonly Roles Admin = new("Admin", "Admin");
+        public static readonly Roles Client = new("Client", "Client");
         protected Roles(string name, string value) : base(name, value)
         {
         }

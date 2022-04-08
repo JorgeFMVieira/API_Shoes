@@ -252,7 +252,7 @@ namespace JorgeShoes
                 };
                 await UserManager.CreateAsync(auADMIN, "Password1!");
             }
-            await UserManager.AddToRolesAsync(auADMIN, new List<string> { Roles.roles.Value });
+            await UserManager.AddToRolesAsync(auADMIN, new List<string> { Roles.Admin.Value });
         }
 
         public async Task CreateRole(IServiceProvider serviceProvider, string roleName)

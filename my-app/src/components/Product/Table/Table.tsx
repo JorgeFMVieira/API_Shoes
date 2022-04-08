@@ -10,6 +10,9 @@ import Edit from '../Edit/Edit';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AiOutlineArrowUp, AiOutlineArrowDown } from "react-icons/ai";
+import { useAuth } from '../../../Context/AuthContext';
+import { AuthService } from '../../../services/AuthService';
+
 
 function Table({ errorHandler }: any) {
 
@@ -153,14 +156,14 @@ function Table({ errorHandler }: any) {
     setCurrentPage(1);
     setInputValue(1);
   }
-  
+
   const handlerError = (errorMsg: string) => {
-      toast.error(errorMsg);
+    toast.error(errorMsg);
   }
 
   const handlerSuccess = (successMsg: string) => {
-      toast.success(successMsg);
-      setCurrentPage(1);
+    toast.success(successMsg);
+    setCurrentPage(1);
   }
 
   const [show, setShow] = useState<boolean>(false);
@@ -170,18 +173,25 @@ function Table({ errorHandler }: any) {
   const [showEdit, setShowEdit] = useState<boolean>(false);
 
   const onClickSort = async (e: string) => {
-    if(order === "") {
+    if (order === "") {
       return setOrder(e);
     }
-    if(order === e) {
+    if (order === e) {
       return setOrder(e + "_desc");
     }
 
-    if(order === e.concat("_desc")){
+    if (order === e.concat("_desc")) {
       return setOrder("");
     }
     setOrder(e);
   }
+
+  const [hideClient, setHideClient] = useState(true);
+
+  const serviceAuth = new AuthService();
+  const { isUserLoggedIn, currentUser, isAdmin } = useAuth();
+
+  console.log(isAdmin());
 
   useEffect(() => {
     service.getAll(currentPage, entries, searchBy, search, order).then(result => {
@@ -194,16 +204,19 @@ function Table({ errorHandler }: any) {
       if (result.search === null) {
         setSearch("");
       }
+
+      if (isAdmin() === false) {
+        setHideClient(false);
+      }
     });
   }, [currentPage, totalPages, searchBy, search, entries, order, show, showDelete, showEdit]);
-
-
-
 
   return (
     <div className="tableContainer">
       <ToastContainer />
-      <button className="btn createNew" onClick={() => (setShow(true))}>Create New Product</button>
+      {hideClient ?
+        <button className="btn createNew" onClick={() => (setShow(true))}>Create New Product</button>
+        : null}
       <Create show={show} onCancel={() => setShow(false)} handlerError={handlerError} handlerSuccess={handlerSuccess} />
       <div className="searchItems">
         <div className="searchItems-Inputs">
@@ -254,11 +267,13 @@ function Table({ errorHandler }: any) {
                   {thead.map((item, index) => {
                     return <th key={index} aria-label={item.name} onClick={(e) => onClickSort(e.currentTarget.ariaLabel!.valueOf())} >
                       {item.name}
-                      { order === item.name ? <AiOutlineArrowDown /> : null}
-                      { order === (item.name + "_desc") ? <AiOutlineArrowUp /> : null}
+                      {order === item.name ? <AiOutlineArrowDown /> : null}
+                      {order === (item.name + "_desc") ? <AiOutlineArrowUp /> : null}
                     </th>
                   })}
-                  <th>Options</th>
+                  {hideClient ?
+                    <th>Options</th>
+                    : null}
                 </tr>
               </thead>
               <tbody>
@@ -269,10 +284,12 @@ function Table({ errorHandler }: any) {
                     <td>{item.type}</td>
                     <td>{item.quantity}</td>
                     <td>{item.price}</td>
-                    <td>
-                      <button className="btn edit-btn" onClick={() => (setShowEdit(true), setCurrentProduct(item.id))}>Edit</button>
-                      <button className="btn delete-btn" onClick={() => (setShowDelete(true), setCurrentProduct(item.id))}>Delete</button>
-                    </td>
+                    {hideClient ?
+                      <td>
+                        <button className="btn edit-btn" onClick={() => (setShowEdit(true), setCurrentProduct(item.id))}>Edit</button>
+                        <button className="btn delete-btn" onClick={() => (setShowDelete(true), setCurrentProduct(item.id))}>Delete</button>
+                      </td>
+                      : null}
                   </tr>
                 ))}
               </tbody>

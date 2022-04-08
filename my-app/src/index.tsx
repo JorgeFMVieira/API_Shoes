@@ -19,7 +19,6 @@ service.GetUser().then(result => {
 
     if (result.success === true && result.obj != null && result.obj.token != null) {
         user = result.obj
-        console.log(user);
     }
 
 ReactDOM.render(

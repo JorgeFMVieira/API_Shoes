@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { AiOutlineLock, AiOutlineUser } from 'react-icons/ai';
+import { AiFillEye, AiFillEyeInvisible, AiOutlineLock, AiOutlineUser } from 'react-icons/ai';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import { useAuth } from '../Context/AuthContext';
@@ -43,6 +43,14 @@ function Login() {
         }
     }
 
+    const [passwordShown, setPasswordShown] = useState(false);
+    const [passwordIconShow, setPasswordIconShow] = useState(true);
+
+    const togglePassword = () => {
+        setPasswordShown(!passwordShown);
+        setPasswordIconShow(!passwordIconShow);
+    };
+
 
     return (
         <div>
@@ -53,11 +61,18 @@ function Login() {
                 <div className="sign-form">
                     <div className="sign-form-item">
                         <div className="sign-form-icon"><AiOutlineUser /></div>
-                        <input type="text" className="sign-form-item-input" placeholder='Email' onChange={(e) => setEmail(e.target.value)} />
+                        <div className="password-container">
+                            <input type="text" className="sign-form-item-input" placeholder='Email' onChange={(e) => setEmail(e.target.value)} />
+                        </div>
                     </div>
                     <div className="sign-form-item">
                         <div className="sign-form-icon"><AiOutlineLock /></div>
-                        <input type="password" className="sign-form-item-input" placeholder='Password' onChange={(e) => setPassword(e.target.value)} />
+                        <div className="password-container">
+                            <input type={passwordShown ? "type" : "password"} className="sign-form-item-input" placeholder='Password' onChange={(e) => setPassword(e.target.value)} />
+                            <div className="show-password-container" onClick={togglePassword}>
+                                {passwordIconShow ? <AiFillEyeInvisible /> : <AiFillEye />}
+                            </div>
+                        </div>
                     </div>
                     <div className="sign-form-item">
                         <button className='sign-button' type='submit' onClick={Sign}>SIGN IN</button>

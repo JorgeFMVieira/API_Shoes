@@ -9,6 +9,8 @@ import Edit from '../Edit/Edit';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AiOutlineArrowUp, AiOutlineArrowDown } from "react-icons/ai";
+import { useAuth } from '../../../Context/AuthContext';
+import { AuthService } from '../../../services/AuthService';
 
 function Table() {
 
@@ -25,6 +27,11 @@ function Table() {
       name: "Type"
     }
   ];
+
+  const [hideClient, setHideClient] = useState(true);
+
+  const serviceAuth = new AuthService();
+  const { isUserLoggedIn, currentUser, isAdmin } = useAuth();
 
   const [inputValue, setInputValue] = useState(currentPage);
 
@@ -99,14 +106,14 @@ function Table() {
     setCurrentPage(1);
     setInputValue(1);
   }
-  
+
   const handlerError = (errorMsg: string) => {
-      toast.error(errorMsg);
+    toast.error(errorMsg);
   }
 
   const handlerSuccess = (successMsg: string) => {
-      toast.success(successMsg);
-      setCurrentPage(1);
+    toast.success(successMsg);
+    setCurrentPage(1);
   }
 
   const [show, setShow] = useState<boolean>(false);
@@ -118,14 +125,14 @@ function Table() {
   const [order, setOrder] = useState("");
 
   const onClickSort = async (e: string) => {
-    if(order === "") {
+    if (order === "") {
       return setOrder(e);
     }
-    if(order === e) {
+    if (order === e) {
       return setOrder(e + "_desc");
     }
 
-    if(order === e.concat("_desc")){
+    if (order === e.concat("_desc")) {
       return setOrder("");
     }
     setOrder(e);
@@ -141,6 +148,10 @@ function Table() {
       if (result.search === null) {
         setSearch("");
       }
+
+      if (isAdmin() === false) {
+        setHideClient(false);
+      }
     });
   }, [currentPage, totalPages, search, order, entries, show, showDelete, showEdit]);
 
@@ -150,11 +161,13 @@ function Table() {
   return (
     <div className="tableContainer">
       <ToastContainer />
-      <button className="btn createNew" onClick={() => (setShow(true))}>Create New Type</button>
+      {hideClient ?
+        <button className="btn createNew" onClick={() => (setShow(true))}>Create New Type</button>
+        : null}
       <Create show={show} onCancel={() => setShow(false)} handlerError={handlerError} handlerSuccess={handlerSuccess} />
       <div className="searchItems">
         <div className="searchItems-Inputs">
-            <input className="search todo" type="search" placeholder="Search..." name="search" autoComplete="off" onChange={(e) => (setSearch(e.target.value), setCurrentPage(1))} />
+          <input className="search todo" type="search" placeholder="Search..." name="search" autoComplete="off" onChange={(e) => (setSearch(e.target.value), setCurrentPage(1))} />
         </div>
         <select className="search todo" onChange={(e) => changeEntriesPerTable(e.target.value)} >
           <option value="5">5</option>
@@ -179,22 +192,26 @@ function Table() {
                 <tr>
                   {thead.map((item, index) => {
                     return <th key={index} aria-label={item.name} onClick={(e) => onClickSort(e.currentTarget.ariaLabel!.valueOf())} >
-                    {item.name}
-                    { order === item.name ? <AiOutlineArrowDown /> : null}
-                    { order === (item.name + "_desc") ? <AiOutlineArrowUp /> : null}
-                  </th>
+                      {item.name}
+                      {order === item.name ? <AiOutlineArrowDown /> : null}
+                      {order === (item.name + "_desc") ? <AiOutlineArrowUp /> : null}
+                    </th>
                   })}
-                  <th>Options</th>
+                  {hideClient ?
+                    <th>Options</th>
+                    : null}
                 </tr>
               </thead>
               <tbody>
                 {data.map(item => (
                   <tr key={item.productTypeId}>
                     <td>{item.type}</td>
-                    <td>
-                      <button className="btn edit-btn" onClick={() => (setShowEdit(true), setCurrentProduct(item.productTypeId))}>Edit</button>
-                      <button className="btn delete-btn" onClick={() => (setShowDelete(true), setCurrentProduct(item.productTypeId))}>Delete</button>
-                    </td>
+                    {hideClient ?
+                      <td>
+                        <button className="btn edit-btn" onClick={() => (setShowEdit(true), setCurrentProduct(item.productTypeId))}>Edit</button>
+                        <button className="btn delete-btn" onClick={() => (setShowDelete(true), setCurrentProduct(item.productTypeId))}>Delete</button>
+                      </td>
+                      : null}
                   </tr>
                 ))}
               </tbody>

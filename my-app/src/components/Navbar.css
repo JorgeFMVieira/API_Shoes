@@ -59,3 +59,20 @@
 .href:hover{
     color: var(--primary-color);
 }
+
+.password-container{
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+}
+
+.show-password-container{
+    user-select: none;
+    position: absolute;
+    top: 55%;
+    transform: translateY(-50%);
+    right: 5px;
+    color: var(--background-modal);
+    font-size: 1.5em;
+    cursor: pointer;
+}
