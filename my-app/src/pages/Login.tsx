@@ -19,7 +19,7 @@ function Signin() {
     const [UserRole, setUserRole] = useState<string[] | undefined>([]);
     const [IsLoggin, setIsLoggin] = useState(false);
 
-    const login = async () => {
+    const Login = async () => {
         
 
         const login: LoginDTO = {
@@ -61,7 +61,7 @@ function Signin() {
                         <input type="password" className="sign-form-item-input" placeholder='Password' onChange={(e) => setPassword(e.target.value)} />
                     </div>
                     <div className="sign-form-item">
-                        <button className='sign-button' type='submit' onClick={login}>SIGN IN</button>
+                        <button className='sign-button' type='submit' onClick={Login}>SIGN IN</button>
                     </div>
                     <div className="sign-form-item">
                         <span className="redirect">

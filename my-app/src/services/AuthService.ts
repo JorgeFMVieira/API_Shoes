@@ -6,45 +6,45 @@ import { APIService } from "./APIService";
 export class AuthService{
     async Login(authentication: LoginDTO): Promise<MessagingHelper<AuthDTO | null>>{
         try{
-            var response = await APIService.Axios().post(`${APIService.GetURL()}/authentication/login`, {...authentication},{
+            var response = await APIService.Axios().post(`${APIService.GetURL()}/Login`, {...authentication},{
                 withCredentials: true
             });
             return response.data
         }
         catch(error){
-            return new MessagingHelper<AuthDTO | null>(false, "Erro ao fazer login", null);
+            return new MessagingHelper<AuthDTO | null>(false, "Error while trying to sigin", null);
         }
     }
 
     async Register(register: AuthDTO): Promise<MessagingHelper<AuthDTO | null>>{
         try{
-            var response = await APIService.Axios().post(`${APIService.GetURL()}/authentication/register`, {...register});
+            var response = await APIService.Axios().post(`${APIService.GetURL()}/Register`, {...register});
             return response.data;
         }catch(error){
-            return new MessagingHelper<AuthDTO| null>(false, "Erro ao criar a conta de administrador", null)
+            return new MessagingHelper<AuthDTO| null>(false, "Error while signinup", null)
         }
     }
 
     async GetUser() : Promise<MessagingHelper<AuthDTO | null>>{
         try{
-            var response = await APIService.Axios().get(`${APIService.GetURL()}/authentication/getUser`,{
+            var response = await APIService.Axios().get(`${APIService.GetURL()}/GetUser`,{
                 withCredentials: true
             });
             return response.data;
 
         }catch(error){
-            return new MessagingHelper<AuthDTO | null>(false, "Erro a buscar o user", null);
+            return new MessagingHelper<AuthDTO | null>(false, "Error while searching for user", null);
         }
     }
 
     async Logout() : Promise<MessagingHelper<any>>{
         try{
-            var response = await APIService.Axios().post(`${APIService.GetURL()}/authentication/logout`,{},{
+            var response = await APIService.Axios().post(`${APIService.GetURL()}/Logout`,{},{
                 withCredentials: true
             });
             return response.data;
         }catch(error){
-            return new MessagingHelper<any>(false, "Erro ao fazer logout", null);
+            return new MessagingHelper<any>(false, "Error while signing out", null);
         }
     }
 
