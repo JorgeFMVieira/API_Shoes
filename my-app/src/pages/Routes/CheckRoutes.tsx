@@ -35,12 +35,8 @@ export function CheckRoutes() {
                     link: "/Products",
                 },
                 {
-                    name: "ProductsTypes",
-                    link: "/ProductsTypes",
-                },
-                {
-                    name: "Logout",
-                    link: "/Logout",
+                    name: "Products Type",
+                    link: "/ProductsType",
                 },
             ]
         } if (!isAdmin()) {
@@ -50,12 +46,8 @@ export function CheckRoutes() {
                     link: "/Products",
                 },
                 {
-                    name: "ProductsTypes",
-                    link: "/ProductsTypes",
-                },
-                {
-                    name: "Logout",
-                    link: "/Logout",
+                    name: "Products Type",
+                    link: "/ProductsType",
                 },
             ]
         }
@@ -89,7 +81,7 @@ export function CheckRoutes() {
                     {
                         (isUserLoggedIn === true) ?
                             <div className="nav-item">
-                                <div onClick={logout} className='href'>Signout</div>
+                                <div onClick={logout} className='href'>Logout</div>
                             </div>
                             :
                             ""
