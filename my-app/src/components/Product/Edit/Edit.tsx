@@ -48,18 +48,12 @@ function Edit(props: createProps) {
             return;
         }
 
-        const price = productInfoSelected.price.toString();
-        if (price.includes(',')) {
-            const priceReplaced = price;
-            productInfoSelected.price = priceReplaced.replace(',', '.');
-        }
-
         if (isNaN(parseFloat(productInfoSelected.price))) {
             toast.error("Price must be a number!");
             return;
         }
 
-        if (productInfoSelected.quantity.includes(',') || productInfoSelected.quantity.includes('.')) {
+        if (productInfoSelected.quantity.toString().includes(',') || productInfoSelected.quantity.toString().includes('.')) {
             toast.error("Quantity must be a integer number.");
             return;
         }
@@ -70,6 +64,12 @@ function Edit(props: createProps) {
         }
 
         parseInt(productInfoSelected.quantity);
+
+        const price = productInfoSelected.price.toString();
+        if (price.includes(',')) {
+            const priceReplaced = price;
+            productInfoSelected.price = priceReplaced.replace(',', '.');
+        }
 
 
         await Api.put("Products/" + props.currentProduct, productInfoSelected)

@@ -77,7 +77,6 @@ namespace JorgeShoes.Controllers
         }
 
         [HttpPut("{id:int}")]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> UpdateProduct(int id, [FromBody]EditProductDTO product)
         {
             try
@@ -99,7 +98,6 @@ namespace JorgeShoes.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteProduct(int id)
         {
             try

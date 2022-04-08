@@ -40,8 +40,17 @@ function Create(props: createProps) {
             return;
         }
 
-        console.log(product.productTypeId);
-        console.log(product);
+        // const price = product.price.toString();
+        // if (price.includes(',')) {
+        //     const priceReplaced = price;
+        //     product.price.toString() = priceReplaced.replace(',', '.');
+        // }
+
+        console.log(product.price);
+        if(product.price.includes('.')){
+            product.price.replace(',', '.');
+        }
+
         await Api.post('Products', { ...product })
             .then(response => {
                 props.handlerSuccess("Product created successfully!");
@@ -83,7 +92,7 @@ function Create(props: createProps) {
                                         </div>
                                         <div className="modalItem">
                                             <label htmlFor="price">Price:</label>
-                                            <input type="text" id="price" name="price" onChange={(e) => setProduct({ ...product, price: parseInt(e.target.value) })} />
+                                            <input type="text" id="price" name="price" onChange={(e) => setProduct({ ...product, price: e.target.value })} />
                                         </div>
                                         <div className="modalItem">
                                             <label htmlFor="productTypeId">Type:</label>
