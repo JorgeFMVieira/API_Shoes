@@ -9,7 +9,7 @@ import { LoginDTO } from '../Models/Auth/LoginDTO';
 import { useAuth } from '../Context/AuthContext';
 import CheckRoutes from './Routes/CheckRoutes';
 
-function Signin() {
+function Login() {
 
     const Navigate = useNavigate()
     const service: AuthService = new AuthService();
@@ -79,4 +79,4 @@ function Signin() {
     )
 }
 
-export default Signin
+export default Login
