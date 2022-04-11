@@ -14,7 +14,7 @@ export class UserService{
         }
     }   
 
-    async ResetPasswordDTO(reset: ResetPasswordDTO) : Promise<MessagingHelper<null>>{
+    async ResetPassword(reset: ResetPasswordDTO) : Promise<MessagingHelper<null>>{
         try{
             var result = await APIService.Axios().post(`${APIService.GetURL()}/api/User/ResetPassword`,{...reset},{
                 withCredentials: true

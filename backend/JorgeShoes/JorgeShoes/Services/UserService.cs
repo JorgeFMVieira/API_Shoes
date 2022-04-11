@@ -55,7 +55,7 @@ namespace JorgeShoes.Services
                     }
 
                     result.Success = false;
-                    result.Message = "Something went wrong. "+ errors;
+                    result.Message = "Something went wrong. " + errors;
                     return result;
                 }
                 result.Success = true;
@@ -72,7 +72,7 @@ namespace JorgeShoes.Services
 
         public async Task<MessagingHelper> SendEmailForgotPassword(ForgotPasswordDTO dto)
         {
-            MessagingHelper result = new MessagingHelper();
+            MessagingHelper result = new();
 
             try
             {
@@ -88,6 +88,7 @@ namespace JorgeShoes.Services
 
                 string frontendUrl = _config["FrontendUrl"];
                 token = HttpUtility.UrlEncode(token);
+                //token = HttpUtility.UrlDecode(token);
                 string link = $"{frontendUrl}/ResetPassword?userId={user.Id}&token={token}";
 
                 RecoveryPasswordDTO obj = new()

@@ -22,10 +22,16 @@ function ForgotPassword() {
             email: email
         }
 
+        if(email == "") {
+            toast.error("Please, fill all fields.");
+            return;
+        }
+
         var response = await service.ForgotPassword(data)
 
         if (response.success == false) {
-            toast.error("We weren´t able to send you an email. Please, try again.");
+            toast.error(response.message);
+            return;
         }
         setEmailSent(true);
 

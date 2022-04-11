@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AiFillEye, AiFillEyeInvisible, AiOutlineLock, AiOutlineUser } from 'react-icons/ai';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
@@ -15,7 +15,6 @@ function ForgotPassword() {
 
     const Navigate = useNavigate();
     const service = new UserService();
-    const [password, setPassword] = useState<string>("");
 
     const [passwordShown, setPasswordShown] = useState(false);
     const [passwordIconShow, setPasswordIconShow] = useState(true);
@@ -23,6 +22,14 @@ function ForgotPassword() {
     const togglePassword = () => {
         setPasswordShown(!passwordShown);
         setPasswordIconShow(!passwordIconShow);
+    };
+
+    const [passwordShown2, setPasswordShown2] = useState(false);
+    const [passwordIconShow2, setPasswordIconShow2] = useState(true);
+
+    const togglePassword2 = () => {
+        setPasswordShown2(!passwordShown2);
+        setPasswordIconShow2(!passwordIconShow2);
     };
 
     const [userId, setUserId] = useState<string>(Utilities.LoadParameterFromURLQuery("userId", "string", null));
@@ -38,28 +45,28 @@ function ForgotPassword() {
     }
     const resetPassword = async () => {
         try {
-            const validator = await validatePasswords(password1, password2);
+            const validator = validatePasswords(password1, password2);
             if (validator === false) {
                 toast.error("Passwords don´t match.")
             }
-            if (validator === false) {
+            if (validator === true) {
                 const data: ResetPasswordDTO = {
                     userId: userId,
-                    password: password,
+                    password: password1,
                     token: token,
                 }
 
-                var response = await service.ResetPasswordDTO(data);
+                var response = await service.ResetPassword(data);
+
+            
 
                 if (response.success === true) {
-                    toast.success(response.message);
-
                     toast.success("Password changed sucessfully!");
                     setTimeout(() => {
-                        Navigate('/Signin');
+                        Navigate('/Login');
                     }, 3500);
                 } else {
-                    console.log(response.message);
+                    toast.error(response.message);
                 }
             }
         } catch (error) {
@@ -87,18 +94,18 @@ function ForgotPassword() {
                     <div className="sign-form-item">
                         <div className="sign-form-icon"><AiOutlineLock /></div>
                         <div className="password-container">
-                            <input type={passwordShown ? "type" : "password"} className="sign-form-item-input" placeholder='Confirm Password' value={password2} onChange={(e) => { setPassword2(e.target.value) }} />
-                            <div className="show-password-container" onClick={togglePassword}>
-                                {passwordIconShow ? <AiFillEyeInvisible /> : <AiFillEye />}
+                            <input type={passwordShown2 ? "type" : "password"} className="sign-form-item-input" placeholder='Confirm Password' value={password2} onChange={(e) => { setPassword2(e.target.value) }} />
+                            <div className="show-password-container" onClick={togglePassword2}>
+                                {passwordIconShow2 ? <AiFillEyeInvisible /> : <AiFillEye />}
                             </div>
                         </div>
                     </div>
                     <div className="sign-form-item">
-                        <button className='sign-button' type='submit' onClick={() => { resetPassword() }}>Reset</button>
+                        <button className='sign-button' type='submit' onClick={() => {resetPassword()}}>Reset</button>
                     </div>
                     <div className="sign-form-item">
                         <span className="redirect">
-                            Changed your mind? <Link to="/Signin" className='noHref'>Go Back Home</Link>
+                            Changed your mind? <Link to="/Login" className='noHref'>Go Back Home</Link>
                         </span>
                     </div>
                 </div>

@@ -72,7 +72,7 @@ function Edit(props: createProps) {
             productInfoSelected.price = priceReplaced.replace(',', '.');
         }
 
-        parseInt(productInfoSelected.price);
+        parseFloat(productInfoSelected.price);
 
 
         await Api.put("Products/" + props.currentProduct, productInfoSelected)
