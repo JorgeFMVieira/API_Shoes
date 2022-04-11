@@ -65,11 +65,14 @@ function Edit(props: createProps) {
 
         parseInt(productInfoSelected.quantity);
 
+
         const price = productInfoSelected.price.toString();
         if (price.includes(',')) {
             const priceReplaced = price;
             productInfoSelected.price = priceReplaced.replace(',', '.');
         }
+
+        parseInt(productInfoSelected.price);
 
 
         await Api.put("Products/" + props.currentProduct, productInfoSelected)

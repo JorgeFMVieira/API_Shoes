@@ -40,16 +40,16 @@ function Create(props: createProps) {
             return;
         }
 
-        // const price = product.price.toString();
-        // if (price.includes(',')) {
-        //     const priceReplaced = price;
-        //     product.price.toString() = priceReplaced.replace(',', '.');
-        // }
-
-        console.log(product.price);
-        if(product.price.includes('.')){
-            product.price.replace(',', '.');
+        const price = product.price.toString();
+        if (price.includes(',')) {
+            const priceReplaced = price;
+            product.price = priceReplaced.replace(',', '.');
         }
+
+        // console.log(product.price);
+        // if(product.price.includes('.')){
+        //     product.price.replace(',', '.');
+        // }
 
         await Api.post('Products', { ...product })
             .then(response => {
@@ -97,7 +97,7 @@ function Create(props: createProps) {
                                         <div className="modalItem">
                                             <label htmlFor="productTypeId">Type:</label>
                                             <select name="productTypeId" id="productTypeId" onChange={(e) => (setProduct({ ...product, productTypeId: parseInt(e.target.value) }), console.log(e.target.value))}>
-                                                <option defaultValue="Choose an option">Choose an option</option>
+                                                <option defaultValue="Choose an option" hidden>Choose an option</option>
                                                 {dataType.map((productType) => (
                                                     <option key={productType.productTypeId} value={productType.productTypeId}>{productType.type}</option>
                                                 ))}

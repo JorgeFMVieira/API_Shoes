@@ -237,20 +237,20 @@ namespace JorgeShoes
             }
 
             //ADMIN
-            var userADMIN = "admin.default@samsys.pt";
+            var userADMIN = "admin@gmail.com";
             ApplicationUser auADMIN = await UserManager.FindByEmailAsync(userADMIN);
             if (auADMIN == null)
             {
                 auADMIN = new ApplicationUser
                 {
-                    Email = "admin.default@samsys.pt",
+                    Email = "admin@gmail.com",
                     EmailConfirmed = true,
-                    UserName = "admin.default@samsys.pt",
+                    UserName = "admin@gmail.com",
                     Name = "Admin",
                     DateCreated = DateTime.Now,
 
                 };
-                await UserManager.CreateAsync(auADMIN, "Password1!");
+                await UserManager.CreateAsync(auADMIN, "Pass1234@");
             }
             await UserManager.AddToRolesAsync(auADMIN, new List<string> { Roles.Admin.Value });
         }

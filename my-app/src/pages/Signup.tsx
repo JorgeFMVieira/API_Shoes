@@ -122,7 +122,7 @@ function Signup() {
                     </div>
                     <div className="sign-form-item">
                         <span className="redirect">
-                            Already have an account? <Link to="/Signup" className='noHref'>Sign In</Link>
+                            Already have an account? <Link to="/Login" className='noHref'>Sign In</Link>
                         </span>
                     </div>
                     <div className="sign-form-item">
