@@ -84,7 +84,7 @@ function Login() {
                     </div>
                     <div className="sign-form-item">
                         <span className="redirect">
-                            Forgot your password? <Link to="/RecoverPassword" className='noHref'>Recover it Now</Link>
+                            Forgot your password? <Link to="/ForgotPassword" className='noHref'>Recover it Now</Link>
                         </span>
                     </div>
                 </div>

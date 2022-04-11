@@ -189,6 +189,8 @@ namespace JorgeShoes
             services.AddTransient<IProductService, ProductsService>();
             services.AddTransient<IProductTypeService, ProductTypeService>();
             services.AddTransient<IAuthenticationServices, AuthenticationService>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IEmailService, EmailService>();
 
         }
 

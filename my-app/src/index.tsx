@@ -10,6 +10,8 @@ import Login from './pages/Login';
 import { AuthService } from './services/AuthService';
 import { AuthDTO } from './Models/Auth/AuthDTO';
 import { AuthProvider } from './Context/AuthContext';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 
 const service: AuthService = new AuthService();
@@ -32,6 +34,8 @@ ReactDOM.render(
                 <Route path='/Products' element={<Products />} />
                 <Route path='/ProductsType' element={<ProductsType />} />
                 <Route path='/ApiError' element={<ApiError />} />
+                <Route path='/ForgotPassword' element={<ForgotPassword />} />
+                <Route path='/ResetPassword' element={<ResetPassword />} />
             </Routes>
         </BrowserRouter>
         </AuthProvider>

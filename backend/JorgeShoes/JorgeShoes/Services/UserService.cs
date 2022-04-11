@@ -31,7 +31,7 @@ namespace JorgeShoes.Services
 
         public async Task<MessagingHelper> ResetPassword(ResetPasswordDTO reset)
         {
-            MessagingHelper result = new MessagingHelper();
+            MessagingHelper result = new();
 
             try
             {
@@ -55,7 +55,7 @@ namespace JorgeShoes.Services
                     }
 
                     result.Success = false;
-                    result.Message = "Something went wrong.";
+                    result.Message = "Something went wrong. "+ errors;
                     return result;
                 }
                 result.Success = true;
@@ -95,7 +95,7 @@ namespace JorgeShoes.Services
                     Link = link
                 };
 
-                MessagingHelper resultSendEmail = await _emailService.SendEmail(dto.Email, "RecoverPassword", obj, "Library");
+                MessagingHelper resultSendEmail = await _emailService.SendEmail(dto.Email, "RecoverPassword", obj, "Products");
 
                 if (resultSendEmail.Success == false)
                 {
@@ -103,7 +103,7 @@ namespace JorgeShoes.Services
                     result.Message = "We couldn´t send the email.";
                 }
                 result.Success = true;
-                result.Message = "We couldn´t send the email.";
+                result.Message = "Email sent sucessfully.";
 
 
 

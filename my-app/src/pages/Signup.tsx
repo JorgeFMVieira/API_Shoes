@@ -125,11 +125,6 @@ function Signup() {
                             Already have an account? <Link to="/Login" className='noHref'>Sign In</Link>
                         </span>
                     </div>
-                    <div className="sign-form-item">
-                        <span className="redirect">
-                            Forgot your password? <Link to="/RecoverPassword" className='noHref'>Recover it Now</Link>
-                        </span>
-                    </div>
                 </div>
             </div>
         </div>
